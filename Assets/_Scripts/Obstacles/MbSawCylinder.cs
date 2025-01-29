@@ -13,15 +13,17 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _saw = transform.Find("Saw");
+            _saw = transform.Find(Obstacles.Saw);
             _pivot = transform.Find("Pivot");
         }
 
         protected override void Start()
         {
-            if (_saw == null)
+            if (_pivot == null)
             {
-                Debug.LogError("Saw not found");
+#if UNITY_EDITOR
+                Debug.LogError("Pivot not found");
+#endif
                 return;
             }
 

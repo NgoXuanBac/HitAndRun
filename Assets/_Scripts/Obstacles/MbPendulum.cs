@@ -11,14 +11,16 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _pendulum = transform.Find("Pendulum");
+            _pendulum = transform.Find(Obstacles.Pendulum);
         }
 
         protected override void Start()
         {
             if (_pendulum == null)
             {
-                Debug.LogError("Pendulum not found");
+#if UNITY_EDITOR
+                Debug.LogError($"{nameof(Obstacles.Pendulum)} not found");
+#endif
                 return;
             }
             _pendulum.localEulerAngles = new Vector3(0, 0, -30);

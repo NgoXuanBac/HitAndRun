@@ -13,14 +13,16 @@ namespace HitAndRun.Obstacles
         protected float _delay = 2f;
         protected override void Reset()
         {
-            _spike = transform.Find("Spike");
+            _spike = transform.Find(Obstacles.Spike);
         }
 
         protected override void Start()
         {
             if (_spike == null)
             {
-                Debug.LogError("Spike not found");
+#if UNITY_EDITOR
+                Debug.LogError($"{nameof(Obstacles.Spike)} not found");
+#endif
                 return;
             }
             float height = _spike.GetComponent<Renderer>().bounds.size.y / 2;

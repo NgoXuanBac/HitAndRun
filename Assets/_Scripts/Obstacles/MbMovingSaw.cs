@@ -19,7 +19,9 @@ namespace HitAndRun.Obstacles
             base.Start();
             if (_base == null)
             {
+#if UNITY_EDITOR
                 Debug.LogError("Base not found");
+#endif
                 return;
             }
             var width = _base.GetComponent<Renderer>().bounds.size.x;

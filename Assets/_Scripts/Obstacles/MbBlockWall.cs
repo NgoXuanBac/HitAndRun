@@ -11,14 +11,16 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _blockWall = transform.Find("BlockWall");
+            _blockWall = transform.Find(Obstacles.BlockWall);
         }
 
         protected override void Start()
         {
             if (_blockWall == null)
             {
-                Debug.LogError("Hammer not found");
+#if UNITY_EDITOR
+                Debug.LogError($"{nameof(Obstacles.BlockWall)} not found");
+#endif
                 return;
             }
         }

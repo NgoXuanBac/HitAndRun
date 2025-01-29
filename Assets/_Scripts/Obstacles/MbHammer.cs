@@ -14,14 +14,16 @@ namespace HitAndRun.Obstacles
 
         protected override void Reset()
         {
-            _hammer = transform.Find("Hammer");
+            _hammer = transform.Find(Obstacles.Hammer);
         }
 
         protected override void Start()
         {
             if (_hammer == null)
             {
-                Debug.LogError("Hammer not found");
+#if UNITY_EDITOR
+                Debug.LogError($"{nameof(Obstacles.Hammer)} not found");
+#endif
                 return;
             }
             Sequence seq = DOTween.Sequence();
