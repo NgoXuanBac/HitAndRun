@@ -6,22 +6,29 @@ namespace HitAndRun.Character
 {
     public class MbLevel : MonoBehaviour
     {
+        [SerializeField, ReadOnly, Min(2)] private int _value;
         [SerializeField] private TextMeshPro _textMeshPro;
-        [SerializeField, ReadOnly, Min(2)] private int _level;
-        public int Level
+        [SerializeField] private SOBodyTypes _bodyTypes;
+        [SerializeField] SkinnedMeshRenderer _skinnedMeshRenderer;
+        public int Value
         {
-            get => _level;
+            get => _value;
             set
             {
-                _level = value;
+                _value = value;
                 _textMeshPro.text = FormatNumber(value);
+
+                if (!Application.isPlaying) return;
+                _skinnedMeshRenderer.material.SetColor("_BaseColor", _bodyTypes.GetColorByLevel(_value));
             }
         }
 
         private void Reset()
         {
-            _textMeshPro = GetComponentInChildren<TextMeshPro>();
-            Level = 2;
+            _bodyTypes ??= Resources.Load<SOBodyTypes>("Scriptables/BodyTypes");
+            _textMeshPro ??= GetComponentInChildren<TextMeshPro>();
+            _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            Value = 2;
         }
 
 
