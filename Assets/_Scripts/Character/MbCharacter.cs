@@ -2,15 +2,15 @@ using UnityEngine;
 
 namespace HitAndRun.Character
 {
-    [RequireComponent(typeof(MbLevel))]
+    [RequireComponent(typeof(MbCharacterBody))]
     public class MbCharacter : MonoBehaviour
     {
-        [SerializeField] private MbLevel _level;
-        public MbLevel Level => _level;
+        [SerializeField] private MbCharacterBody _body;
+        public MbCharacterBody Body => _body;
         public void Reset()
         {
-            _level ??= GetComponent<MbLevel>();
-            _level.Value = 2;
+            _body ??= GetComponent<MbCharacterBody>();
+            _body.Level = 2;
         }
     }
 }

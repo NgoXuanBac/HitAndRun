@@ -14,7 +14,7 @@ namespace HitAndRun
             var _font = Resources.Load<Font>("Fonts/LilitaOne-Regular");
             _style = new GUIStyle
             {
-                fontSize = 16,
+                fontSize = (int)(Screen.height * 0.02f),
                 fontStyle = FontStyle.Normal,
                 alignment = TextAnchor.UpperLeft,
                 font = _font,

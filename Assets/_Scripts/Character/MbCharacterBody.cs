@@ -1,25 +1,31 @@
+using DG.Tweening;
 using HitAndRun.Attributes;
 using TMPro;
 using UnityEngine;
 
 namespace HitAndRun.Character
 {
-    public class MbLevel : MonoBehaviour
+    public class MbCharacterBody : MonoBehaviour
     {
-        [SerializeField, ReadOnly, Min(2)] private int _value;
+        [SerializeField, ReadOnly, Min(2)] private int _level;
         [SerializeField] private TextMeshPro _textMeshPro;
         [SerializeField] private SOBodyTypes _bodyTypes;
-        [SerializeField] SkinnedMeshRenderer _skinnedMeshRenderer;
-        public int Value
+        [SerializeField] private SkinnedMeshRenderer _skinnedMeshRenderer;
+        [SerializeField, Range(0, 100)] private int _scaleUp;
+        [SerializeField, ReadOnly] private float _radius;
+        public float Width => _radius * transform.localScale.x * 2;
+        public int Level
         {
-            get => _value;
+            get => _level;
             set
             {
-                _value = value;
+                _level = value;
                 _textMeshPro.text = FormatNumber(value);
 
                 if (!Application.isPlaying) return;
-                _skinnedMeshRenderer.material.SetColor("_BaseColor", _bodyTypes.GetColorByLevel(_value));
+                _skinnedMeshRenderer.material.SetColor("_BaseColor", _bodyTypes.GetColorByLevel(_level));
+                var scale = transform.localScale + (Mathf.Log(_level, 2) - 1) * 0.01f * _scaleUp * Vector3.one;
+                transform.DOScale(scale, 0.3f).SetEase(Ease.OutQuad);
             }
         }
 
@@ -28,7 +34,8 @@ namespace HitAndRun.Character
             _bodyTypes ??= Resources.Load<SOBodyTypes>("Scriptables/BodyTypes");
             _textMeshPro ??= GetComponentInChildren<TextMeshPro>();
             _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-            Value = 2;
+            _radius = GetComponent<CapsuleCollider>().radius;
+            Level = 2;
         }
 
 

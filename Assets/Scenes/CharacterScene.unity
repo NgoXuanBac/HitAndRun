@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 013a7af984999a94e90516e9f988de2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: 2
+  _offset: 0.4
   _prefab: {fileID: 7662500137456523143, guid: a0bcbf5785b67e04ca28692d85436662, type: 3}
   _row: []
 --- !u!114 &148498570

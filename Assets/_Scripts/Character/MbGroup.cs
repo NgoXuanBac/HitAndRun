@@ -5,7 +5,7 @@ using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
+using System.Linq;
 
 namespace HitAndRun.Character
 {
@@ -29,7 +29,7 @@ namespace HitAndRun.Character
     public class MbGroup : MonoBehaviour
     {
         [Header("Line up")]
-        [SerializeField, Range(1, 5)] private float _offset = 2;
+        [SerializeField, Range(0, 1)] private float _offset = 0.4f;
         [SerializeField] private GameObject _prefab;
         [SerializeField] private List<MbCharacter> _row = new();
         private Queue<MbCharacter> _pool = new();
@@ -64,27 +64,38 @@ namespace HitAndRun.Character
             _pool.Enqueue(character);
         }
 
-        private void MergeCharacter(int from, int to)
+        private async Task MergeCharacter(int one, int two)
         {
-            _row[to].Level.Value *= 2;
-            DespawnCharacter(_row[from]);
+            if (Mathf.Abs(_row[one].transform.position.x) < Mathf.Abs(_row[two].transform.position.x))
+                (two, one) = (one, two);
+
+            _row[two].Body.Level *= 2;
+
+            var target = _row[two].transform.localPosition;
+            await _row[one].transform
+                .DOLocalMove(target, 0.3f)
+                .SetEase(Ease.OutQuad).ToUniTask();
+
+            DespawnCharacter(_row[one]);
         }
 
-        private async UniTask RearrangeCharacters(int center)
+        private async UniTask RearrangeCharacters()
         {
-            var tasks = new List<UniTask>();
-            for (int i = 0; i < _row.Count; i++)
-            {
-                var offset = (i - center) * _offset;
-                var target = new Vector3(offset, 0, 0);
+            if (_row.Count == 0) return;
 
-                var task = _row[i].transform
+            var start = -0.5f * (_row.Sum(c => c.Body.Width) + (_row.Count - 1) * _offset);
+
+            var tasks = _row.Select((character, i) =>
+            {
+                var target = new Vector3(start + character.Body.Width * 0.5f, 0, 0);
+
+                start += character.Body.Width + _offset;
+
+                return character.transform
                     .DOLocalMove(target, 0.3f)
                     .SetEase(Ease.OutQuad)
                     .ToUniTask();
-
-                tasks.Add(task);
-            }
+            });
 
             await UniTask.WhenAll(tasks);
         }
@@ -93,54 +104,29 @@ namespace HitAndRun.Character
         {
             if (index < 0 || index > _row.Count) return;
             character.transform.SetParent(transform);
-            var insert = _row[index == _row.Count ? index - 1 : index].transform.localPosition.x;
-            var tasks = new List<UniTask>();
-            if (index == 0) insert -= _offset;
-            else if (index == _row.Count) insert += _offset;
-            else
-            {
-                insert -= 0.5f * _offset;
-                for (int i = 0; i < _row.Count; i++)
-                {
-                    var move = _row[i].transform.localPosition + Mathf.Sign(i - index)
-                            * 0.5f * _offset * Vector3.right;
-
-                    tasks.Add(_row[i].transform
-                        .DOLocalMove(move, 0.3f)
-                        .SetEase(Ease.OutQuad)
-                        .ToUniTask());
-                }
-
-            }
-            tasks.Add(character.transform
-                .DOLocalMove(insert * Vector3.right, 0.3f)
-                .SetEase(Ease.OutQuad)
-                .ToUniTask());
-            await UniTask.WhenAll(tasks);
-
             _row.Insert(index, character);
+            await RearrangeCharacters();
 
             bool merged;
             do
             {
                 merged = false;
-                if (index > 0 && _row[index - 1].Level.Value == _row[index].Level.Value)
+                if (index > 0 && _row[index - 1].Body.Level == _row[index].Body.Level)
                 {
-                    await UniTask.Delay(100);
-                    MergeCharacter(index, index - 1);
+                    await MergeCharacter(index, index - 1);
                     index--;
                     merged = true;
 
                 }
-                else if (index < _row.Count - 1 && _row[index + 1].Level.Value == _row[index].Level.Value)
+                else if (index < _row.Count - 1 && _row[index + 1].Body.Level == _row[index].Body.Level)
                 {
-                    await UniTask.Delay(100);
-                    MergeCharacter(index + 1, index);
+                    await MergeCharacter(index + 1, index);
                     merged = true;
                 }
 
             } while (merged);
-            await RearrangeCharacters(_row.Count / 2);
+
+            await RearrangeCharacters();
         }
 
         public void AddCharacter()
