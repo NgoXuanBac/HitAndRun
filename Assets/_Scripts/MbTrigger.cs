@@ -1,4 +1,3 @@
-using HitAndRun.Attributes;
 using UnityEngine;
 using UnityEngine.Events;
 

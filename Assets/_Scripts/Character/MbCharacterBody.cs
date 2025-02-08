@@ -1,5 +1,4 @@
 using DG.Tweening;
-using HitAndRun.Attributes;
 using TMPro;
 using UnityEngine;
 
