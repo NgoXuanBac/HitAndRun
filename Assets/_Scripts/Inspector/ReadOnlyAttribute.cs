@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace HitAndRun
+namespace HitAndRun.Inspector
 {
     /// <summary>
     /// Read Only attribute.

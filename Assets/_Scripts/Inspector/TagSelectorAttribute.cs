@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace HitAndRun
+namespace HitAndRun.Inspector
 {
     public class TagSelectorAttribute : PropertyAttribute
     {

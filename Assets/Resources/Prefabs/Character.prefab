@@ -267,7 +267,7 @@ MonoBehaviour:
   _textMeshPro: {fileID: 240896982}
   _bodyTypes: {fileID: 11400000, guid: 1912ff75bf4074a45bb884e1384e8f22, type: 2}
   _skinnedMeshRenderer: {fileID: 4412818629764687591}
-  _scaleUp: 0
+  _scaleUp: 0.02
   _radius: 0.8
 --- !u!1001 &3971252451629570518
 PrefabInstance:

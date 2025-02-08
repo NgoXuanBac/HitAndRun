@@ -1,4 +1,4 @@
-using DG.Tweening;
+using HitAndRun.Inspector;
 using TMPro;
 using UnityEngine;
 
@@ -10,9 +10,10 @@ namespace HitAndRun.Character
         [SerializeField] private TextMeshPro _textMeshPro;
         [SerializeField] private SOBodyTypes _bodyTypes;
         [SerializeField] private SkinnedMeshRenderer _skinnedMeshRenderer;
-        [SerializeField, Range(0, 100)] private int _scaleUp;
+        [SerializeField, Range(0, 1)] private float _scaleUp = 0.02f;
         [SerializeField, ReadOnly] private float _radius;
         public float Width => _radius * transform.localScale.x * 2;
+
         public int Level
         {
             get => _level;
@@ -23,8 +24,7 @@ namespace HitAndRun.Character
 
                 if (!Application.isPlaying) return;
                 _skinnedMeshRenderer.material.SetColor("_BaseColor", _bodyTypes.GetColorByLevel(_level));
-                var scale = transform.localScale + (Mathf.Log(_level, 2) - 1) * 0.01f * _scaleUp * Vector3.one;
-                transform.DOScale(scale, 0.3f).SetEase(Ease.OutQuad);
+                transform.localScale = Vector3.one + (Mathf.Log(_level, 2) - 1) * _scaleUp * Vector3.one;
             }
         }
 
