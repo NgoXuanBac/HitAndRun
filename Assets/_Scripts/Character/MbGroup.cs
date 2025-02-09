@@ -72,7 +72,6 @@ namespace HitAndRun.Character
             _pool.Enqueue(character);
         }
 
-
         private async void ProcessInsertCharactes()
         {
             while (!_ctk.IsCancellationRequested)
@@ -143,7 +142,7 @@ namespace HitAndRun.Character
 
         private async UniTask ProcessInsertCharacterAt(MbCharacter character, int index)
         {
-            if (index < -1 || index > _row.Count) return;
+            index = Mathf.Clamp(index, -1, _row.Count);
             index = (index == -1) ? _row.Count : index;
 
             character.transform.SetParent(transform);
@@ -186,7 +185,7 @@ namespace HitAndRun.Character
                 }
                 else if (index < _row.Count - 1 && _row[index + 1].Body.Level == _row[index].Body.Level)
                 {
-                    await MergeCharacter(index + 1, index);
+                    await MergeCharacter(index, index + 1);
                     merged = true;
                 }
                 if (merged && !needArrange) needArrange = true;
@@ -202,7 +201,7 @@ namespace HitAndRun.Character
         public void AddCharacter()
         {
             var c1 = SpawnCharacter(transform.position + new Vector3(0, 0, 8f));
-            InsertCharacterAt(c1, -1);
+            InsertCharacterAt(c1, UnityEngine.Random.Range(0, _row.Count + 1));
         }
     }
 }

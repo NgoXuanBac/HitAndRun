@@ -5,20 +5,30 @@ namespace HitAndRun.Character
     public class MbGroupMovement : MonoBehaviour
     {
         [SerializeField, Range(1, 10)] private float _moveSpeed = 5f;
-        private float _target;
-
+        [SerializeField, Range(1, 20)] private float _forwardSpeed = 10f;
+        private bool _hasStarted = false;
+        private float _targetX;
+        public void Reset() => _hasStarted = false;
         private void Update()
         {
             var touches = InputHelper.GetTouches();
+            if (_hasStarted)
+                transform.Translate(Vector3.forward * _forwardSpeed * Time.deltaTime, Space.World);
 
             if (touches.Count == 0) return;
             var touch = touches[0];
 
-            if (touch.phase == TouchPhase.Moved)
-                _target += touch.deltaPosition.x * _moveSpeed * Time.deltaTime;
+            if (!_hasStarted && touch.phase == TouchPhase.Began)
+                _hasStarted = true;
 
-            transform.position = new Vector3(Mathf.Lerp(transform.position.x, _target, 0.1f), transform.position.y, transform.position.z);
+            if (touch.phase == TouchPhase.Moved)
+                _targetX += touch.deltaPosition.x * _moveSpeed * Time.deltaTime;
+
+            transform.position = new Vector3(
+                Mathf.Lerp(transform.position.x, _targetX, 0.1f),
+                transform.position.y,
+                transform.position.z
+            );
         }
     }
 }
-
