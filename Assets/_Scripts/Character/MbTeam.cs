@@ -10,12 +10,12 @@ using System.Threading;
 
 namespace HitAndRun.Character
 {
-    [CustomEditor(typeof(MbGroup))]
+    [CustomEditor(typeof(MbTeam))]
     public class EGroupInspector : Editor
     {
         public override void OnInspectorGUI()
         {
-            var group = (MbGroup)target;
+            var group = (MbTeam)target;
             GUI.enabled = Application.isPlaying;
             if (GUILayout.Button("Add Character"))
             {
@@ -27,7 +27,7 @@ namespace HitAndRun.Character
         }
     }
 
-    public class MbGroup : MonoBehaviour
+    public class MbTeam : MonoBehaviour
     {
         [Header("Line up")]
         [SerializeField, Range(0, 1)] private float _offset = 0.4f;

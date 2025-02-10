@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HitAndRun.Character
 {
-    public class MbGroupMovement : MonoBehaviour
+    public class MbTeamMovement : MonoBehaviour
     {
         [SerializeField, Range(1, 10)] private float _moveSpeed = 5f;
         [SerializeField, Range(1, 20)] private float _forwardSpeed = 10f;
