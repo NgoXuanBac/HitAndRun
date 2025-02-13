@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
 namespace HitAndRun
 {
+    [RequireComponent(typeof(BoxCollider))]
     public class MbTrigger : MonoBehaviour
     {
         [SerializeField, TagSelector]

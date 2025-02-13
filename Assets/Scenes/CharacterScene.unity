@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 148498569}
   - component: {fileID: 148498570}
   m_Layer: 0
-  m_Name: Character Group
+  m_Name: Team
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -233,6 +233,7 @@ MonoBehaviour:
   _offset: 0.4
   _prefab: {fileID: 7662500137456523143, guid: a0bcbf5785b67e04ca28692d85436662, type: 3}
   _row: []
+  _follow: {fileID: 1634270813}
 --- !u!114 &148498570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,6 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 5
+  _forwardSpeed: 10
 --- !u!1 &316133291
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,8 +871,8 @@ MonoBehaviour:
   m_UpdateMethod: 2
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
-    m_Style: 1
-    m_Time: 1
+    m_Style: 3
+    m_Time: 2
     m_CustomCurve:
       serializedVersion: 2
       m_Curve: []
