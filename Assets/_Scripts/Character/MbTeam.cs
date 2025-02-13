@@ -7,39 +7,42 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace HitAndRun.Character
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(MbTeam))]
-    public class EGroupInspector : Editor
+    public class ETeamInspector : Editor
     {
         public override void OnInspectorGUI()
         {
-            var group = (MbTeam)target;
+            var team = (MbTeam)target;
             GUI.enabled = Application.isPlaying;
             if (GUILayout.Button("Add Character"))
             {
-                group.AddCharacter();
+                team.AddCharacter();
             }
             GUI.enabled = true;
             EditorGUILayout.Space();
             DrawDefaultInspector();
         }
     }
+#endif
 
     public class MbTeam : MonoBehaviour
     {
         [Header("Line up")]
         [SerializeField, Range(0, 1)] private float _offset = 0.4f;
-        [SerializeField] private GameObject _prefab;
+        [SerializeField] private MbCharacter _prefab;
         [SerializeField] private List<MbCharacter> _row = new();
-        private Queue<MbCharacter> _pool = new();
-        private Queue<(MbCharacter, int)> _insertQueue = new();
+        private ConcurrentQueue<MbCharacter> _pool = new();
+        private ConcurrentQueue<(MbCharacter, int)> _insertQueue = new();
         [SerializeField] private Transform _follow;
         private CancellationToken _ctk;
         private void Reset()
         {
-            _prefab = Resources.Load<GameObject>("Prefabs/Character");
+            _prefab = Resources.Load<MbCharacter>("Prefabs/Character");
             _follow = transform.Find("Follow");
         }
         private void Start()
@@ -54,11 +57,11 @@ namespace HitAndRun.Character
         {
             if (_pool.Count == 0)
             {
-                var newCharacter = Instantiate(_prefab, transform).GetComponent<MbCharacter>();
+                var newCharacter = Instantiate(_prefab, transform);
                 _pool.Enqueue(newCharacter);
             }
 
-            var character = _pool.Dequeue();
+            _pool.TryDequeue(out var character);
             character.transform.position = position;
             character.gameObject.SetActive(true);
             return character;
@@ -77,8 +80,8 @@ namespace HitAndRun.Character
             while (!_ctk.IsCancellationRequested)
             {
                 await UniTask.WaitUntil(() => _insertQueue.Count != 0);
-                var (character, index) = _insertQueue.Dequeue();
-                await ProcessInsertCharacterAt(character, index);
+                _insertQueue.TryDequeue(out var result);
+                await ProcessInsertCharacterAt(result.Item1, result.Item2);
             }
         }
 

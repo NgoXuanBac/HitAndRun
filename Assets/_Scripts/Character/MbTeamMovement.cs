@@ -5,7 +5,7 @@ namespace HitAndRun.Character
     public class MbTeamMovement : MonoBehaviour
     {
         [SerializeField, Range(1, 10)] private float _moveSpeed = 5f;
-        [SerializeField, Range(1, 20)] private float _forwardSpeed = 10f;
+        [SerializeField, Range(1, 20)] private float _forwardSpeed = 8f;
         private bool _hasStarted = false;
         private float _targetX;
         public void Reset() => _hasStarted = false;
