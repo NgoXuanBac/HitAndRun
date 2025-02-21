@@ -3,7 +3,7 @@ using UnityEngine;
 namespace HitAndRun.Character.State
 {
     [RequireComponent(typeof(MbStateMachine))]
-    public abstract class MbCharacterState : MonoBehaviour
+    public abstract class MbState : MonoBehaviour
     {
         [SerializeField]
         private MbStateMachine _stateMachine;
@@ -12,7 +12,18 @@ namespace HitAndRun.Character.State
         protected void OnReset()
         {
             _stateMachine = GetComponent<MbStateMachine>();
-            enabled = false;
         }
+
+        protected void OnEnable()
+        {
+            OnEnter();
+        }
+
+        protected void OnDisable()
+        {
+            OnExit();
+        }
+        protected abstract void OnEnter();
+        protected abstract void OnExit();
     }
 }
