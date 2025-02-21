@@ -21,4 +21,3 @@ namespace HitAndRun.Character.State
         }
     }
 }
-
