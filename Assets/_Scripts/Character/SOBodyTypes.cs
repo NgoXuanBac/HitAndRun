@@ -8,7 +8,7 @@ namespace HitAndRun.Character
     {
         [SerializeField]
         private List<Color> _bodyTypes;
-        public Color GetColorByLevel(int level)
+        public Color GetColor(int level)
         {
             var index = (int)Mathf.Log(level, 2);
             index = (index < 0 || index >= _bodyTypes.Count) ? 0 : index;

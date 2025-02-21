@@ -4,6 +4,6 @@ namespace HitAndRun.Bullet
 {
     public interface IShootingPattern
     {
-        void Shoot(float bulletSpeed, Transform firePoint);
+        void Shoot(float speed, Transform fire, Color color, Vector3 scale);
     }
 }

@@ -11,25 +11,6 @@ using System.Collections.Concurrent;
 
 namespace HitAndRun.Character
 {
-#if UNITY_EDITOR
-    [CustomEditor(typeof(MbTeam))]
-    public class ETeamInspector : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            var team = (MbTeam)target;
-            GUI.enabled = Application.isPlaying;
-            if (GUILayout.Button("Add Character"))
-            {
-                team.AddCharacter();
-            }
-            GUI.enabled = true;
-            EditorGUILayout.Space();
-            DrawDefaultInspector();
-        }
-    }
-#endif
-
     public class MbTeam : MonoBehaviour
     {
         [Header("Line up")]
@@ -207,4 +188,24 @@ namespace HitAndRun.Character
             InsertCharacterAt(c1, UnityEngine.Random.Range(0, _row.Count + 1));
         }
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(MbTeam))]
+    public class ETeamInspector : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            var team = (MbTeam)target;
+            GUI.enabled = Application.isPlaying;
+            if (GUILayout.Button("Add Character"))
+            {
+                team.AddCharacter();
+            }
+            GUI.enabled = true;
+            EditorGUILayout.Space();
+            DrawDefaultInspector();
+        }
+    }
+#endif
+
 }

@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxDistance: 100
+  _meshRenderer: {fileID: 7473214383017547589}
 --- !u!54 &7982486891996651977
 Rigidbody:
   m_ObjectHideFlags: 0

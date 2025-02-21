@@ -13,7 +13,17 @@ namespace HitAndRun.Character
         [SerializeField, Range(0, 1)] private float _scaleUp = 0.02f;
         [SerializeField, ReadOnly] private float _radius;
         public float Width => _radius * transform.localScale.x * 2;
-
+        [SerializeField, ReadOnly] private Color _color;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                if (!Application.isPlaying) return;
+                _skinnedMeshRenderer.material.SetColor("_BaseColor", _color);
+            }
+        }
         public int Level
         {
             get => _level;
@@ -21,9 +31,7 @@ namespace HitAndRun.Character
             {
                 _level = value;
                 _textMeshPro.text = FormatNumber(value);
-
-                if (!Application.isPlaying) return;
-                _skinnedMeshRenderer.material.SetColor("_BaseColor", _bodyTypes.GetColorByLevel(_level));
+                Color = _bodyTypes.GetColor(_level);
                 transform.localScale = Vector3.one + (Mathf.Log(_level, 2) - 1) * _scaleUp * Vector3.one;
             }
         }

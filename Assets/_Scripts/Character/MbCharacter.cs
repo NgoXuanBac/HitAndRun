@@ -6,26 +6,6 @@ using UnityEngine;
 
 namespace HitAndRun.Character
 {
-#if UNITY_EDITOR
-    [CustomEditor(typeof(MbCharacter))]
-    public class ECharacterInspector : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            var character = (MbCharacter)target;
-            GUI.enabled = Application.isPlaying;
-            var shooting = character.ShootingPattern;
-            var text = shooting is SpreadShot ? "SingleShot" : "SpreadShot";
-            if (GUILayout.Button($"Shooting Pattern: {text}"))
-            {
-                character.SetShootingPattern(shooting is SpreadShot ? new SingleShot() : new SpreadShot());
-            }
-            GUI.enabled = true;
-            EditorGUILayout.Space();
-            DrawDefaultInspector();
-        }
-    }
-#endif
     [RequireComponent(typeof(MbCharacterBody))]
     public class MbCharacter : MonoBehaviour
     {
@@ -55,7 +35,7 @@ namespace HitAndRun.Character
         {
             while (!_cts.IsCancellationRequested)
             {
-                _shootingPattern.Shoot(_bulletSpeed, _shooter);
+                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale);
                 await UniTask.Delay((int)(_fireRate * 1000));
             }
         }
@@ -70,5 +50,26 @@ namespace HitAndRun.Character
         }
 
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(MbCharacter))]
+    public class ECharacterInspector : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            var character = (MbCharacter)target;
+            GUI.enabled = Application.isPlaying;
+            var shooting = character.ShootingPattern;
+            var text = shooting is SpreadShot ? "SingleShot" : "SpreadShot";
+            if (GUILayout.Button($"Shooting Pattern: {text}"))
+            {
+                character.SetShootingPattern(shooting is SpreadShot ? new SingleShot() : new SpreadShot());
+            }
+            GUI.enabled = true;
+            EditorGUILayout.Space();
+            DrawDefaultInspector();
+        }
+    }
+#endif
 }
 
