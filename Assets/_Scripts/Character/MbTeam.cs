@@ -15,58 +15,71 @@ namespace HitAndRun.Character
     {
         [Header("Line up")]
         [SerializeField, Range(0, 1)] private float _offset = 0.4f;
-        [SerializeField] private MbCharacter _prefab;
+        [SerializeField, Range(0, 1)] private float _delay = 0.2f;
         [SerializeField] private List<MbCharacter> _row = new();
-        private ConcurrentQueue<MbCharacter> _pool = new();
-        private ConcurrentQueue<(MbCharacter, int)> _insertQueue = new();
+        private ConcurrentQueue<Func<UniTask>> _actions = new();
         [SerializeField] private Transform _follow;
         private CancellationToken _ctk;
+        private bool _needRearrange = false;
         private void Reset()
         {
-            _prefab = Resources.Load<MbCharacter>("Prefabs/Character");
             _follow = transform.Find("Follow");
         }
         private void Start()
         {
-            _row.Add(SpawnCharacter(transform.position));
+            var character = MbCharacterSpawner.Instance.SpawnCharacter(transform.position, transform);
+            AddToRow(character);
             _ctk = this.GetCancellationTokenOnDestroy();
-            ProcessInsertCharactes();
+            ProcessActionsAsync();
         }
 
-
-        private MbCharacter SpawnCharacter(Vector3 position)
+        private async void ProcessActionsAsync()
         {
-            if (_pool.Count == 0)
+            while (!_ctk.IsCancellationRequested && _row.Count > 0)
             {
-                var newCharacter = Instantiate(_prefab, transform);
-                _pool.Enqueue(newCharacter);
-            }
+                await UniTask.WaitUntil(() => _actions.Count > 0 || _needRearrange);
+                if (_actions.TryDequeue(out var action)) await action();
 
-            _pool.TryDequeue(out var character);
-            character.transform.position = position;
-            character.gameObject.SetActive(true);
-            return character;
+                if (_needRearrange)
+                {
+                    _needRearrange = false;
+                    await RearrangeCharactersAsync();
+                }
+            }
         }
 
-        private void DespawnCharacter(MbCharacter character)
+        private void AddToRow(MbCharacter character, int index = 0)
         {
-            character.Reset();
-            character.gameObject.SetActive(false);
+            character.Grabber.OnGrab += HandleInsertCharacter;
+            character.OnFall += HandleRemoveCharacter;
+            _row.Insert(index, character);
+        }
+
+        private void RemoveFromRow(MbCharacter character)
+        {
+            character.Grabber.OnGrab -= HandleInsertCharacter;
+            character.OnFall -= HandleRemoveCharacter;
             _row.Remove(character);
-            _pool.Enqueue(character);
         }
 
-        private async void ProcessInsertCharactes()
+        private void HandleInsertCharacter(MbCharacter collider, MbCharacter other, int offset)
         {
-            while (!_ctk.IsCancellationRequested)
-            {
-                await UniTask.WaitUntil(() => _insertQueue.Count != 0);
-                _insertQueue.TryDequeue(out var result);
-                await ProcessInsertCharacterAt(result.Item1, result.Item2);
-            }
+            other.tag = MbCharacter.ACTIVE_TAG;
+            var current = _row.IndexOf(collider);
+            int index;
+            if (offset > 0 && current == _row.Count - 1) index = -1;
+            else index = _row.IndexOf(collider) + offset;
+
+            _actions.Enqueue(() => ProcessInsertCharacterAtAsync(other, index));
         }
 
-        private async Task MergeCharacter(int one, int two)
+        private void HandleRemoveCharacter(MbCharacter dead)
+        {
+            RemoveFromRow(dead);
+            _needRearrange = true;
+        }
+
+        private async UniTask MergeCharacterAsync(int one, int two)
         {
             var center = _follow.localPosition.x;
             if (Mathf.Abs(_row[one].transform.localPosition.x - center)
@@ -77,14 +90,16 @@ namespace HitAndRun.Character
 
             var target = _row[two].transform.localPosition;
             await _row[one].transform
-                .DOLocalMove(target, 0.3f)
+                .DOLocalMove(target, _delay)
                 .SetEase(Ease.OutQuad)
                 .WithCancellation(_ctk);
 
-            DespawnCharacter(_row[one]);
+            var character = _row[one];
+            RemoveFromRow(character);
+            MbCharacterSpawner.Instance.DespawnCharacter(character);
         }
 
-        private async UniTask RearrangeCharacters()
+        private async UniTask RearrangeCharactersAsync()
         {
             if (_row.Count == 0) return;
 
@@ -110,21 +125,22 @@ namespace HitAndRun.Character
                 positions[i] = positions[i + 1] - _row[i].Body.Width - _offset;
 
             var tasks = _row.Select((character, i) =>
-                character.transform
-                    .DOLocalMove(positions[i] * Vector3.right, 0.3f)
-                    .SetEase(Ease.OutQuad)
-                    .WithCancellation(_ctk)
-            );
+            {
+                if (!Mathf.Approximately(character.transform.localPosition.x, positions[i]))
+                {
+                    return character.transform
+                        .DOLocalMove(positions[i] * Vector3.right, _delay)
+                        .SetEase(Ease.OutQuad)
+                        .WithCancellation(_ctk);
+                }
+                return UniTask.CompletedTask;
+            });
 
             await UniTask.WhenAll(tasks);
+            RecalculateFollow();
         }
 
-        public void InsertCharacterAt(MbCharacter character, int index)
-        {
-            _insertQueue.Enqueue((character, index));
-        }
-
-        private async UniTask ProcessInsertCharacterAt(MbCharacter character, int index)
+        private async UniTask ProcessInsertCharacterAtAsync(MbCharacter character, int index)
         {
             index = Mathf.Clamp(index, -1, _row.Count);
             index = (index == -1) ? _row.Count : index;
@@ -143,19 +159,19 @@ namespace HitAndRun.Character
                 {
                     var offset = Mathf.Sign(i - index) * 0.5f * (gap + _row[i].Body.Width * 0.5f);
                     tasks.Add(_row[i].transform
-                        .DOLocalMove((_row[i].transform.localPosition.x + offset) * Vector3.right, 0.3f)
+                        .DOLocalMove((_row[i].transform.localPosition.x + offset) * Vector3.right, _delay)
                         .SetEase(Ease.OutQuad)
                         .WithCancellation(_ctk));
                 }
             }
 
             tasks.Add(character.transform
-                .DOLocalMove(insert * Vector3.right, 0.3f)
+                .DOLocalMove(insert * Vector3.right, _delay)
                 .SetEase(Ease.OutQuad)
                 .WithCancellation(_ctk));
 
             await UniTask.WhenAll(tasks);
-            _row.Insert(index, character);
+            AddToRow(character, index);
 
             bool merged, needArrange = false;
             do
@@ -163,30 +179,45 @@ namespace HitAndRun.Character
                 merged = false;
                 if (index > 0 && _row[index - 1].Body.Level == _row[index].Body.Level)
                 {
-                    await MergeCharacter(index, index - 1);
+                    await MergeCharacterAsync(index, index - 1);
                     index--;
                     merged = true;
                 }
                 else if (index < _row.Count - 1 && _row[index + 1].Body.Level == _row[index].Body.Level)
                 {
-                    await MergeCharacter(index, index + 1);
+                    await MergeCharacterAsync(index, index + 1);
                     merged = true;
                 }
                 if (merged && !needArrange) needArrange = true;
 
             } while (merged);
-            if (needArrange) await RearrangeCharacters();
-
-            var center = _row.Average(c => c.transform.localPosition.x);
-            _follow.localPosition = new Vector3(center, _follow.localPosition.y, _follow.localPosition.z);
+            if (needArrange) _needRearrange = true;
+            else RecalculateFollow();
         }
 
-
-        public void AddCharacter()
+        private void RecalculateFollow()
         {
-            var c1 = SpawnCharacter(transform.position + new Vector3(0, 0, 8f));
-            InsertCharacterAt(c1, UnityEngine.Random.Range(0, _row.Count + 1));
+            if (_row.Count == 0) return;
+            var sum = 0f;
+            for (int i = 0; i < _row.Count; i++) sum += _row[i].transform.localPosition.x;
+            _follow.localPosition = new Vector3(sum / _row.Count, _follow.localPosition.y, _follow.localPosition.z);
         }
+
+#if UNITY_EDITOR
+
+        public void AddRandom()
+        {
+            var c1 = MbCharacterSpawner.Instance.SpawnCharacter(transform.position + new Vector3(0, 0, 8f), transform);
+            _actions.Enqueue(() => ProcessInsertCharacterAtAsync(c1, UnityEngine.Random.Range(0, _row.Count + 1)));
+        }
+
+        public void RemoveRandom()
+        {
+            var dead = _row[UnityEngine.Random.Range(0, _row.Count)];
+            HandleRemoveCharacter(dead);
+            MbCharacterSpawner.Instance.DespawnCharacter(dead);
+        }
+#endif
     }
 
 #if UNITY_EDITOR
@@ -197,9 +228,13 @@ namespace HitAndRun.Character
         {
             var team = (MbTeam)target;
             GUI.enabled = Application.isPlaying;
-            if (GUILayout.Button("Add Character"))
+            if (GUILayout.Button("Add Random"))
             {
-                team.AddCharacter();
+                team.AddRandom();
+            }
+            if (GUILayout.Button("Remove Random"))
+            {
+                team.RemoveRandom();
             }
             GUI.enabled = true;
             EditorGUILayout.Space();
