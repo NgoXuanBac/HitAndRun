@@ -1,4 +1,4 @@
-namespace HitAndRun.Map
+namespace HitAndRun.Spawner
 {
     public class SingleSpawnPattern : SpawnPattern
     {

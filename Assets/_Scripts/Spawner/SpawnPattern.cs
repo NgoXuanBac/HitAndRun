@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HitAndRun.Map
+namespace HitAndRun.Spawner
 {
     public abstract class SpawnPattern
     {
