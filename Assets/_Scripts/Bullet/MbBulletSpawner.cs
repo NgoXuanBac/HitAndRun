@@ -3,17 +3,10 @@ using UnityEngine;
 
 namespace HitAndRun.Bullet
 {
-    public class MbBulletSpawner : MonoBehaviour
+    public class MbBulletSpawner : MbSingleton<MbBulletSpawner>
     {
         [SerializeField] private MbBullet _prefab;
         private ConcurrentQueue<MbBullet> _pool = new();
-        private static MbBulletSpawner _instance;
-        public static MbBulletSpawner Instance => _instance;
-
-        private void Awake()
-        {
-            _instance ??= this;
-        }
 
         private void Reset()
         {
@@ -38,6 +31,7 @@ namespace HitAndRun.Bullet
 
         public void DespawnBullet(MbBullet bullet)
         {
+            bullet.TrailRenderer.Clear();
             bullet.gameObject.SetActive(false);
             _pool.Enqueue(bullet);
         }

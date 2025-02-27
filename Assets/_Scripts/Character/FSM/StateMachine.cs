@@ -19,17 +19,22 @@ namespace HitAndRun.Character.FSM
         {
             _current.State?.FixedUpdate();
         }
-        public void SetState(IState state)
+        public void SetState(Type type)
         {
-            _current = _nodes[state.GetType()];
+            _current = _nodes[type];
             _current.State?.OnEnter();
         }
+        public void SetState(IState state)
+        {
+            SetState(state.GetType());
+        }
+        public IState GetCurrentState() => _current.State;
         public void AddTransition(IState from, IState to, IPredicate condition)
             => GetOrAddNode(from).AddTransition(GetOrAddNode(to).State, condition);
 
         public void AddAnyTransition(IState to, IPredicate condition)
-            => _anyTransitions.Add(new Transition(to, condition));
-            
+            => _anyTransitions.Add(new Transition(GetOrAddNode(to).State, condition));
+
         private StateNone GetOrAddNode(IState state)
         {
             var node = _nodes.GetValueOrDefault(state.GetType());
