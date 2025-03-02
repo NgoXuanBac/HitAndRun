@@ -8,7 +8,7 @@ namespace HitAndRun.Character
     public class MbCharacterBody : MonoBehaviour
     {
         [SerializeField, ReadOnly, Min(2)] private int _level;
-        [SerializeField, Range(1, 100)] private float _fallForce = 20f;
+        [SerializeField, Range(1, 100)] private int _gravityScale = 20;
         [SerializeField] private TextMeshPro _textMeshPro;
         [SerializeField] private SOBodyTypes _bodyTypes;
         [SerializeField] private SkinnedMeshRenderer _meshRenderer;
@@ -19,6 +19,9 @@ namespace HitAndRun.Character
         [SerializeField, ReadOnly] private float _radius;
         public float Width => _radius * transform.localScale.x * 2;
         [SerializeField, ReadOnly] private Color _color;
+
+        private bool _isGrounded = true;
+        public bool IsGrounded => _isGrounded;
         public Color Color
         {
             get => _color;
@@ -57,13 +60,18 @@ namespace HitAndRun.Character
             Level = 2;
         }
 
-
-        public void AddFallingForce()
+        private void Update()
         {
-            _rigidbody.AddForce(Vector2.down * _fallForce, ForceMode.Impulse);
+            _isGrounded = CheckGrounded();
         }
 
-        public bool IsGrounded()
+        private void FixedUpdate()
+        {
+            if (!_isGrounded) _rigidbody.AddForce(Physics.gravity.y * _gravityScale * Vector3.up, ForceMode.Acceleration);
+            else _rigidbody.velocity = Vector3.zero;
+        }
+
+        private bool CheckGrounded()
         {
             var offset = 0.5f;
             var bounds = _collider.bounds;

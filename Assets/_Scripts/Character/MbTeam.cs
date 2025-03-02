@@ -27,7 +27,7 @@ namespace HitAndRun.Character
         }
         private void Start()
         {
-            var character = MbCharacterSpawner.Instance.SpawnCharacter(transform.position, transform);
+            var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
             AddToRow(character);
             _ctk = this.GetCancellationTokenOnDestroy();
             ProcessActionsAsync();
@@ -96,7 +96,7 @@ namespace HitAndRun.Character
 
             var character = _row[one];
             RemoveFromRow(character);
-            MbCharacterSpawner.Instance.DespawnCharacter(character);
+            MbCharacterSpawner.Instance.Despawn(character);
         }
 
         private async UniTask RearrangeCharactersAsync()
@@ -207,7 +207,7 @@ namespace HitAndRun.Character
 
         public void AddRandom()
         {
-            var c1 = MbCharacterSpawner.Instance.SpawnCharacter(transform.position + new Vector3(0, 0, 8f), transform);
+            var c1 = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), transform);
             _actions.Enqueue(() => ProcessInsertCharacterAtAsync(c1, UnityEngine.Random.Range(0, _row.Count + 1)));
         }
 
@@ -215,7 +215,7 @@ namespace HitAndRun.Character
         {
             var dead = _row[UnityEngine.Random.Range(0, _row.Count)];
             HandleRemoveCharacter(dead);
-            MbCharacterSpawner.Instance.DespawnCharacter(dead);
+            MbCharacterSpawner.Instance.Despawn(dead);
         }
 #endif
     }

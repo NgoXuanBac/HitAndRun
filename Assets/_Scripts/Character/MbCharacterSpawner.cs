@@ -13,7 +13,7 @@ namespace HitAndRun.Character
             _prefab = Resources.Load<MbCharacter>("Prefabs/Character");
         }
 
-        public MbCharacter SpawnCharacter(Vector3 position, Transform parent, string tag = MbCharacter.ACTIVE_TAG)
+        public MbCharacter Spawn(Vector3 position, Transform parent, string tag = MbCharacter.ACTIVE_TAG)
         {
             if (_pool.Count == 0)
             {
@@ -28,7 +28,7 @@ namespace HitAndRun.Character
             return character;
         }
 
-        public void DespawnCharacter(MbCharacter character)
+        public void Despawn(MbCharacter character)
         {
             character.Reset();
             character.SetDefaultState();

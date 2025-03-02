@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace HitAndRun.Map
 {
-    [CreateAssetMenu(fileName = "LevelGeneration", menuName = "ScriptableObjects/Level Generation")]
+    [CreateAssetMenu(fileName = "LevelGeneration", menuName = "HitAndRun/Map/Level Generation")]
     public class SOLevelGeneration : ScriptableObject
     {
         [SerializeField]
-        private List<PrebuildLevel> _prebuildLevels = new();
+        private List<LevelData> _prebuildLevels = new();
 
-        public PrebuildLevel GetPrebuildLevel(int level)
+        public LevelData GetPrebuildLevel(int level)
         {
             var index = level - 1;
             if (index < _prebuildLevels.Count)
@@ -23,17 +23,12 @@ namespace HitAndRun.Map
 
 
     [Serializable]
-    public struct PrebuildLevel
+    public struct LevelData
     {
-        [Range(0, 100)]
-        public int MaxCharacters;
+        [Range(0, 1)]
+        public float TowerThreshold;
         [Range(0, 1)]
         public float CharacterThreshold;
-        public int MaxTowerHeath;
-        [Range(0, 100)]
-        public int MaxObstacles;
-        [Range(0, 1)]
-        public float ObstacleThreshold;
         [Range(0, 5)]
         public float NoiseScale;
     }

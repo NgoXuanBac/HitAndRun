@@ -1,3 +1,4 @@
+using HitAndRun.Tower;
 using UnityEngine;
 
 namespace HitAndRun.Bullet
@@ -9,8 +10,11 @@ namespace HitAndRun.Bullet
         [SerializeField] private TrailRenderer _trailRenderer;
         public TrailRenderer TrailRenderer => _trailRenderer;
         private Vector3 start;
+        private int _damage = 1;
+        public int Damage => _damage;
         private void Reset()
         {
+            _damage = 1;
             _meshRenderer = transform.GetComponentInChildren<MeshRenderer>();
             _trailRenderer = transform.GetComponent<TrailRenderer>();
         }
@@ -21,9 +25,16 @@ namespace HitAndRun.Bullet
         private void Update()
         {
             if (Vector3.Distance(start, transform.position) > _maxDistance)
-                MbBulletSpawner.Instance.DespawnBullet(this);
+                MbBulletSpawner.Instance.Despawn(this);
         }
-        public void SetColor(Color color)
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.CompareTag("Tower")) return;
+            MbBulletSpawner.Instance.Despawn(this);
+        }
+
+        public void SetProperties(Color color, int damage)
         {
             _meshRenderer.material.SetColor("_BaseColor", color);
             var gradient = new Gradient();
@@ -34,6 +45,8 @@ namespace HitAndRun.Bullet
             );
 
             _trailRenderer.colorGradient = gradient;
+
+            _damage = damage;
         }
     }
 

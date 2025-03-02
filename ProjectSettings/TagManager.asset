@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Character
   - Character_Inactive
+  - Bullet
+  - Bullet_Inactive
+  - Tower
   layers:
   - Default
   - TransparentFX

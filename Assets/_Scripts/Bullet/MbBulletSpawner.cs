@@ -13,7 +13,7 @@ namespace HitAndRun.Bullet
             _prefab = Resources.Load<MbBullet>("Prefabs/Bullet");
         }
 
-        public MbBullet SpawnBullet(Vector3 position, Vector3 scale, Color color)
+        public MbBullet Spawn(Vector3 position, Vector3 scale, Color color, int damage = 1)
         {
             if (_pool.Count == 0)
             {
@@ -24,12 +24,12 @@ namespace HitAndRun.Bullet
             _pool.TryDequeue(out var bullet);
             bullet.transform.localScale = scale;
             bullet.transform.position = position;
-            bullet.SetColor(color);
+            bullet.SetProperties(color, damage);
             bullet.gameObject.SetActive(true);
             return bullet;
         }
 
-        public void DespawnBullet(MbBullet bullet)
+        public void Despawn(MbBullet bullet)
         {
             bullet.TrailRenderer.Clear();
             bullet.gameObject.SetActive(false);

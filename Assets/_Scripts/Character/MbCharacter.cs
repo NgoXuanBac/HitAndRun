@@ -14,9 +14,6 @@ namespace HitAndRun.Character
         [SerializeField] private MbCharacterBody _body;
         public MbCharacterBody Body => _body;
 
-        [SerializeField, Range(0, 1)] private float _fireRate = 0.2f;
-        [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
-        public float FireRate => _fireRate;
         private IShootingPattern _shootingPattern = new SingleShot();
         public IShootingPattern ShootingPattern => _shootingPattern;
         [SerializeField] private Transform _shooter;
@@ -25,6 +22,16 @@ namespace HitAndRun.Character
         public MbGrabber Grabber => _grabber;
 
         [SerializeField] private Animator _animator;
+
+
+        [Header("Shooting")]
+        [SerializeField, Range(0, 1)] private float _fireRate = 0.2f;
+        public float FireRate => _fireRate;
+        [SerializeField, Range(1, 100)] private int _damage = 2;
+        public float Damage => _damage;
+
+        [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
+
         private StateMachine _stateMachine = new();
         private CancellationTokenSource _cts = new();
 
@@ -56,7 +63,7 @@ namespace HitAndRun.Character
             var fallState = new FallState(this, _animator);
 
             At(idleState, runState, new FuncPredicate(() => tag == ACTIVE_TAG));
-            Any(fallState, new FuncPredicate(() => tag == ACTIVE_TAG && !_body.IsGrounded()));
+            Any(fallState, new FuncPredicate(() => tag == ACTIVE_TAG && !_body.IsGrounded));
             Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
 
             SetDefaultState();
@@ -75,7 +82,6 @@ namespace HitAndRun.Character
 
         private void Update()
         {
-            _body.IsGrounded();
             _stateMachine.Update();
         }
 
@@ -89,7 +95,7 @@ namespace HitAndRun.Character
             while (!_cts.IsCancellationRequested)
             {
                 await UniTask.WaitUntil(() => this != null && _stateMachine.GetCurrentState() is RunState);
-                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale);
+                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
                 await UniTask.Delay((int)(_fireRate * 1000));
             }
         }

@@ -1,17 +1,19 @@
 using HitAndRun.Bullet;
 using UnityEngine;
 
-public class SpreadShot : IShootingPattern
+namespace HitAndRun.Bullet
 {
-    public void Shoot(float speed, Transform fire, Color color, Vector3 scale)
+    public class SpreadShot : IShootingPattern
     {
-        float[] angles = { -10f, 0, 10f };
-        foreach (var angle in angles)
+        public void Shoot(float speed, Transform fire, Color color, Vector3 scale, int damage = 1)
         {
-            var bullet = MbBulletSpawner.Instance.SpawnBullet(fire.position, scale, color);
-            Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * fire.forward;
-            bullet.GetComponent<Rigidbody>().velocity = direction * speed;
+            float[] angles = { -10f, 0, 10f };
+            foreach (var angle in angles)
+            {
+                var bullet = MbBulletSpawner.Instance.Spawn(fire.position, scale, color, damage);
+                Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * fire.forward;
+                bullet.GetComponent<Rigidbody>().velocity = direction * speed;
+            }
         }
     }
 }
-

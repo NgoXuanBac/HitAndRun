@@ -15,7 +15,6 @@ namespace HitAndRun.Character.FSM
             var temp = _character.transform.position;
             _character.transform.SetParent(null, true);
             _character.transform.position = temp;
-            _character.Body.AddFallingForce();
             _animator.CrossFade(FallHash, CrossFadeDuration);
         }
 
@@ -24,7 +23,7 @@ namespace HitAndRun.Character.FSM
             var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.shortNameHash == FallHash && stateInfo.normalizedTime >= 1f)
             {
-                MbCharacterSpawner.Instance.DespawnCharacter(_character);
+                MbCharacterSpawner.Instance.Despawn(_character);
             }
         }
     }

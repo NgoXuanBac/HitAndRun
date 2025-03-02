@@ -9,13 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e5172ddc453f2b408f938df41cb2c48, type: 3}
-  m_Name: LevelGeneration
+  m_Script: {fileID: 11500000, guid: e4be746b991a6f54583893258182203e, type: 3}
+  m_Name: TowerSpawnRule
   m_EditorClassIdentifier: 
-  _prebuildLevels:
-  - MaxCharacters: 20
-    CharacterThreshold: 0.5
-    MaxTowerHeath: 0
-    MaxObstacles: 0
-    ObstacleThreshold: 0
-    NoiseScale: 0.3
+  _grid: 3
