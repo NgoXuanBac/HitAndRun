@@ -2,37 +2,48 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace HitAndRun.Gate.Modifier {
+namespace HitAndRun.Gate.Modifier
+{
     public class MbModifierView : MonoBehaviour
     {
-        [SerializeField] private Image backgroundImage;
-        [SerializeField] private Renderer cylinder;
-        [SerializeField] private Renderer cylinder2;
-        [SerializeField] private Renderer quad;
-        [SerializeField] private TMP_Text amountText;
-        [SerializeField] private Color positiveColor;
-        [SerializeField] private Color negativeColor;
-        [SerializeField] private SpriteRenderer positiveStatusImage;
-        [SerializeField] private SpriteRenderer negativeStatusImage;
-        
-        public void SetVisuals(bool isPositive, int amount)
+        [SerializeField] private Renderer _cylinderL;
+        [SerializeField] private Renderer _cylinderR;
+        [SerializeField] private Renderer _banner;
+        [SerializeField] private Image _background;
+        [SerializeField] private TMP_Text _info;
+        [SerializeField] private TMP_Text _name;
+        [SerializeField] private Image _icon;
+
+        private void Reset()
         {
-            backgroundImage.color = isPositive ? positiveColor : negativeColor;
-            cylinder.material.color = isPositive? positiveColor : negativeColor;
-            cylinder2.material.color = isPositive? positiveColor : negativeColor;
-            quad.material.color = isPositive? positiveColor : negativeColor;
-            amountText.text = isPositive ? "+" + amount : "" + amount;
-            if (isPositive) {
-                positiveStatusImage.enabled = true;
-                negativeStatusImage.enabled = false;
-            } else{
-                negativeStatusImage.enabled = true;
-                positiveStatusImage.enabled = false;
-            }
+            _cylinderL = transform.Find("Cylinder_L").GetComponent<Renderer>();
+            _cylinderR = transform.Find("Cylinder_R").GetComponent<Renderer>();
+            _banner = transform.Find("Banner").GetComponent<Renderer>();
+            _background = transform.Find("Canvas").Find("Background").GetComponent<Image>();
+            _icon = transform.Find("Canvas").Find("Icon").GetComponent<Image>();
+            _name = transform.Find("Canvas").Find("Name").GetComponent<TMP_Text>();
+            _info = transform.Find("Canvas").Find("Info").GetComponent<TMP_Text>();
         }
-        public void SetAmountText(string text)
+
+        public void SetVisuals(string name, Color color, Sprite icon, string info)
         {
-            amountText.text = text;
+            _name.text = name;
+            _background.color = new Color(color.r, color.g, color.b, 0.5f);
+            _info.text = info;
+            _icon.sprite = icon;
+
+            if (Application.isPlaying)
+            {
+                _cylinderL.material.SetColor("_BaseColor", color);
+                _cylinderR.material.SetColor("_BaseColor", color);
+                _banner.material.SetColor("_BaseColor", color);
+            }
+            else
+            {
+                _cylinderL.sharedMaterial.SetColor("_BaseColor", color);
+                _cylinderR.sharedMaterial.SetColor("_BaseColor", color);
+                _banner.sharedMaterial.SetColor("_BaseColor", color);
+            }
         }
     }
 }

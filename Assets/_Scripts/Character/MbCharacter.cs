@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using HitAndRun.Bullet;
 using HitAndRun.Character.FSM;
+using HitAndRun.Gate.Modifier;
 using UnityEditor;
 using UnityEngine;
 
@@ -41,7 +42,9 @@ namespace HitAndRun.Character
         public const string ACTIVE_TAG = "Character";
         public const string INACTIVE_TAG = "Character_Inactive";
 
-        public Action<MbCharacter> OnFall;
+        public Action<MbCharacter> OnDead;
+
+        private bool _isHit;
 
         public void Reset()
         {
@@ -51,7 +54,7 @@ namespace HitAndRun.Character
             _animator = GetComponentInChildren<Animator>();
             transform.position = Vector3.zero;
             _body.Reset();
-
+            _isHit = false;
             tag = INACTIVE_TAG;
         }
 
@@ -64,6 +67,7 @@ namespace HitAndRun.Character
 
             At(idleState, runState, new FuncPredicate(() => tag == ACTIVE_TAG));
             Any(fallState, new FuncPredicate(() => tag == ACTIVE_TAG && !_body.IsGrounded));
+            Any(dyingState, new FuncPredicate(() => tag == ACTIVE_TAG && _isHit));
             Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
 
             SetDefaultState();
@@ -103,6 +107,16 @@ namespace HitAndRun.Character
         private void OnDisable()
         {
             _cts.Cancel();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "Tower") _isHit = true;
+            else if (other.TryGetComponent(out MbModifierBase modifier))
+            {
+                modifier.Modify(this);
+            }
+
         }
 
 #if UNITY_EDITOR

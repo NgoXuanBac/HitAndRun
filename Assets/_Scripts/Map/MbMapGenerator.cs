@@ -23,6 +23,11 @@ namespace HitAndRun.Map
             _chunkWidth = _ground.Width;
         }
 
+        private void Start()
+        {
+            GenerateMap();
+        }
+
         public void GenerateMap()
         {
             var level = MbGameManager.Instance.CurrentLevel;

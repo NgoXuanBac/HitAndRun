@@ -51,14 +51,14 @@ namespace HitAndRun.Character
         private void AddToRow(MbCharacter character, int index = 0)
         {
             character.Grabber.OnGrab += HandleInsertCharacter;
-            character.OnFall += HandleRemoveCharacter;
+            character.OnDead += HandleRemoveCharacter;
             _row.Insert(index, character);
         }
 
         private void RemoveFromRow(MbCharacter character)
         {
             character.Grabber.OnGrab -= HandleInsertCharacter;
-            character.OnFall -= HandleRemoveCharacter;
+            character.OnDead -= HandleRemoveCharacter;
             _row.Remove(character);
         }
 

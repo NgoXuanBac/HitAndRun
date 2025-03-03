@@ -10,7 +10,7 @@ namespace HitAndRun.Character.FSM
 
         public override void OnEnter()
         {
-            _character.OnFall?.Invoke(_character);
+            _character.OnDead?.Invoke(_character);
 
             var temp = _character.transform.position;
             _character.transform.SetParent(null, true);
