@@ -24,13 +24,11 @@ namespace HitAndRun.Character
 
         [SerializeField] private Animator _animator;
 
-
         [Header("Shooting")]
         [SerializeField, Range(0, 1)] private float _fireRate = 0.2f;
         public float FireRate => _fireRate;
         [SerializeField, Range(1, 100)] private int _damage = 2;
         public float Damage => _damage;
-
         [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
 
         private StateMachine _stateMachine = new();
@@ -54,6 +52,10 @@ namespace HitAndRun.Character
             _animator = GetComponentInChildren<Animator>();
             transform.position = Vector3.zero;
             _body.Reset();
+
+            _fireRate = MbGameManager.Instance.Specifications.FireRate;
+            _damage = MbGameManager.Instance.Specifications.Damage;
+
             _isHit = false;
             tag = INACTIVE_TAG;
         }
@@ -81,7 +83,7 @@ namespace HitAndRun.Character
         private void OnEnable()
         {
             _cts = new CancellationTokenSource();
-            AutoShootAsync();
+            ProcessShootingAsync().Forget();
         }
 
         private void Update()
@@ -94,7 +96,7 @@ namespace HitAndRun.Character
             _stateMachine.FixedUpdate();
         }
 
-        private async void AutoShootAsync()
+        private async UniTaskVoid ProcessShootingAsync()
         {
             while (!_cts.IsCancellationRequested)
             {

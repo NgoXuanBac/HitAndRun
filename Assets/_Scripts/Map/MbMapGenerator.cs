@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using HitAndRun.Character;
+using HitAndRun.Gate;
 using HitAndRun.Inspector;
 using HitAndRun.Tower;
 using UnityEditor;
@@ -14,13 +17,21 @@ namespace HitAndRun.Map
         [SerializeField] private int _chunkCount = 60;
         [SerializeField, ReadOnly] private float _chunkHeight;
         [SerializeField, ReadOnly] private float _chunkWidth;
+        [SerializeField] private List<SOSpawnRule> _spawnRules;
 
+        private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
         private void Reset()
         {
             _ground = GetComponentInChildren<MbGround>();
+            _spawnRules = Resources.LoadAll<SOSpawnRule>("Scriptables").ToList();
             _ground.ChunkCount = _chunkCount;
             _chunkHeight = _ground.Length / _chunkCount;
             _chunkWidth = _ground.Width;
+        }
+
+        private void Awake()
+        {
+            _spawnRuleWithType = _spawnRules.GroupBy(x => x.SpawnType).ToDictionary(g => g.Key, g => g.Single());
         }
 
         private void Start()
@@ -30,18 +41,44 @@ namespace HitAndRun.Map
 
         public void GenerateMap()
         {
-            var level = MbGameManager.Instance.CurrentLevel;
+            var chunks = new int[_chunkCount];
+            for (int index = 3; index < _chunkCount; index++)
+            {
+                chunks[index] = Random.Range((int)SpawnType.Tower, (int)SpawnType.Item + 1);
+            }
 
             for (int index = 3; index < _chunkCount; index++)
             {
-                var noise = Mathf.PerlinNoise(level, index * 0.3f);
-                if (noise < 0.5f)
+                var type = (SpawnType)chunks[index];
+                switch (type)
                 {
-                    MbCharacterSpawner.Instance.Spawn(new Vector3(0, 8, index * _chunkHeight), transform, MbCharacter.INACTIVE_TAG);
-                    MbTowerSpawner.Instance.Spawn(new Vector3(0, 0, index * _chunkHeight), transform, 100);
+                    case SpawnType.Tower:
+                        if (_spawnRuleWithType.TryGetValue(type, out var rule))
+                        {
+                            var ratios = rule.GetSpawnRatios();
+                            foreach (var ratio in ratios)
+                            {
+                                MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 8, index * _chunkHeight), transform, MbCharacter.INACTIVE_TAG);
+                                MbTowerSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, 300);
+                            }
+                        }
+                        break;
+                    case SpawnType.Gate:
+                        MbGateSpawner.Instance.SpawnDual(index, _chunkHeight, _chunkWidth, transform);
+                        break;
                 }
+
+
             }
         }
+    }
+
+    public enum SpawnType
+    {
+        Tower,
+        Gate,
+        Obstacle,
+        Item
     }
 
 #if UNITY_EDITOR

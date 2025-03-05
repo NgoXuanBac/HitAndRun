@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using HitAndRun.Bullet;
-using HitAndRun.Inspector;
 using TMPro;
 using UnityEngine;
 

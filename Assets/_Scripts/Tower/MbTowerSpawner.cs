@@ -1,23 +1,16 @@
 using System.Collections.Concurrent;
-using HitAndRun.Map;
 using UnityEngine;
 
 namespace HitAndRun.Tower
 {
     public class MbTowerSpawner : MbSingleton<MbTowerSpawner>
     {
-        [SerializeField] private SOSpawnRule _rule;
         [SerializeField] private MbTower _prefab;
         private ConcurrentQueue<MbTower> _pool = new();
+
         private void Reset()
         {
-            _rule ??= Resources.Load<SOSpawnRule>("Scriptables/TowerSpawnRule");
             _prefab ??= Resources.Load<MbTower>("Prefabs/Tower");
-        }
-
-        public bool CanSpawn()
-        {
-            return true;
         }
 
         public MbTower Spawn(Vector3 position, Transform parent, long health)

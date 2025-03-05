@@ -12,4 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4be746b991a6f54583893258182203e, type: 3}
   m_Name: TowerSpawnRule
   m_EditorClassIdentifier: 
-  _grid: 3
+  _spawnType: 0
+  _spawnPatterns:
+  - Name: Center
+    Count: 2
+    Ratios:
+    - 0.35
+    - -0.35
+  - Name: Single
+    Count: 1
+    Ratios:
+    - -0.75
+    - -0.35
+    - 0
+    - 0.35
+    - 0.75
+  - Name: Double
+    Count: 2
+    Ratios:
+    - -0.75
+    - 0
+    - 0.75
+  - Name: Triple
+    Count: 3
+    Ratios:
+    - -0.75
+    - 0
+    - 0.75

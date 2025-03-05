@@ -247,8 +247,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.3, y: 5, z: 3}
-  m_Center: {x: 0, y: 2.5, z: 0}
+  m_Size: {x: 2.5, y: 5, z: 2.8}
+  m_Center: {x: 0, y: 2.5, z: 1.2}
 --- !u!114 &1559487990919396375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,7 +362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _level: 2
-  _fallForce: 20
+  _gravityScale: 20
   _textMeshPro: {fileID: 240896982}
   _bodyTypes: {fileID: 11400000, guid: 1912ff75bf4074a45bb884e1384e8f22, type: 2}
   _meshRenderer: {fileID: 4412818629764687591}

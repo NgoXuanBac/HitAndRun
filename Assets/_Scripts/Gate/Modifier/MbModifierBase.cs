@@ -20,7 +20,7 @@ namespace HitAndRun.Gate.Modifier
         protected void ApplyVisuals(string info)
         {
             var type = _isPositive ? _modifierType.Positive : _modifierType.Negative;
-            _modifierView.SetVisuals(_modifierType.Name, type.Color, type.Icon, info);
+            _modifierView.SetVisuals(_modifierType.Name, info, type);
         }
     }
 }
