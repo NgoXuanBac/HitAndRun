@@ -44,7 +44,9 @@ namespace HitAndRun.Map
             var chunks = new int[_chunkCount];
             for (int index = 3; index < _chunkCount; index++)
             {
-                chunks[index] = Random.Range((int)SpawnType.Tower, (int)SpawnType.Item + 1);
+                // chunks[index] = Random.Range((int)SpawnType.Tower, (int)SpawnType.Item + 1);
+                chunks[index] = (int)SpawnType.Tower;
+
             }
 
             for (int index = 3; index < _chunkCount; index++)
@@ -58,8 +60,8 @@ namespace HitAndRun.Map
                             var ratios = rule.GetSpawnRatios();
                             foreach (var ratio in ratios)
                             {
-                                MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 8, index * _chunkHeight), transform, MbCharacter.INACTIVE_TAG);
-                                MbTowerSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, 300);
+                                MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, MbCharacter.INACTIVE_TAG);
+                                // MbTowerSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, 300);
                             }
                         }
                         break;
@@ -67,8 +69,6 @@ namespace HitAndRun.Map
                         MbGateSpawner.Instance.SpawnDual(index, _chunkHeight, _chunkWidth, transform);
                         break;
                 }
-
-
             }
         }
     }

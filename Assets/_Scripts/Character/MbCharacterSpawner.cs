@@ -22,6 +22,7 @@ namespace HitAndRun.Character
                 _pool.Enqueue(newCharacter);
             }
             _pool.TryDequeue(out var character);
+            character.name = $"Character#{character.GetHashCode()}";
             character.transform.position = position;
             character.gameObject.SetActive(true);
             character.tag = tag;

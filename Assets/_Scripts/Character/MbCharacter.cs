@@ -12,6 +12,8 @@ namespace HitAndRun.Character
     [RequireComponent(typeof(MbCharacterBody))]
     public class MbCharacter : MonoBehaviour
     {
+        public MbCharacter Left { get; set; }
+        public MbCharacter Right { get; set; }
         [SerializeField] private MbCharacterBody _body;
         public MbCharacterBody Body => _body;
 
@@ -21,7 +23,6 @@ namespace HitAndRun.Character
 
         [SerializeField] private MbGrabber _grabber;
         public MbGrabber Grabber => _grabber;
-
         [SerializeField] private Animator _animator;
 
         [Header("Shooting")]
@@ -33,15 +34,11 @@ namespace HitAndRun.Character
 
         private StateMachine _stateMachine = new();
         private CancellationTokenSource _cts = new();
-
-        private void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
-        private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
-
         public const string ACTIVE_TAG = "Character";
         public const string INACTIVE_TAG = "Character_Inactive";
 
         public Action<MbCharacter> OnDead;
-
+        public bool IsMerging { get; set; }
         private bool _isHit;
 
         public void Reset()
@@ -57,6 +54,8 @@ namespace HitAndRun.Character
             _damage = MbGameManager.Instance.Specifications.Damage;
 
             _isHit = false;
+            Left = Right = null;
+            IsMerging = false;
             tag = INACTIVE_TAG;
         }
 
@@ -72,8 +71,12 @@ namespace HitAndRun.Character
             Any(dyingState, new FuncPredicate(() => tag == ACTIVE_TAG && _isHit));
             Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
 
+            OnDead += character => character.Body.StopTween();
             SetDefaultState();
         }
+
+        private void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
+        private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
         public void SetDefaultState()
         {

@@ -43,10 +43,9 @@ namespace HitAndRun
                         _isProcessing = false;
                         return;
                     }
-                    else if (_queue.Count < _batchSize)
-                    {
-                        await UniTask.Delay(_batchDelay, cancellationToken: cancellationToken);
-                    }
+
+                    await UniTask.Delay(_batchDelay, cancellationToken: cancellationToken);
+
                     var batch = new List<T>(_batchSize);
                     while (batch.Count < _batchSize && _queue.TryDequeue(out var job))
                     {
@@ -67,6 +66,7 @@ namespace HitAndRun
 
         public void Clear()
         {
+            _queue.Clear();
             _cts.Cancel();
             _isProcessing = false;
         }

@@ -12,9 +12,7 @@ namespace HitAndRun.Character.FSM
         {
             _character.OnDead?.Invoke(_character);
 
-            var temp = _character.transform.position;
             _character.transform.SetParent(null, true);
-            _character.transform.position = temp;
             _animator.CrossFade(FallHash, CrossFadeDuration);
         }
 
