@@ -1,32 +1,30 @@
-using System.Collections.Generic;
 using System.Linq;
 using HitAndRun.Character;
 using HitAndRun.Gate;
-using HitAndRun.Inspector;
 using HitAndRun.Tower;
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace HitAndRun.Map
 {
     public class MbMapGenerator : MonoBehaviour
     {
+        [SerializeField] private MbLevelGeneration _levelGeneration;
         [SerializeField] private MbGround _ground;
-
-        [Header("Chunk")]
-        [SerializeField] private int _chunkCount = 60;
-        [SerializeField, ReadOnly] private float _chunkHeight;
-        [SerializeField, ReadOnly] private float _chunkWidth;
         [SerializeField] private List<SOSpawnRule> _spawnRules;
 
+        // [SerializeField] private int _bossHealth = 500;
+        // [SerializeField] private int _gateCount = 5;
+
+
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
+
         private void Reset()
         {
             _ground = GetComponentInChildren<MbGround>();
             _spawnRules = Resources.LoadAll<SOSpawnRule>("Scriptables").ToList();
-            _ground.ChunkCount = _chunkCount;
-            _chunkHeight = _ground.Length / _chunkCount;
-            _chunkWidth = _ground.Width;
+            _levelGeneration = GetComponent<MbLevelGeneration>();
         }
 
         private void Awake()
@@ -41,32 +39,34 @@ namespace HitAndRun.Map
 
         public void GenerateMap()
         {
-            var chunks = new int[_chunkCount];
-            for (int index = 3; index < _chunkCount; index++)
-            {
-                // chunks[index] = Random.Range((int)SpawnType.Tower, (int)SpawnType.Item + 1);
-                chunks[index] = (int)SpawnType.Tower;
+            var chunks = _levelGeneration.Generate(MbGameManager.Instance.CurrentLevel);
+            _ground.ChunkCount = chunks.Length;
 
-            }
+            var chunkWidth = _ground.Width;
+            var chunkHeight = _ground.Length / chunks.Length;
 
-            for (int index = 3; index < _chunkCount; index++)
+            for (int index = 3; index < chunks.Length; index++)
             {
-                var type = (SpawnType)chunks[index];
+                var type = chunks[index];
+
+                if (!_spawnRuleWithType.TryGetValue(type, out var rule))
+                    continue;
+                var ratios = rule.GetSpawnRatios();
+
                 switch (type)
                 {
                     case SpawnType.Tower:
-                        if (_spawnRuleWithType.TryGetValue(type, out var rule))
+                        foreach (var ratio in ratios)
                         {
-                            var ratios = rule.GetSpawnRatios();
-                            foreach (var ratio in ratios)
-                            {
-                                MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, MbCharacter.INACTIVE_TAG);
-                                // MbTowerSpawner.Instance.Spawn(new Vector3(ratio * _chunkWidth * 0.5f, 0, index * _chunkHeight), transform, 300);
-                            }
+                            MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform, MbCharacter.INACTIVE_TAG);
+                            MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, 300);
                         }
                         break;
                     case SpawnType.Gate:
-                        MbGateSpawner.Instance.SpawnDual(index, _chunkHeight, _chunkWidth, transform);
+                        foreach (var ratio in ratios)
+                        {
+                            MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
+                        }
                         break;
                 }
             }
@@ -78,6 +78,7 @@ namespace HitAndRun.Map
         Tower,
         Gate,
         Obstacle,
+        Character,
         Item
     }
 

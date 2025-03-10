@@ -11,14 +11,6 @@ namespace HitAndRun.Gate
         {
             _prefab = Resources.Load<MbGate>("Prefabs/Gate");
         }
-        public void SpawnDual(int index, float chunkHeight, float chunkWidth, Transform parent)
-        {
-            var posR = new Vector3(0.25f * chunkWidth, 0, index * chunkHeight);
-            var posL = new Vector3(-0.25f * chunkWidth, 0, index * chunkHeight);
-
-            Spawn(posR, parent);
-            Spawn(posL, parent);
-        }
 
         public MbGate Spawn(Vector3 position, Transform parent)
         {

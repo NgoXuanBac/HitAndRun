@@ -10,36 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4be746b991a6f54583893258182203e, type: 3}
-  m_Name: TowerSpawnRule
+  m_Name: GateSpawnRule
   m_EditorClassIdentifier: 
-  _spawnType: 0
+  _spawnType: 1
   _spawnPatterns:
   - Name: Single
     Count: 1
     Weight: 50
     Ratios:
-    - -0.75
-    - -0.35
-    - 0
-    - 0.35
-    - 0.75
-  - Name: Center
-    Count: 2
-    Weight: 20
-    Ratios:
-    - 0.35
-    - -0.35
+    - -0.5
+    - 0.5
   - Name: Double
     Count: 2
-    Weight: 20
+    Weight: 50
     Ratios:
-    - -0.75
-    - 0
-    - 0.75
-  - Name: Triple
-    Count: 3
-    Weight: 10
-    Ratios:
-    - -0.75
-    - 0
-    - 0.75
+    - -0.5
+    - 0.5

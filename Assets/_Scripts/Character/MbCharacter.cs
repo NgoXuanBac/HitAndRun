@@ -54,9 +54,10 @@ namespace HitAndRun.Character
             _damage = MbGameManager.Instance.Specifications.Damage;
 
             _isHit = false;
+            tag = INACTIVE_TAG;
+
             Left = Right = null;
             IsMerging = false;
-            tag = INACTIVE_TAG;
         }
 
         private void Awake()
