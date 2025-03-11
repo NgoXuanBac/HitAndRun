@@ -7,8 +7,10 @@ namespace HitAndRun.Map
         [SerializeField] private MeshRenderer _renderer;
         [SerializeField] private Transform _road;
         [SerializeField] private Transform _finish;
+        [SerializeField] private Transform _enemy;
         [SerializeField, ReadOnly] private int _chunkCount = 10;
         public Vector3 Finish => _finish.position;
+        public Vector3 Enemy => _enemy.position;
         public int ChunkCount
         {
             get => _chunkCount;
@@ -33,6 +35,7 @@ namespace HitAndRun.Map
         {
             _road = transform.Find("Road");
             _finish = transform.Find("Finish");
+            _enemy = GameObject.Find("Enemy").transform;
 
             _renderer = _road.Find("Model").GetComponentInChildren<MeshRenderer>();
             ChunkCount = _chunkCount;

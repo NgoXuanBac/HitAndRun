@@ -11,6 +11,7 @@ TagManager:
   - Tower
   - Modifier
   - Goal
+  - Enemy
   layers:
   - Default
   - TransparentFX

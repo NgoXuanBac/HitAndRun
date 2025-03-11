@@ -15,17 +15,25 @@ namespace HitAndRun.Character
         public Action<Vector3> OnFinish;
         public Action OnMove;
         private bool _hasTouchedOnce = false;
+        private bool _isFinish = false;
 
         public void Reset()
         {
             _ground = FindObjectOfType<MbGround>();
             _hasTouchedOnce = false;
+            _isFinish = false;
             Stop = true;
+        }
+
+        private void Awake()
+        {
+            OnFinish += (_) => _isFinish = true;
         }
 
 
         private void Update()
         {
+            if (_isFinish) return;
 
             var touches = InputHelper.GetTouches();
             if (!Stop)

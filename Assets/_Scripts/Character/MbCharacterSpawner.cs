@@ -32,7 +32,6 @@ namespace HitAndRun.Character
         public void Despawn(MbCharacter character)
         {
             character.Reset();
-            character.SetDefaultState();
             character.transform.SetParent(transform);
             character.gameObject.SetActive(false);
             _pool.Enqueue(character);

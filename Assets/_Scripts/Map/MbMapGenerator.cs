@@ -5,6 +5,7 @@ using HitAndRun.Tower;
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using HitAndRun.Enemy;
 
 namespace HitAndRun.Map
 {
@@ -12,11 +13,11 @@ namespace HitAndRun.Map
     {
         [SerializeField] private MbLevelGeneration _levelGeneration;
         [SerializeField] private MbGround _ground;
+        [SerializeField] private bool _spawnObject = true;
         [SerializeField] private List<SOSpawnRule> _spawnRules;
 
         // [SerializeField] private int _bossHealth = 500;
         // [SerializeField] private int _gateCount = 5;
-
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
 
         private void Reset()
@@ -38,37 +39,42 @@ namespace HitAndRun.Map
 
         public void GenerateMap()
         {
-            var chunks = _levelGeneration.Generate(MbGameManager.Instance.CurrentLevel);
-            _ground.ChunkCount = chunks.Length;
-
-            var chunkWidth = _ground.Width;
-            var chunkHeight = _ground.Length / chunks.Length;
-
-            for (int index = 3; index < chunks.Length; index++)
+            if (_spawnObject)
             {
-                var type = chunks[index];
+                var chunks = _levelGeneration.Generate(MbGameManager.Instance.CurrentLevel);
+                _ground.ChunkCount = chunks.Length;
 
-                if (!_spawnRuleWithType.TryGetValue(type, out var rule))
-                    continue;
-                var ratios = rule.GetSpawnRatios();
+                var chunkWidth = _ground.Width;
+                var chunkHeight = _ground.Length / chunks.Length;
 
-                switch (type)
+                for (int index = 3; index < chunks.Length; index++)
                 {
-                    case SpawnType.Tower:
-                        foreach (var ratio in ratios)
-                        {
-                            MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform);
-                            MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, 300);
-                        }
-                        break;
-                    case SpawnType.Gate:
-                        foreach (var ratio in ratios)
-                        {
-                            MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
-                        }
-                        break;
+                    var type = chunks[index];
+
+                    if (!_spawnRuleWithType.TryGetValue(type, out var rule))
+                        continue;
+                    var ratios = rule.GetSpawnRatios();
+
+                    switch (type)
+                    {
+                        case SpawnType.Tower:
+                            foreach (var ratio in ratios)
+                            {
+                                MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform);
+                                MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, 300);
+                            }
+                            break;
+                        case SpawnType.Gate:
+                            foreach (var ratio in ratios)
+                            {
+                                MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
+                            }
+                            break;
+                    }
                 }
             }
+
+            MbEnemySpawner.Instance.Spawn<MbMonster>(_ground.Enemy, Quaternion.Euler(0, 180, 0), transform);
         }
     }
 

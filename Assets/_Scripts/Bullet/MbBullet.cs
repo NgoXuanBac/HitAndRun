@@ -30,7 +30,7 @@ namespace HitAndRun.Bullet
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.CompareTag("Tower")) return;
+            if (!other.CompareTag("Tower") && !other.CompareTag("Enemy")) return;
             MbBulletSpawner.Instance.Despawn(this);
         }
 

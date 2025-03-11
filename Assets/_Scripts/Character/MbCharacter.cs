@@ -64,6 +64,8 @@ namespace HitAndRun.Character
             tag = INACTIVE_TAG;
             Left = Right = null;
             IsMerging = Attack = false;
+
+            _stateMachine?.SetState(typeof(IdleState));
         }
 
         private void Awake()
@@ -81,16 +83,13 @@ namespace HitAndRun.Character
             Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
 
             OnDead += character => character.Body.StopTween();
-            SetDefaultState();
+            _stateMachine?.SetState(typeof(IdleState));
         }
 
         private void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
-        public void SetDefaultState()
-        {
-            _stateMachine.SetState(typeof(IdleState));
-        }
+
 
         private void OnEnable()
         {
