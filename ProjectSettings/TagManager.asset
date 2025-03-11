@@ -9,6 +9,8 @@ TagManager:
   - Bullet
   - Bullet_Inactive
   - Tower
+  - Modifier
+  - Goal
   layers:
   - Default
   - TransparentFX

@@ -13,7 +13,7 @@ namespace HitAndRun.Character
             _prefab = Resources.Load<MbCharacter>("Prefabs/Character");
         }
 
-        public MbCharacter Spawn(Vector3 position, Transform parent, string tag = MbCharacter.ACTIVE_TAG)
+        public MbCharacter Spawn(Vector3 position, Transform parent, bool isActive = false)
         {
             if (_pool.Count == 0)
             {
@@ -25,7 +25,7 @@ namespace HitAndRun.Character
             character.name = $"Character#{character.GetHashCode()}";
             character.transform.position = position;
             character.gameObject.SetActive(true);
-            character.tag = tag;
+            character.SetActive(isActive);
             return character;
         }
 

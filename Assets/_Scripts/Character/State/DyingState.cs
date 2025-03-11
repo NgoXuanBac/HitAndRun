@@ -1,29 +1,27 @@
 using UnityEngine;
 
-namespace HitAndRun.Character.FSM
+namespace HitAndRun.Character.State
 {
-    public class FallState : BaseState
+    public class DyingState : BaseState
     {
-        public FallState(MbCharacter character, Animator animator) : base(character, animator)
+        public DyingState(MbCharacter character, Animator animator) : base(character, animator)
         {
         }
 
         public override void OnEnter()
         {
             _character.OnDead?.Invoke(_character);
-
             _character.transform.SetParent(null, true);
-            _animator.CrossFade(FallHash, CrossFadeDuration);
+            _animator.CrossFade(DyingHash, CrossFadeDuration);
         }
 
         public override void Update()
         {
             var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.shortNameHash == FallHash && stateInfo.normalizedTime >= 1f)
+            if (stateInfo.shortNameHash == DyingHash && stateInfo.normalizedTime >= 1f)
             {
                 MbCharacterSpawner.Instance.Despawn(_character);
             }
         }
     }
 }
-

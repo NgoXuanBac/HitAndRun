@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HitAndRun.Character.FSM
+namespace HitAndRun.FSM
 {
     public class StateMachine
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace HitAndRun.Character.FSM
+namespace HitAndRun.FSM
 {
     public interface IPredicate
     {

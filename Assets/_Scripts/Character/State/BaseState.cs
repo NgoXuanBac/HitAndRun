@@ -1,20 +1,16 @@
+using HitAndRun.FSM;
 using UnityEngine;
 
-namespace HitAndRun.Character.FSM
+namespace HitAndRun.Character.State
 {
-    public interface IState
-    {
-        void OnEnter();
-        void OnExit();
-        void Update();
-        void FixedUpdate();
-    }
+ 
     public abstract class BaseState : IState
     {
         protected readonly Animator _animator;
         protected readonly MbCharacter _character;
         protected static readonly int RunHash = Animator.StringToHash("Run");
         protected static readonly int IdleHash = Animator.StringToHash("Idle");
+        protected static readonly int AttackHash = Animator.StringToHash("Attack");
         protected static readonly int VictoryHash = Animator.StringToHash("Victory");
         protected static readonly int DyingHash = Animator.StringToHash("Dead");
         protected static readonly int FallHash = Animator.StringToHash("Fall");

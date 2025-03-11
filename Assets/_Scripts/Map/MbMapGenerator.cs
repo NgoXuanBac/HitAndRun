@@ -17,7 +17,6 @@ namespace HitAndRun.Map
         // [SerializeField] private int _bossHealth = 500;
         // [SerializeField] private int _gateCount = 5;
 
-
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
 
         private void Reset()
@@ -58,7 +57,7 @@ namespace HitAndRun.Map
                     case SpawnType.Tower:
                         foreach (var ratio in ratios)
                         {
-                            MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform, MbCharacter.INACTIVE_TAG);
+                            MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform);
                             MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, 300);
                         }
                         break;

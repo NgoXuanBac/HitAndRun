@@ -11,22 +11,31 @@ namespace HitAndRun.Character
         [SerializeField] private Transform _follow;
         private MbCharacter _head;
         private MbCharacter _tail;
-
+        [SerializeField]
+        private MbTeamMovement _movement;
+        private bool _isAttacking;
         private void Reset()
         {
             _follow = transform.Find("Follow");
+            _movement = GetComponent<MbTeamMovement>();
+            _isAttacking = false;
         }
 
         private void Start()
         {
-            var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
+            var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform, false);
             character.Grabber.OnGrab += Collect;
+            character.OnDead += Leave;
             _head = _tail = character;
             character.Left = character.Right = null;
+
+            _movement.OnMove += Active;
+            _movement.OnFinish += Attack;
         }
 
         public void AddCharacter()
         {
+            Active();
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
             var characters = new List<MbCharacter>();
@@ -41,8 +50,42 @@ namespace HitAndRun.Character
             );
         }
 
+        private void Active()
+        {
+            for (var i = _head; i != null; i = i.Right)
+            {
+                i.SetActive(true);
+            }
+        }
+
+        private void Attack(Vector3 position)
+        {
+            _isAttacking = true;
+            var sum = 0f;
+            for (var i = _head; i != null; i = i.Right)
+            {
+                sum += i.Body.Width + _gap;
+            }
+
+            var startX = -sum * 0.5f + _head.Body.Width * 0.5f;
+            for (var i = _head; i != null; i = i.Right)
+            {
+                i.Attack = true;
+                i.transform.SetParent(null, true);
+                i.Body.MoveToTarget(new Vector3(startX, 0, position.z));
+                startX += i.Body.Width + _gap;
+            }
+            _follow.position = new Vector3(0, _follow.position.y, _follow.position.z);
+        }
+
         private void Update()
         {
+            if (!_head || _isAttacking)
+            {
+                _movement.Stop = true;
+                return;
+            }
+
             var isMoving = false;
             for (var i = _head; i != null; i = i.Right)
             {
@@ -104,8 +147,6 @@ namespace HitAndRun.Character
             Follow();
         }
 
-
-
         private void Leave(MbCharacter remove)
         {
             remove.OnDead -= Leave;
@@ -115,7 +156,7 @@ namespace HitAndRun.Character
 
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
-            insert.tag = MbCharacter.ACTIVE_TAG;
+            insert.SetActive(true);
             insert.transform.parent = transform;
             insert.OnDead += Leave;
             insert.Grabber.OnGrab += Collect;

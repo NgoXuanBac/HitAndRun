@@ -8,6 +8,7 @@ namespace HitAndRun.Map
         [SerializeField] private Transform _road;
         [SerializeField] private Transform _finish;
         [SerializeField, ReadOnly] private int _chunkCount = 10;
+        public Vector3 Finish => _finish.position;
         public int ChunkCount
         {
             get => _chunkCount;

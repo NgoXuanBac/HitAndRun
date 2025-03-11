@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HitAndRun.Character.FSM
+namespace HitAndRun.Character.State
 {
     public class RunState : BaseState
     {

@@ -108,9 +108,20 @@ namespace HitAndRun.Character
                 .OnComplete(() => { _moveTween = null; });
         }
 
+        public void MoveToTarget(Vector3 target, Action onCompleted = null)
+        {
+            if (_moveTween != null && _moveTween.IsActive())
+            {
+                _moveTween.Kill();
+            }
+            _moveTween = transform.DOMove(target, _moveDuration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() => { _moveTween = null; onCompleted?.Invoke(); });
+        }
+
         public void WhenMoveCompleted(Action onCompleted)
         {
-            if (_moveTween == null) onCompleted?.Invoke();
+            if (_moveTween == null && _moveTween.IsActive()) onCompleted?.Invoke();
             else _moveTween?.OnComplete(() => { _moveTween = null; onCompleted?.Invoke(); });
         }
 

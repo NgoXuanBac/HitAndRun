@@ -2,7 +2,8 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HitAndRun.Bullet;
-using HitAndRun.Character.FSM;
+using HitAndRun.Character.State;
+using HitAndRun.FSM;
 using HitAndRun.Gate.Modifier;
 using UnityEditor;
 using UnityEngine;
@@ -39,7 +40,13 @@ namespace HitAndRun.Character
 
         public Action<MbCharacter> OnDead;
         public bool IsMerging { get; set; }
+        public bool Attack { get; set; }
         private bool _isHit;
+
+        public void SetActive(bool isActive)
+        {
+            tag = isActive ? ACTIVE_TAG : INACTIVE_TAG;
+        }
 
         public void Reset()
         {
@@ -55,9 +62,8 @@ namespace HitAndRun.Character
 
             _isHit = false;
             tag = INACTIVE_TAG;
-
             Left = Right = null;
-            IsMerging = false;
+            IsMerging = Attack = false;
         }
 
         private void Awake()
@@ -66,8 +72,10 @@ namespace HitAndRun.Character
             var runState = new RunState(this, _animator);
             var dyingState = new DyingState(this, _animator);
             var fallState = new FallState(this, _animator);
+            var attackState = new AttackState(this, _animator);
 
             At(idleState, runState, new FuncPredicate(() => tag == ACTIVE_TAG));
+            At(runState, attackState, new FuncPredicate(() => Attack));
             Any(fallState, new FuncPredicate(() => tag == ACTIVE_TAG && !_body.IsGrounded));
             Any(dyingState, new FuncPredicate(() => tag == ACTIVE_TAG && _isHit));
             Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
@@ -104,7 +112,7 @@ namespace HitAndRun.Character
         {
             while (!_cts.IsCancellationRequested)
             {
-                await UniTask.WaitUntil(() => this != null && _stateMachine.GetCurrentState() is RunState);
+                await UniTask.WaitUntil(() => this != null && _stateMachine.GetCurrentState() is RunState or AttackState);
                 _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
                 await UniTask.Delay((int)(_fireRate * 1000));
             }
