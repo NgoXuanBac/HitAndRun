@@ -1,8 +1,11 @@
 namespace HitAndRun.Enemy
 {
-    public class MbZombie : MbEnemy
+    public sealed class MbZombie : MbEnemy
     {
-
+        public override void TakeDamage(int damage)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }

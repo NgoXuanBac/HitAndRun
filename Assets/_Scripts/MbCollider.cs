@@ -5,7 +5,7 @@ namespace HitAndRun
 {
     public class MbCollider : MonoBehaviour
     {
-        [SerializeField] private MeshCollider _collider;
+        [SerializeField] private Collider _collider;
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
         public Action<GameObject> CollisionEnter;
@@ -18,7 +18,7 @@ namespace HitAndRun
         }
         private void Reset()
         {
-            _collider = GetComponent<MeshCollider>();
+            _collider = GetComponent<Collider>();
         }
 
         private void OnCollisionEnter(Collision other)

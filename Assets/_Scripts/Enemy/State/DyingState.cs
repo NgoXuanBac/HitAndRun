@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HitAndRun.Enemy
+namespace HitAndRun.Enemy.State
 {
     public class DyingState : BaseState
     {

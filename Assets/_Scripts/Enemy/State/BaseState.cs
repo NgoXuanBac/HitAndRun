@@ -1,7 +1,7 @@
 using HitAndRun.FSM;
 using UnityEngine;
 
-namespace HitAndRun.Enemy
+namespace HitAndRun.Enemy.State
 {
     public class BaseState : IState
     {
