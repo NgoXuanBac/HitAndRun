@@ -5,9 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Character
-  - Character_Inactive
   - Bullet
-  - Bullet_Inactive
   - Tower
   - Modifier
   - Goal

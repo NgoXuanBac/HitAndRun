@@ -13,7 +13,7 @@ namespace HitAndRun.Character
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.CompareTag(MbCharacter.INACTIVE_TAG)) return;
+            if (!other.CompareTag(_character.INACTIVE_TAG)) return;
             var dir = (other.transform.position - _character.transform.position).normalized;
             var side = Vector3.Dot(dir, _character.transform.right);
             OnGrab?.Invoke(_character, other.GetComponent<MbCharacter>(), side > 0);

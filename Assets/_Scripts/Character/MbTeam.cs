@@ -13,29 +13,29 @@ namespace HitAndRun.Character
         private MbCharacter _tail;
         [SerializeField]
         private MbTeamMovement _movement;
-        private bool _isAttacking;
+
         private void Reset()
         {
             _follow = transform.Find("Follow");
             _movement = GetComponent<MbTeamMovement>();
-            _isAttacking = false;
+            _movement.enabled = true;
         }
 
         private void Start()
         {
-            var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform, false);
+            var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
             character.Grabber.OnGrab += Collect;
             character.OnDead += Leave;
             _head = _tail = character;
             character.Left = character.Right = null;
 
-            _movement.OnMove += Active;
+            _movement.OnTouched += ActiveCharacters;
             _movement.OnFinish += Attack;
         }
 
         public void AddCharacter()
         {
-            Active();
+            ActiveCharacters();
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
             var characters = new List<MbCharacter>();
@@ -50,17 +50,17 @@ namespace HitAndRun.Character
             );
         }
 
-        private void Active()
+        private void ActiveCharacters()
         {
             for (var i = _head; i != null; i = i.Right)
             {
-                i.SetActive(true);
+                i.IsActive = true;
             }
         }
 
         private void Attack(Vector3 position)
         {
-            _isAttacking = true;
+            _movement.enabled = false;
             var sum = 0f;
             for (var i = _head; i != null; i = i.Right)
             {
@@ -70,7 +70,7 @@ namespace HitAndRun.Character
             var startX = -sum * 0.5f + _head.Body.Width * 0.5f;
             for (var i = _head; i != null; i = i.Right)
             {
-                i.Attack = true;
+                i.IsAttack = true;
                 i.transform.SetParent(null, true);
                 i.Body.MoveToTarget(new Vector3(startX, 0, position.z));
                 startX += i.Body.Width + _gap;
@@ -80,11 +80,7 @@ namespace HitAndRun.Character
 
         private void Update()
         {
-            if (!_head || _isAttacking)
-            {
-                _movement.Stop = true;
-                return;
-            }
+            if (!_head || !_movement.enabled) return;
 
             var isMoving = false;
             for (var i = _head; i != null; i = i.Right)
@@ -156,7 +152,7 @@ namespace HitAndRun.Character
 
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
-            insert.SetActive(true);
+            insert.IsActive = true;
             insert.transform.parent = transform;
             insert.OnDead += Leave;
             insert.Grabber.OnGrab += Collect;

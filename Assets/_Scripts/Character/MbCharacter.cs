@@ -20,8 +20,8 @@ namespace HitAndRun.Character
 
         private IShootingPattern _shootingPattern = new SingleShot();
         public IShootingPattern ShootingPattern => _shootingPattern;
-        [SerializeField] private Transform _shooter;
 
+        [SerializeField] private Transform _shooter;
         [SerializeField] private MbGrabber _grabber;
         public MbGrabber Grabber => _grabber;
         [SerializeField] private Animator _animator;
@@ -34,20 +34,21 @@ namespace HitAndRun.Character
         [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
 
         private StateMachine _stateMachine = new();
-        private CancellationTokenSource _cts = new();
-        public const string ACTIVE_TAG = "Character";
-        public const string INACTIVE_TAG = "Character_Inactive";
+
+        public readonly string ACTIVE_TAG = "Character";
+        public readonly string INACTIVE_TAG = "Character_Inactive";
 
         public Action<MbCharacter> OnDead;
         public bool IsMerging { get; set; }
-        public bool Attack { get; set; }
-        private bool _isHit;
+        public bool IsAttack { get; set; }
+        private bool _isDead;
+        private float _nextFireTime;
 
-        public void SetActive(bool isActive)
+        public bool IsActive
         {
-            tag = isActive ? ACTIVE_TAG : INACTIVE_TAG;
+            get => tag == ACTIVE_TAG;
+            set => tag = value ? ACTIVE_TAG : INACTIVE_TAG;
         }
-
         public void Reset()
         {
             _body ??= GetComponent<MbCharacterBody>();
@@ -60,10 +61,10 @@ namespace HitAndRun.Character
             _fireRate = MbGameManager.Instance.Specifications.FireRate;
             _damage = MbGameManager.Instance.Specifications.Damage;
 
-            _isHit = false;
+            _isDead = false;
             tag = INACTIVE_TAG;
             Left = Right = null;
-            IsMerging = Attack = false;
+            IsMerging = IsAttack = false;
 
             _stateMachine?.SetState(typeof(IdleState));
         }
@@ -76,11 +77,11 @@ namespace HitAndRun.Character
             var fallState = new FallState(this, _animator);
             var attackState = new AttackState(this, _animator);
 
-            At(idleState, runState, new FuncPredicate(() => tag == ACTIVE_TAG));
-            At(runState, attackState, new FuncPredicate(() => Attack));
-            Any(fallState, new FuncPredicate(() => tag == ACTIVE_TAG && !_body.IsGrounded));
-            Any(dyingState, new FuncPredicate(() => tag == ACTIVE_TAG && _isHit));
-            Any(idleState, new FuncPredicate(() => tag == INACTIVE_TAG));
+            At(idleState, runState, new FuncPredicate(() => IsActive));
+            At(runState, attackState, new FuncPredicate(() => IsAttack));
+            Any(fallState, new FuncPredicate(() => IsActive && !_body.IsGrounded));
+            Any(dyingState, new FuncPredicate(() => IsActive && _isDead));
+            Any(idleState, new FuncPredicate(() => !IsActive));
 
             OnDead += character => character.Body.StopTween();
             _stateMachine?.SetState(typeof(IdleState));
@@ -90,16 +91,15 @@ namespace HitAndRun.Character
         private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
 
-
-        private void OnEnable()
-        {
-            _cts = new CancellationTokenSource();
-            ProcessShootingAsync().Forget();
-        }
-
         private void Update()
         {
             _stateMachine.Update();
+            if (_stateMachine.GetCurrentState() is RunState or AttackState)
+            {
+                if (Time.time <= _nextFireTime) return;
+                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
+                _nextFireTime = Time.time + _fireRate;
+            }
         }
 
         private void FixedUpdate()
@@ -107,24 +107,9 @@ namespace HitAndRun.Character
             _stateMachine.FixedUpdate();
         }
 
-        private async UniTaskVoid ProcessShootingAsync()
-        {
-            while (!_cts.IsCancellationRequested)
-            {
-                await UniTask.WaitUntil(() => this != null && _stateMachine.GetCurrentState() is RunState or AttackState);
-                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
-                await UniTask.Delay((int)(_fireRate * 1000));
-            }
-        }
-
-        private void OnDisable()
-        {
-            _cts.Cancel();
-        }
-
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Tower") _isHit = true;
+            if (other.tag == "Tower") _isDead = true;
             else if (other.TryGetComponent(out MbModifierBase modifier))
             {
                 modifier.Modify(this);

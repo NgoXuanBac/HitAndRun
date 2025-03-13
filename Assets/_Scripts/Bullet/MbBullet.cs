@@ -1,4 +1,3 @@
-using HitAndRun.Tower;
 using UnityEngine;
 
 namespace HitAndRun.Bullet

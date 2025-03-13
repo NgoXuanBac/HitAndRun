@@ -374,6 +374,7 @@ MonoBehaviour:
   _scaleUp: 0.02
   _radius: 0.8
   _color: {r: 0, g: 0.7176471, b: 1, a: 1}
+  _moveDuration: 0.2
 --- !u!1001 &3971252451629570518
 PrefabInstance:
   m_ObjectHideFlags: 0

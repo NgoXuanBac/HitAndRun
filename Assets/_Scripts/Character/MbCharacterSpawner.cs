@@ -25,7 +25,7 @@ namespace HitAndRun.Character
             character.name = $"Character#{character.GetHashCode()}";
             character.transform.position = position;
             character.gameObject.SetActive(true);
-            character.SetActive(isActive);
+            character.IsActive = isActive;
             return character;
         }
 
