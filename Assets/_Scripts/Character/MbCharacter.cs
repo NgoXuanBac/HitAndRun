@@ -33,11 +33,7 @@ namespace HitAndRun.Character
         public float Damage => _damage;
         [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
 
-        private StateMachine _stateMachine = new();
-
-        public readonly string ACTIVE_TAG = "Character";
-        public readonly string INACTIVE_TAG = "Character_Inactive";
-
+        private StateMachine _stateMachine;
         public Action<MbCharacter> OnDead;
         public bool IsMerging { get; set; }
         public bool IsAttack { get; set; }
@@ -46,8 +42,8 @@ namespace HitAndRun.Character
 
         public bool IsActive
         {
-            get => tag == ACTIVE_TAG;
-            set => tag = value ? ACTIVE_TAG : INACTIVE_TAG;
+            get => tag == "Character";
+            set => tag = value ? "Character" : "Character_Inactive";
         }
         public void Reset()
         {
@@ -62,15 +58,16 @@ namespace HitAndRun.Character
             _damage = MbGameManager.Instance.Specifications.Damage;
 
             _isDead = false;
-            tag = INACTIVE_TAG;
+            IsActive = false;
             Left = Right = null;
-            IsMerging = IsAttack = false;
 
+            IsMerging = IsAttack = false;
             _stateMachine?.SetState(typeof(IdleState));
         }
 
         private void Awake()
         {
+            _stateMachine = new StateMachine();
             var idleState = new IdleState(this, _animator);
             var runState = new RunState(this, _animator);
             var dyingState = new DyingState(this, _animator);
