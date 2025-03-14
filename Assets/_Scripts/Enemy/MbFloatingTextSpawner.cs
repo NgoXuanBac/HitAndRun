@@ -17,12 +17,13 @@ namespace HitAndRun.Enemy
         {
             if (_pools.Count == 0)
             {
-                var newFloatingText = Instantiate(_prefab, parent);
+                var newFloatingText = Instantiate(_prefab, transform);
                 _pools.Enqueue(newFloatingText);
             }
 
             _pools.TryDequeue(out var floatingText);
             floatingText.transform.position = position;
+            floatingText.transform.SetParent(parent);
             floatingText.gameObject.SetActive(true);
             floatingText.Setup(text);
             return floatingText;

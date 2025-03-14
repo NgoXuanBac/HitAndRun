@@ -41,7 +41,7 @@ namespace HitAndRun.Tower
             _textMeshPro ??= GetComponentInChildren<TextMeshPro>();
             _animator = GetComponentInChildren<Animator>();
             _collider ??= GetComponentInChildren<MbCollider>();
-            _collider.Enabled = true;
+            _collider.enabled = true;
             _textMeshPro.enabled = true;
         }
 
@@ -64,7 +64,7 @@ namespace HitAndRun.Tower
         private void Disappear()
         {
             _animator.SetTrigger("Break");
-            _collider.Enabled = false;
+            _collider.enabled = false;
             _textMeshPro.enabled = false;
             StartCoroutine(WaitForAnimationEnd());
         }

@@ -1,23 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HitAndRun.Enemy;
 using UnityEngine;
 
 namespace HitAndRun.Character
 {
-    public class MbEnemyTracker : MbSingleton<MbEnemyTracker>
+    public class MbEnemyTracker : MonoBehaviour
     {
-        [SerializeField] private List<MbEnemy> _enemies;
+        [SerializeField] private List<MbEnemy> _enemies = new();
+        public List<MbEnemy> Enemies => _enemies;
         public event Action OnEnemiesDied;
 
-        private void Reset()
+        public void Reset()
         {
-            var enemies = FindObjectsOfType<MbEnemy>();
-
-            foreach (var enemy in enemies)
-            {
-                _enemies.Add(enemy);
-            }
+            _enemies?.Clear();
+            _enemies = FindObjectsOfType<MbEnemy>().ToList();
         }
 
         public void RemoveEnemy(MbEnemy enemy)

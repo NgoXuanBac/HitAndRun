@@ -32,11 +32,6 @@ namespace HitAndRun.Map
             _spawnRuleWithType = _spawnRules.GroupBy(x => x.SpawnType).ToDictionary(g => g.Key, g => g.Single());
         }
 
-        private void Start()
-        {
-            GenerateMap();
-        }
-
         public void GenerateMap()
         {
             if (_spawnObject)

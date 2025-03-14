@@ -1,5 +1,7 @@
 using System;
 using HitAndRun.Character;
+using HitAndRun.Map;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace HitAndRun
@@ -18,12 +20,37 @@ namespace HitAndRun
         private SaveManager _saveManager = new();
 
         [SerializeField] private MbTeam _team;
+        [SerializeField] private MbMapGenerator _generator;
+        [SerializeField] private MbEnemyTracker _enemyTracker;
 
         public void Reset()
         {
             _currentLevel = _saveManager.Load("Level", _currentLevel);
             _specifications = _saveManager.Load("Specifications", _specifications);
             _team = FindObjectOfType<MbTeam>();
+            _generator = FindObjectOfType<MbMapGenerator>();
+            _enemyTracker = FindObjectOfType<MbEnemyTracker>();
+        }
+
+        private void Awake()
+        {
+            _team.Movement.OnFinish += OnFinish;
+        }
+
+        private void Start()
+        {
+            _generator.GenerateMap();
+            _enemyTracker.Reset();
+        }
+
+        public void OnWin()
+        {
+            Debug.Log("Win");
+        }
+
+        public void OnFinish(Vector3 position)
+        {
+            _enemyTracker.Enemies.ForEach(e => e.Target = position);
         }
 
     }

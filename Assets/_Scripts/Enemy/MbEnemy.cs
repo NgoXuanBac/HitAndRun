@@ -1,6 +1,6 @@
 using System;
 using HitAndRun.Bullet;
-using HitAndRun.Enemy.State;
+using HitAndRun.Character;
 using HitAndRun.FSM;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,6 +38,7 @@ namespace HitAndRun.Enemy
                 if (_hp <= 0)
                 {
                     _collider.enabled = false;
+                    _attackBox.enabled = false;
                     OnDead?.Invoke();
                 }
             }
@@ -55,8 +56,10 @@ namespace HitAndRun.Enemy
             _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
 
             _collider.enabled = true;
+            _attackBox.enabled = true;
             Target = null;
         }
+
 
         protected virtual void Update()
         {
@@ -68,10 +71,26 @@ namespace HitAndRun.Enemy
             _stateMachine?.FixedUpdate();
         }
 
+        private void OnEnable()
+        {
+            _attackBox.TriggerEnter += OnDetect;
+        }
+
+        private void OnDisable()
+        {
+            _attackBox.TriggerEnter -= OnDetect;
+        }
+
+        private void OnDetect(GameObject other)
+        {
+            if (!other.TryGetComponent(out MbCharacter character)) return;
+            Debug.Log($"Detect {character.name}");
+        }
+
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out MbBullet bullet)) return;
+            if (!other.TryGetComponent(out MbBullet bullet) || Target == null) return;
             MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString());
             TakeDamage(bullet.Damage);
         }

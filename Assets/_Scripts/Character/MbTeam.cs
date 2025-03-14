@@ -80,7 +80,11 @@ namespace HitAndRun.Character
 
         private void Update()
         {
-            if (!_head || !_movement.enabled) return;
+            if (!_head || !_movement.enabled)
+            {
+                _movement.enabled = false;
+                return;
+            }
 
             var isMoving = false;
             for (var i = _head; i != null; i = i.Right)
