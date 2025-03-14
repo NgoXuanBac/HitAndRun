@@ -142,6 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 9212679131711419091}
   _damage: {fileID: 344922660322077759}
+  _collider: {fileID: 5135632218447897218}
   _hpBar: {fileID: 1574333865266665429}
   _attackBox: {fileID: 1358369548689302199}
 --- !u!136 &5135632218447897218

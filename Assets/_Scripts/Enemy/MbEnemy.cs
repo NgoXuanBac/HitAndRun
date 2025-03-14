@@ -1,4 +1,6 @@
+using System;
 using HitAndRun.Bullet;
+using HitAndRun.Enemy.State;
 using HitAndRun.FSM;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,13 +9,13 @@ namespace HitAndRun.Enemy
 {
     public abstract class MbEnemy : MbDamageable
     {
-        [SerializeField] private Animator _animator;
-        [SerializeField]
-        private Transform _damage;
+        [SerializeField] protected Animator _animator;
+        [SerializeField] private Transform _damage;
+        [SerializeField] private Collider _collider;
         [SerializeField] Slider _hpBar;
-        private StateMachine _stateMachine = new();
-        [SerializeField]
-        private MbCollider _attackBox;
+        [SerializeField] private MbCollider _attackBox;
+        public Action OnDead;
+        public Vector3? Target { get; set; }
         private long _health;
         public long Health
         {
@@ -21,41 +23,57 @@ namespace HitAndRun.Enemy
             set
             {
                 _health = value;
-                SetHp(value);
+                Hp = value;
             }
         }
         private long _hp;
-        private void SetHp(long value)
+        public long Hp
         {
-            _hp = value;
-            var progress = Mathf.Clamp01((float)_hp / Health);
-            _hpBar.value = progress;
+            get => _hp;
+            set
+            {
+                _hp = value;
+                var progress = Mathf.Clamp01((float)_hp / Health);
+                _hpBar.value = progress;
+                if (_hp <= 0)
+                {
+                    _collider.enabled = false;
+                    OnDead?.Invoke();
+                }
+            }
         }
+        protected StateMachine _stateMachine;
+        protected void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
+        protected void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
         protected virtual void Reset()
         {
             _animator = GetComponentInChildren<Animator>();
             _attackBox ??= GetComponentInChildren<MbCollider>();
+            _collider = GetComponent<Collider>();
             _damage = transform.Find("Damage");
             _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
+
+            _collider.enabled = true;
+            Target = null;
         }
 
-        protected virtual void Awake()
+        protected virtual void Update()
         {
-            Health = 100;
-            // var attackState = new AttackState(_animator);
-            // var walkState = new WalkState(_animator);
-            // var idleState = new IdleState(_animator);
-            // var dyingState = new DyingState(_animator);
-
-            // _stateMachine?.SetState(typeof(IdleState));
+            _stateMachine?.Update();
         }
+
+        protected virtual void FixedUpdate()
+        {
+            _stateMachine?.FixedUpdate();
+        }
+
 
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent(out MbBullet bullet)) return;
             MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString());
-            SetHp(_hp - bullet.Damage);
+            TakeDamage(bullet.Damage);
         }
 
     }

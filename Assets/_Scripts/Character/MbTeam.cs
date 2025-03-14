@@ -9,10 +9,10 @@ namespace HitAndRun.Character
     {
         [SerializeField, Range(0, 1)] private float _gap = 0.4f;
         [SerializeField] private Transform _follow;
+        [SerializeField] private MbTeamMovement _movement;
+        public MbTeamMovement Movement => _movement;
         private MbCharacter _head;
         private MbCharacter _tail;
-        [SerializeField]
-        private MbTeamMovement _movement;
 
         private void Reset()
         {

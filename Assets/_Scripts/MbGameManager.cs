@@ -25,6 +25,7 @@ namespace HitAndRun
             _specifications = _saveManager.Load("Specifications", _specifications);
             _team = FindObjectOfType<MbTeam>();
         }
+
     }
 
     [Serializable]

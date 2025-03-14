@@ -18,17 +18,23 @@ namespace HitAndRun.Tower
             set
             {
                 _health = value;
-                SetHp(value);
+                Hp = value;
             }
         }
+
         private long _hp;
-        private void SetHp(long value)
+        public long Hp
         {
-            _hp = value;
-            _textMeshPro.text = FormatNumber(value);
-            _animator.SetFloat("Health", 1 - (float)Math.Round(_hp / (double)_health, 2));
-            if (_hp <= 0) Disappear();
+            get => _hp;
+            set
+            {
+                _hp = value;
+                _textMeshPro.text = FormatNumber(value);
+                _animator.SetFloat("Health", 1 - (float)Math.Round(_hp / (double)_health, 2));
+                if (_hp <= 0) Disappear();
+            }
         }
+
 
         public void Reset()
         {
@@ -52,7 +58,7 @@ namespace HitAndRun.Tower
         private void OnHit(GameObject other)
         {
             if (!other.TryGetComponent(out MbBullet bullet)) return;
-            SetHp(_hp - bullet.Damage);
+            Hp -= bullet.Damage;
         }
 
         private void Disappear()
