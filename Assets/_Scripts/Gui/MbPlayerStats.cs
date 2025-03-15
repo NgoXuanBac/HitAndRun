@@ -51,8 +51,8 @@ namespace HitAndRun.Gui
         {
             ticketText.text = FormatNumber(tickets);
 
-            float baseFontSize = 100f; 
-            float minFontSize = 100f;   
+            float baseFontSize = 170f; 
+            float minFontSize = 170f;   
             float fontSizeReductionRate = 3f; 
 
             float newFontSize = Mathf.Max(baseFontSize - tickets * fontSizeReductionRate, minFontSize);
