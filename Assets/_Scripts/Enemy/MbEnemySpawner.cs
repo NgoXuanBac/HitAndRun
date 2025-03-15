@@ -49,9 +49,9 @@ namespace HitAndRun.Enemy
             return (T)enemy;
         }
 
-        public void Despawn<T>(T enemy) where T : MbEnemy
+        public void Despawn(MbEnemy enemy)
         {
-            var type = typeof(T);
+            var type = enemy.GetType();
             if (!_pools.ContainsKey(type)) return;
 
             enemy.transform.parent = transform;

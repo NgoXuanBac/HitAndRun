@@ -6,7 +6,7 @@ using HitAndRun.Character;
 
 namespace HitAndRun.DistanceProgressBar
 {
-    public class LevelBar : MonoBehaviour
+    public class MbLevelBar : MonoBehaviour
     {
         [SerializeField] private Slider _progressBar;
         [SerializeField] private MbTeam _team;
