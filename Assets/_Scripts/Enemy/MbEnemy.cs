@@ -1,6 +1,7 @@
 using System;
 using HitAndRun.Bullet;
 using HitAndRun.Character;
+using HitAndRun.Enemy.State;
 using HitAndRun.FSM;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ namespace HitAndRun.Enemy
         [SerializeField] protected MbAutoTarget _autoTarget;
         [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
         public Action OnDead;
+        private bool _isAttacking;
         private long _health;
         public long Health
         {
@@ -64,6 +66,22 @@ namespace HitAndRun.Enemy
             _autoTarget.enabled = true;
         }
 
+        protected virtual void Awake()
+        {
+            Health = 100;
+            _stateMachine = new StateMachine();
+            var attackState = new AttackState(this, _animator);
+            var walkState = new WalkState(this, _animator);
+            var idleState = new IdleState(this, _animator);
+            var dyingState = new DyingState(this, _animator);
+
+            At(idleState, walkState, new FuncPredicate(() => _autoTarget.Target != null && Hp > 0));
+            Any(idleState, new FuncPredicate(() => _autoTarget.Target == null && Hp > 0));
+            Any(dyingState, new FuncPredicate(() => Hp <= 0));
+            Any(attackState, new FuncPredicate(() => Hp > 0 && !_isAttacking));
+
+            _stateMachine?.SetState(typeof(IdleState));
+        }
 
         protected virtual void Update()
         {
@@ -79,7 +97,8 @@ namespace HitAndRun.Enemy
 
         private void MoveTowardsTarget()
         {
-            if (_autoTarget.Target != null)
+            var canMove = _isAttacking && _autoTarget.Target != null;
+            if (canMove)
             {
                 var direction = (_autoTarget.Target.position - transform.position).normalized;
 
@@ -102,7 +121,9 @@ namespace HitAndRun.Enemy
 
         private void OnDetect(GameObject other)
         {
+            _isAttacking = false;
             if (!other.TryGetComponent(out MbCharacter character)) return;
+            _isAttacking = true;
             Attack(character);
         }
 

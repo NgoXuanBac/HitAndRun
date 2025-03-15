@@ -19,6 +19,7 @@ namespace HitAndRun
         public Specifications Specifications => _specifications;
         private SaveManager _saveManager = new();
 
+        [SerializeField] private MbEnemyTracker _enemiesTracker;
         [SerializeField] private MbTeam _team;
         [SerializeField] private MbMapGenerator _generator;
 
@@ -28,11 +29,13 @@ namespace HitAndRun
             _specifications = _saveManager.Load("Specifications", _specifications);
             _team = FindObjectOfType<MbTeam>();
             _generator = FindObjectOfType<MbMapGenerator>();
+            _enemiesTracker = MbEnemyTracker.Instance;
         }
 
         private void Start()
         {
             _generator.GenerateMap();
+            _enemiesTracker.Reset();
         }
 
         public void OnWin()

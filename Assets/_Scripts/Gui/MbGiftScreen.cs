@@ -115,7 +115,6 @@ namespace HitAndRun.Gui
 
         private IEnumerator TweenHidePanel(GameObject targetPanel)
         {
-            // CollectCoins();
             Dimed.GetComponent<CanvasGroup>().DOFade(0f, settingTweenTime).SetEase(Ease.InBack);
 
             targetPanel.transform.DOScale(Vector3.zero, settingTweenTime).SetEase(Ease.InBack)
@@ -135,15 +134,12 @@ namespace HitAndRun.Gui
 
         private async void CollectCoins()
         {
-            // Reset
             SetCoin(0);
             for (int i = 0; i < coins.Count; i++)
             {
                 Destroy(coins[i]);
             }
             coins.Clear();
-            // Spawn the coin to a specific location with random value
-            Debug.Log("Coins have been reset.");
 
             List<UniTask> spawnCoinTaskList = new List<UniTask>();
             for (int i = 0; i < coinAmount; i++)
@@ -154,20 +150,16 @@ namespace HitAndRun.Gui
 
                 coinInstance.transform.position = new Vector3(xPosition, yPosition);
 
-                Debug.Log($"Spawning coin {i + 1} at position: {coinInstance.transform.position}");
-
                 spawnCoinTaskList.Add(coinInstance.transform.DOPunchPosition(new Vector3(0, 30, 0), Random.Range(0, 1f)).SetEase(Ease.InOutElastic)
                     .ToUniTask());
                 coins.Add(coinInstance);
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f));
             }
-            Debug.Log($"Total {coinAmount} coins spawned.");
 
             await UniTask.WhenAll(spawnCoinTaskList);
-            // Move all the coins to the coin label
             await MoveCoinsTask();
             // Animation the reaction when collecting coin
-            HideGift();
+            // HideGift();
         }
 
 #if UNITY_EDITOR

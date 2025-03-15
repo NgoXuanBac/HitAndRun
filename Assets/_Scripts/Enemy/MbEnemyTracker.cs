@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace HitAndRun.Character
 {
-    public class MbEnemyTracker : MonoBehaviour
+    public class MbEnemyTracker : MbSingleton<MbEnemyTracker>
     {
         [SerializeField] private List<MbEnemy> _enemies = new();
         public List<MbEnemy> Enemies => _enemies;

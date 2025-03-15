@@ -996,9 +996,9 @@ MonoBehaviour:
   _specifications:
     Damage: 2
     FireRate: 0.2
+  _enemiesTracker: {fileID: 4309972874894008130}
   _team: {fileID: 148498571}
   _generator: {fileID: 762254428}
-  _enemyTracker: {fileID: 4309972874894008130}
 --- !u!1 &1291402587
 GameObject:
   m_ObjectHideFlags: 0
