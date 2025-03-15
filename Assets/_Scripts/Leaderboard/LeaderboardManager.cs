@@ -13,36 +13,14 @@ namespace HitAndRun.Leaderboard
 
         private void Start()
         {
-            if (!PlayFabClientAPI.IsClientLoggedIn())
-            {
-                Debug.Log("⚠️ Not logged into PlayFab! Attempting login...");
-                LoginAndGetLeaderboard();
-            }
-            else
+            PlayFabLoginManager.OnLoginSuccess += () =>
             {
                 GetLeaderboard();
                 GetCurrentPlayerRank();
-            }
-        }
-
-        private void LoginAndGetLeaderboard()
-        {
-            var request = new LoginWithCustomIDRequest
-            {
-                CustomId = SystemInfo.deviceUniqueIdentifier,
-                CreateAccount = true
             };
-
-            PlayFabClientAPI.LoginWithCustomID(request, result =>
-            {
-                Debug.Log("✅ Login successful! Fetching leaderboard...");
-                GetLeaderboard();
-                GetCurrentPlayerRank();
-            }, error =>
-            {
-                Debug.LogError("❌ Login failed: " + error.GenerateErrorReport());
-            });
         }
+
+
 
         private void GetLeaderboard()
         {
@@ -60,17 +38,19 @@ namespace HitAndRun.Leaderboard
 
             PlayFabClientAPI.GetLeaderboard(request, result =>
             {
-                Debug.Log("🏆 Leaderboard retrieved successfully!");
                 foreach (var e in result.Leaderboard)
                 {
                     GameObject entry = Instantiate(entryPrefab, contentTransform);
 
-                    TMPro.TextMeshProUGUI rankText = entry.transform.Find("RankText").GetComponent<TMPro.TextMeshProUGUI>();
+                    TMPro.TextMeshProUGUI rankText = entry.transform.Find("Rank/RankText").GetComponent<TMPro.TextMeshProUGUI>();
                     TMPro.TextMeshProUGUI playerNameText = entry.transform.Find("PlayerNameText").GetComponent<TMPro.TextMeshProUGUI>();
                     TMPro.TextMeshProUGUI scoreText = entry.transform.Find("ScoreText").GetComponent<TMPro.TextMeshProUGUI>();
 
                     rankText.text = (e.Position + 1).ToString();
-                    playerNameText.text = e.PlayFabId;
+                    if (e.DisplayName != null)
+                        playerNameText.text = e.DisplayName;
+                    else
+                        playerNameText.text = e.PlayFabId;
                     scoreText.text = e.StatValue.ToString();
                 }
             }, error =>
@@ -97,12 +77,15 @@ namespace HitAndRun.Leaderboard
 
                     if (entry == null) Debug.Log("entry is null");
 
-                    TextMeshProUGUI rankText = entry.transform.Find("RankText").GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI rankText = entry.transform.Find("Rank/RankText").GetComponent<TextMeshProUGUI>();
                     TextMeshProUGUI playerNameText = entry.transform.Find("PlayerNameText").GetComponent<TextMeshProUGUI>();
                     TextMeshProUGUI scoreText = entry.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>();
 
                     rankText.text = (playerEntry.Position + 1).ToString();
-                    playerNameText.text = playerEntry.PlayFabId;
+                    if (playerEntry.DisplayName != null)
+                        playerNameText.text = playerEntry.DisplayName;
+                    else
+                        playerNameText.text = playerEntry.PlayFabId;
                     scoreText.text = playerEntry.StatValue.ToString();
                 }
                 else
