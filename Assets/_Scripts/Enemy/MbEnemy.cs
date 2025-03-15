@@ -18,7 +18,7 @@ namespace HitAndRun.Enemy
         [SerializeField] protected MbAutoTarget _autoTarget;
         [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
         public Action OnDead;
-        private bool _isAttacking;
+        public bool IsAttacking { get; set; }
         private long _health;
         public long Health
         {
@@ -62,7 +62,7 @@ namespace HitAndRun.Enemy
             _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
             _autoTarget.enabled = true;
-            _isAttacking = false;
+            IsAttacking = false;
         }
 
         protected virtual void Awake()
@@ -74,10 +74,13 @@ namespace HitAndRun.Enemy
             var idleState = new IdleState(this, _animator);
             var dyingState = new DyingState(this, _animator);
 
-            At(idleState, walkState, new FuncPredicate(() => _autoTarget.Target != null && Hp > 0));
-            Any(idleState, new FuncPredicate(() => _autoTarget.Target == null && Hp > 0));
+            At(idleState, walkState, new FuncPredicate(() => _autoTarget.Target && Hp > 0));
+            Any(idleState, new FuncPredicate(() => !_autoTarget.Target && !IsAttacking && Hp > 0));
+            At(attackState, walkState, new FuncPredicate(() => Hp > 0 && !IsAttacking));
+            Any(attackState, new FuncPredicate(() => Hp > 0 && IsAttacking));
+
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
-            Any(attackState, new FuncPredicate(() => Hp > 0 && _isAttacking));
+
 
             _stateMachine?.SetState(typeof(IdleState));
         }
@@ -90,18 +93,20 @@ namespace HitAndRun.Enemy
 
         private void DetectCharacter()
         {
-            if (Hp <= 0 || _isAttacking) return;
-
-            var origin = transform.position;
-            var direction = transform.forward;
+            if (_stateMachine.GetCurrentState() is not WalkState) return;
+            var origin = transform.position + Vector3.up * _collider.bounds.extents.y;
+            var direction = (_autoTarget.Target.position - transform.position).normalized;
             var maxDistance = _collider.bounds.extents.z * 3;
 
             if (Physics.Raycast(origin, direction, out var hit, maxDistance)
                 && hit.collider.TryGetComponent(out MbCharacter character))
             {
-                _isAttacking = true;
+                IsAttacking = true;
                 Attack(character);
             }
+#if UNITY_EDITOR
+            Debug.DrawRay(origin, direction * maxDistance, Color.red);
+#endif
         }
         protected virtual void FixedUpdate()
         {
@@ -112,16 +117,14 @@ namespace HitAndRun.Enemy
 
         private void MoveTowardsTarget()
         {
-            var canMove = !_isAttacking && _autoTarget.Target != null;
             _rb.velocity = Vector3.zero;
-            if (canMove)
-            {
-                var direction = (_autoTarget.Target.position - transform.position).normalized;
-                _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);
+            if (_stateMachine.GetCurrentState() is not WalkState) return;
 
-                if (direction.magnitude > 0.1f)
-                    transform.rotation = Quaternion.LookRotation(direction);
-            }
+            var direction = (_autoTarget.Target.position - transform.position).normalized;
+            _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);
+
+            if (direction.magnitude > 0.1f)
+                transform.rotation = Quaternion.LookRotation(direction);
         }
 
 

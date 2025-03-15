@@ -12,5 +12,14 @@ namespace HitAndRun.Enemy.State
         {
             _animator.CrossFade(AttackHash, CrossFadeDuration);
         }
+
+        public override void Update()
+        {
+            var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.shortNameHash == AttackHash && stateInfo.normalizedTime >= 1f)
+            {
+                _enemy.IsAttacking = false;
+            }
+        }
     }
 }

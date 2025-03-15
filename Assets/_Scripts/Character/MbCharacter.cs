@@ -79,13 +79,12 @@ namespace HitAndRun.Character
             Any(dyingState, new FuncPredicate(() => IsActive && _isDead));
             Any(idleState, new FuncPredicate(() => !IsActive));
 
-            OnDead += character => character.Body.StopTween();
+            OnDead += character => character.Body.Unaffected();
             _stateMachine?.SetState(typeof(IdleState));
         }
 
         private void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
-
 
         private void Update()
         {
@@ -96,6 +95,8 @@ namespace HitAndRun.Character
 
                 if (_autoTarget.Target != null) _shooter.LookAt(_autoTarget.Target.transform);
                 else _shooter.rotation = Quaternion.identity;
+
+                _shooter.rotation = Quaternion.Euler(0, _shooter.rotation.eulerAngles.y, 0);
                 _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
                 _nextFireTime = Time.time + _fireRate;
             }
@@ -113,7 +114,6 @@ namespace HitAndRun.Character
             {
                 modifier.Modify(this);
             }
-
         }
 
         public void TakeDamage()
