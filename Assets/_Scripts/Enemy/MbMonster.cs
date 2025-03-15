@@ -14,7 +14,7 @@ namespace HitAndRun.Enemy
             var idleState = new IdleState(_animator);
             var dyingState = new DyingState(_animator);
 
-            // At(idleState, walkState, new FuncPredicate(() => Target != null && Hp > 0));
+            At(idleState, walkState, new FuncPredicate(() => Target != null && Hp > 0));
             Any(idleState, new FuncPredicate(() => Target == null && Hp > 0));
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
 

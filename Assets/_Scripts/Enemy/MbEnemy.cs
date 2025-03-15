@@ -84,6 +84,7 @@ namespace HitAndRun.Enemy
         private void OnDetect(GameObject other)
         {
             if (!other.TryGetComponent(out MbCharacter character)) return;
+            Target = null;
             Debug.Log($"Detect {character.name}");
         }
 
