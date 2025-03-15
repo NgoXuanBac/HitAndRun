@@ -25,7 +25,7 @@ namespace HitAndRun.Enemy
             }
         }
 
-        public T Spawn<T>(Vector3 position, Quaternion rotation, Transform parent) where T : MbEnemy
+        public T Spawn<T>(Vector3 position, Quaternion rotation, Transform parent, long health) where T : MbEnemy
         {
             var type = typeof(T);
             if (!_pools.ContainsKey(type)) return null;
@@ -45,6 +45,7 @@ namespace HitAndRun.Enemy
             enemy.transform.position = position;
             enemy.transform.rotation = rotation;
             enemy.transform.SetParent(parent);
+            enemy.Health = health;
             enemy.gameObject.SetActive(true);
             return (T)enemy;
         }

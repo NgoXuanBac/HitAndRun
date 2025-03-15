@@ -21,7 +21,6 @@ namespace HitAndRun
 
         [SerializeField] private MbTeam _team;
         [SerializeField] private MbMapGenerator _generator;
-        [SerializeField] private MbEnemyTracker _enemyTracker;
 
         public void Reset()
         {
@@ -29,28 +28,16 @@ namespace HitAndRun
             _specifications = _saveManager.Load("Specifications", _specifications);
             _team = FindObjectOfType<MbTeam>();
             _generator = FindObjectOfType<MbMapGenerator>();
-            _enemyTracker = FindObjectOfType<MbEnemyTracker>();
-        }
-
-        private void Awake()
-        {
-            _team.Movement.OnFinish += OnFinish;
         }
 
         private void Start()
         {
             _generator.GenerateMap();
-            _enemyTracker.Reset();
         }
 
         public void OnWin()
         {
             Debug.Log("Win");
-        }
-
-        public void OnFinish(Vector3 position)
-        {
-            _enemyTracker.Enemies.ForEach(e => e.Target = position);
         }
 
     }

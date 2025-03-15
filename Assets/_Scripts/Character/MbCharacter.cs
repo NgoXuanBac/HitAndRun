@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using HitAndRun.Bullet;
 using HitAndRun.Character.State;
 using HitAndRun.FSM;
@@ -32,7 +30,7 @@ namespace HitAndRun.Character
         [SerializeField, Range(1, 100)] private int _damage = 2;
         public float Damage => _damage;
         [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
-
+        [SerializeField] MbAutoTarget _autoTarget;
         private StateMachine _stateMachine;
         public Action<MbCharacter> OnDead;
         public bool IsMerging { get; set; }
@@ -48,6 +46,7 @@ namespace HitAndRun.Character
         public void Reset()
         {
             _body ??= GetComponent<MbCharacterBody>();
+            _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _shooter = transform.Find("Shooter");
             _grabber = GetComponentInChildren<MbGrabber>();
             _animator = GetComponentInChildren<Animator>();
@@ -94,6 +93,8 @@ namespace HitAndRun.Character
             if (_stateMachine.GetCurrentState() is RunState or AttackState)
             {
                 if (Time.time <= _nextFireTime) return;
+
+                if (_autoTarget.Target != null) _shooter.LookAt(_autoTarget.Target.transform);
                 _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
                 _nextFireTime = Time.time + _fireRate;
             }

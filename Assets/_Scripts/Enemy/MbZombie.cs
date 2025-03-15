@@ -1,3 +1,4 @@
+using HitAndRun.Character;
 using HitAndRun.Enemy.State;
 using HitAndRun.FSM;
 
@@ -13,8 +14,8 @@ namespace HitAndRun.Enemy
             var idleState = new IdleState(this, _animator);
             var dyingState = new DyingState(this, _animator);
 
-            At(idleState, walkState, new FuncPredicate(() => Target != null && Hp > 0));
-            Any(idleState, new FuncPredicate(() => Target == null && Hp > 0));
+            At(idleState, walkState, new FuncPredicate(() => _autoTarget.Target != null && Hp > 0));
+            Any(idleState, new FuncPredicate(() => _autoTarget.Target == null && Hp > 0));
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
 
             _stateMachine?.SetState(typeof(IdleState));
@@ -23,6 +24,11 @@ namespace HitAndRun.Enemy
         public override void TakeDamage(int damage)
         {
             Hp -= damage;
+        }
+
+        protected override void Attack(MbCharacter character)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

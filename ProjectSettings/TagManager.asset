@@ -10,6 +10,7 @@ TagManager:
   - Modifier
   - Goal
   - Enemy
+  - Character_Inactive
   layers:
   - Default
   - TransparentFX

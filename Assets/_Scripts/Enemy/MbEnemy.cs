@@ -14,9 +14,9 @@ namespace HitAndRun.Enemy
         [SerializeField] private Collider _collider;
         [SerializeField] Slider _hpBar;
         [SerializeField] private MbCollider _attackBox;
-        [SerializeField, Range(0, 10)] private float _moveSpeed = 3f;
+        [SerializeField] protected MbAutoTarget _autoTarget;
+        [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
         public Action OnDead;
-        public Vector3? Target { get; set; }
         private long _health;
         public long Health
         {
@@ -40,7 +40,6 @@ namespace HitAndRun.Enemy
                 {
                     _collider.enabled = false;
                     _attackBox.enabled = false;
-                    Target = null;
                     _hpBar.gameObject.SetActive(false);
                     OnDead?.Invoke();
                 }
@@ -54,6 +53,7 @@ namespace HitAndRun.Enemy
         {
             _animator = GetComponentInChildren<Animator>();
             _attackBox ??= GetComponentInChildren<MbCollider>();
+            _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _collider = GetComponent<Collider>();
             _damage = transform.Find("Damage");
             _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
@@ -61,7 +61,7 @@ namespace HitAndRun.Enemy
             _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
             _attackBox.enabled = true;
-            Target = null;
+            _autoTarget.enabled = true;
         }
 
 
@@ -79,9 +79,9 @@ namespace HitAndRun.Enemy
 
         private void MoveTowardsTarget()
         {
-            if (Target != null)
+            if (_autoTarget.Target != null)
             {
-                var direction = (Target.Value - transform.position).normalized;
+                var direction = (_autoTarget.Target.position - transform.position).normalized;
 
                 transform.position += direction * _moveSpeed * Time.fixedDeltaTime;
 
@@ -103,14 +103,14 @@ namespace HitAndRun.Enemy
         private void OnDetect(GameObject other)
         {
             if (!other.TryGetComponent(out MbCharacter character)) return;
-            Target = null;
-            Debug.Log($"Detect {character.name}");
+            Attack(character);
         }
 
+        protected abstract void Attack(MbCharacter character);
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out MbBullet bullet) || Target == null) return;
+            if (!other.TryGetComponent(out MbBullet bullet) || _autoTarget.Target == null) return;
             MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString());
             TakeDamage(bullet.Damage);
         }

@@ -15,7 +15,7 @@ namespace HitAndRun.Character
         public void Reset()
         {
             _enemies?.Clear();
-            _enemies = FindObjectsOfType<MbEnemy>().ToList();
+            _enemies = FindObjectsOfType<MbEnemy>().OrderBy(e => e.transform.position.x).ToList();
         }
 
         public void RemoveEnemy(MbEnemy enemy)
