@@ -14,6 +14,7 @@ namespace HitAndRun.Enemy
         [SerializeField] private Collider _collider;
         [SerializeField] Slider _hpBar;
         [SerializeField] private MbCollider _attackBox;
+        [SerializeField, Range(0, 10)] private float _moveSpeed = 3f;
         public Action OnDead;
         public Vector3? Target { get; set; }
         private long _health;
@@ -39,6 +40,8 @@ namespace HitAndRun.Enemy
                 {
                     _collider.enabled = false;
                     _attackBox.enabled = false;
+                    Target = null;
+                    _hpBar.gameObject.SetActive(false);
                     OnDead?.Invoke();
                 }
             }
@@ -55,6 +58,7 @@ namespace HitAndRun.Enemy
             _damage = transform.Find("Damage");
             _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
 
+            _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
             _attackBox.enabled = true;
             Target = null;
@@ -69,6 +73,21 @@ namespace HitAndRun.Enemy
         protected virtual void FixedUpdate()
         {
             _stateMachine?.FixedUpdate();
+            MoveTowardsTarget();
+        }
+
+
+        private void MoveTowardsTarget()
+        {
+            if (Target != null)
+            {
+                var direction = (Target.Value - transform.position).normalized;
+
+                transform.position += direction * _moveSpeed * Time.fixedDeltaTime;
+
+                if (direction.magnitude > 0.1f)
+                    transform.rotation = Quaternion.LookRotation(direction);
+            }
         }
 
         private void OnEnable()

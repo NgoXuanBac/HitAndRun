@@ -145,6 +145,7 @@ MonoBehaviour:
   _collider: {fileID: 5135632218447897218}
   _hpBar: {fileID: 1574333865266665429}
   _attackBox: {fileID: 1358369548689302199}
+  _moveSpeed: 3
 --- !u!136 &5135632218447897218
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ namespace HitAndRun.Enemy.State
 {
     public class IdleState : BaseState
     {
-        public IdleState(Animator animator) : base(animator)
+        public IdleState(MbEnemy enemy, Animator animator) : base(enemy, animator)
         {
         }
 
