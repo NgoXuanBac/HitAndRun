@@ -246,7 +246,7 @@ namespace HitAndRun.Character
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(MbTeam))]
-    public class ETeam1Inspector : Editor
+    public class ETeamInspector : Editor
     {
         public override void OnInspectorGUI()
         {

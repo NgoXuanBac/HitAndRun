@@ -13,8 +13,8 @@ namespace HitAndRun.Enemy
         [SerializeField] protected Animator _animator;
         [SerializeField] private Transform _damage;
         [SerializeField] private Collider _collider;
+        [SerializeField] private Rigidbody _rb;
         [SerializeField] Slider _hpBar;
-        [SerializeField] private MbCollider _attackBox;
         [SerializeField] protected MbAutoTarget _autoTarget;
         [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
         public Action OnDead;
@@ -41,7 +41,6 @@ namespace HitAndRun.Enemy
                 if (_hp <= 0)
                 {
                     _collider.enabled = false;
-                    _attackBox.enabled = false;
                     _hpBar.gameObject.SetActive(false);
                     OnDead?.Invoke();
                 }
@@ -54,16 +53,16 @@ namespace HitAndRun.Enemy
         protected virtual void Reset()
         {
             _animator = GetComponentInChildren<Animator>();
-            _attackBox ??= GetComponentInChildren<MbCollider>();
             _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _collider = GetComponent<Collider>();
+            _rb = GetComponent<Rigidbody>();
             _damage = transform.Find("Damage");
             _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
 
             _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
-            _attackBox.enabled = true;
             _autoTarget.enabled = true;
+            _isAttacking = false;
         }
 
         protected virtual void Awake()
@@ -78,7 +77,7 @@ namespace HitAndRun.Enemy
             At(idleState, walkState, new FuncPredicate(() => _autoTarget.Target != null && Hp > 0));
             Any(idleState, new FuncPredicate(() => _autoTarget.Target == null && Hp > 0));
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
-            Any(attackState, new FuncPredicate(() => Hp > 0 && !_isAttacking));
+            Any(attackState, new FuncPredicate(() => Hp > 0 && _isAttacking));
 
             _stateMachine?.SetState(typeof(IdleState));
         }
@@ -86,8 +85,24 @@ namespace HitAndRun.Enemy
         protected virtual void Update()
         {
             _stateMachine?.Update();
+            DetectCharacter();
         }
 
+        private void DetectCharacter()
+        {
+            if (Hp <= 0 || _isAttacking) return;
+
+            var origin = transform.position;
+            var direction = transform.forward;
+            var maxDistance = _collider.bounds.extents.z * 3;
+
+            if (Physics.Raycast(origin, direction, out var hit, maxDistance)
+                && hit.collider.TryGetComponent(out MbCharacter character))
+            {
+                _isAttacking = true;
+                Attack(character);
+            }
+        }
         protected virtual void FixedUpdate()
         {
             _stateMachine?.FixedUpdate();
@@ -97,35 +112,18 @@ namespace HitAndRun.Enemy
 
         private void MoveTowardsTarget()
         {
-            var canMove = _isAttacking && _autoTarget.Target != null;
+            var canMove = !_isAttacking && _autoTarget.Target != null;
+            _rb.velocity = Vector3.zero;
             if (canMove)
             {
                 var direction = (_autoTarget.Target.position - transform.position).normalized;
-
-                transform.position += direction * _moveSpeed * Time.fixedDeltaTime;
+                _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);
 
                 if (direction.magnitude > 0.1f)
                     transform.rotation = Quaternion.LookRotation(direction);
             }
         }
 
-        private void OnEnable()
-        {
-            _attackBox.TriggerEnter += OnDetect;
-        }
-
-        private void OnDisable()
-        {
-            _attackBox.TriggerEnter -= OnDetect;
-        }
-
-        private void OnDetect(GameObject other)
-        {
-            _isAttacking = false;
-            if (!other.TryGetComponent(out MbCharacter character)) return;
-            _isAttacking = true;
-            Attack(character);
-        }
 
         protected abstract void Attack(MbCharacter character);
 

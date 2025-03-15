@@ -95,6 +95,7 @@ namespace HitAndRun.Character
                 if (Time.time <= _nextFireTime) return;
 
                 if (_autoTarget.Target != null) _shooter.LookAt(_autoTarget.Target.transform);
+                else _shooter.rotation = Quaternion.identity;
                 _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
                 _nextFireTime = Time.time + _fireRate;
             }
@@ -113,6 +114,11 @@ namespace HitAndRun.Character
                 modifier.Modify(this);
             }
 
+        }
+
+        public void TakeDamage()
+        {
+            _isDead = true;
         }
 
 #if UNITY_EDITOR

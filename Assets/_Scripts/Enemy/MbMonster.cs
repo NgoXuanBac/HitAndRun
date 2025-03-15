@@ -13,6 +13,7 @@ namespace HitAndRun.Enemy
 
         protected override void Attack(MbCharacter character)
         {
+            // character.TakeDamage();
         }
     }
 }
