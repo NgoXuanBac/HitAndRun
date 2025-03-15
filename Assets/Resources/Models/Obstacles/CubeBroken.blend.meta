@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Rounded_Cube_Material0
-    second: {fileID: 2100000, guid: 867b9e67805d196469173b41ca6f267c, type: 2}
+      name: Material
+    second: {fileID: 2100000, guid: 35b4dbcd1221f794486d0ad383c44c3d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

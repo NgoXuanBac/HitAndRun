@@ -160,6 +160,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.DefaultCompany.HitAndRun
     Standalone: com.DefaultCompany.HitAndRun
+    iPhone: com.DefaultCompany.HitAndRun
   buildNumber:
     Standalone: 0
     iPhone: 0
@@ -823,7 +824,7 @@ PlayerSettings:
     WebGL: DOTWEEN
     Windows Store Apps: DOTWEEN
     XboxOne: DOTWEEN
-    iPhone: DOTWEEN
+    iPhone: DOTWEEN;UNITASK_DOTWEEN_SUPPORT
     tvOS: DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
