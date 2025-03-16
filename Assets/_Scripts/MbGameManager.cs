@@ -1,14 +1,13 @@
 using System;
 using HitAndRun.Character;
 using HitAndRun.Map;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace HitAndRun
 {
     public enum GameState
     {
-        Play, Run,
+        Wait, Play, Win, Lose
     }
     public class MbGameManager : MbSingleton<MbGameManager>
     {
@@ -32,6 +31,8 @@ namespace HitAndRun
             _enemiesTracker = MbEnemyTracker.Instance;
         }
 
+        // => Wait => Play => Win => Lose
+
         private void Start()
         {
             _generator.GenerateMap();
@@ -52,6 +53,17 @@ namespace HitAndRun
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _team.OnCharactersDied -= HandleLose;
             Debug.Log("Lose");
+        }
+
+        private void NextLevel()
+        {
+            _currentLevel++;
+            _saveManager.Save("Level", _currentLevel.ToString());
+        }
+
+        private void Clean()
+        {
+
         }
 
     }

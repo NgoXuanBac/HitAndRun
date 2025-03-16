@@ -21,7 +21,7 @@ namespace HitAndRun.Obstacles
             if (_saw == null)
             {
 #if UNITY_EDITOR
-                Debug.LogError($"{nameof(Obstacles.Saw)} not found"); 
+                Debug.LogError($"{nameof(Obstacles.Saw)} not found");
 #endif
                 return;
             }
