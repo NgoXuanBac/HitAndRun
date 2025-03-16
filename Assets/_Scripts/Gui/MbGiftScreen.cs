@@ -99,7 +99,7 @@ namespace HitAndRun.Gui
 
         public void Collecting()
         {
-            CollectCoins();
+            AdmobAds.instance.CorrectDoupleCoin(()=> CollectCoins());
         }
 
         private IEnumerator TweenShowPanel(GameObject targetPanel)

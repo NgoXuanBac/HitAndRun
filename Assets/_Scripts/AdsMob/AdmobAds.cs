@@ -7,6 +7,7 @@ using System;
 
 public class AdmobAds : MonoBehaviour
 {
+    public static AdmobAds instance;
     public TextMeshProUGUI totalCoinsTxt;
 
     public string appId = "ca-app-pub-1385093244148841~5602672977";// "ca-app-pub-3940256099942544~3347511713";
@@ -35,8 +36,11 @@ public class AdmobAds : MonoBehaviour
     InterstitialAd interstitialAd;
     RewardedAd rewardedAd;
     NativeAd nativeAd;
-
-
+    private void Awake()
+    {
+        instance = this;
+    }
+   
     private void Start()
     {
         ShowCoins();
@@ -44,7 +48,8 @@ public class AdmobAds : MonoBehaviour
         MobileAds.Initialize(initStatus => {
 
             print("Ads Initialised !!");
-
+            LoadBannerAd();
+            LoadRewardedAd();
         });
     }
 
@@ -77,7 +82,7 @@ public class AdmobAds : MonoBehaviour
         {
             DestroyBannerAd();
         }
-        bannerView = new BannerView(bannerId, AdSize.Banner, AdPosition.Top);
+        bannerView = new BannerView(bannerId, AdSize.GetPortraitAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.MediumRectangle.Width), AdPosition.Bottom);
     }
     void ListenToBannerEvents()
     {
@@ -208,6 +213,16 @@ public class AdmobAds : MonoBehaviour
                            "with error : " + error);
         };
     }
+    public void CorrectDoupleCoin(Action actionReward)
+    {
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            rewardedAd.Show((action) =>
+            {
+                actionReward?.Invoke();
+            });
+        }
+    }
 
     #endregion
 
@@ -283,10 +298,12 @@ public class AdmobAds : MonoBehaviour
         ad.OnAdFullScreenContentClosed += () =>
         {
             Debug.Log("Rewarded ad full screen content closed.");
+            LoadRewardedAd();
         };
         // Raised when the ad failed to open full screen content.
         ad.OnAdFullScreenContentFailed += (AdError error) =>
         {
+            LoadRewardedAd();
             Debug.LogError("Rewarded ad failed to open full screen content " +
                            "with error : " + error);
         };
