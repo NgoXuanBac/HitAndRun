@@ -36,11 +36,22 @@ namespace HitAndRun
         {
             _generator.GenerateMap();
             _enemiesTracker.Reset();
+            _enemiesTracker.OnEnemiesDied += HandleWin;
+            _team.OnCharactersDied += HandleLose;
         }
 
-        public void OnWin()
+        public void HandleWin()
         {
+            _enemiesTracker.OnEnemiesDied -= HandleWin;
+            _team.OnCharactersDied -= HandleLose;
             Debug.Log("Win");
+        }
+
+        public void HandleLose(bool isFinish)
+        {
+            _enemiesTracker.OnEnemiesDied -= HandleWin;
+            _team.OnCharactersDied -= HandleLose;
+            Debug.Log("Lose");
         }
 
     }

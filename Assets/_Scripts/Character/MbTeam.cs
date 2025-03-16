@@ -14,6 +14,8 @@ namespace HitAndRun.Character
         private MbCharacter _head;
         private MbCharacter _tail;
 
+        public event Action<bool> OnCharactersDied;
+
         private void Reset()
         {
             _follow = transform.Find("Follow");
@@ -204,6 +206,10 @@ namespace HitAndRun.Character
             if (current.Right != null) current.Right.Left = current.Left;
             else _tail = current.Left;
 
+            if (_head == null)
+            {
+                OnCharactersDied?.Invoke(true);
+            }
             return current;
         }
 
