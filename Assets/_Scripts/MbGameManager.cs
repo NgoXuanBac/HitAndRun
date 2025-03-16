@@ -1,6 +1,10 @@
 using System;
+using HitAndRun.Bullet;
 using HitAndRun.Character;
+using HitAndRun.Enemy;
 using HitAndRun.Map;
+using HitAndRun.Tower;
+using UnityEditor;
 using UnityEngine;
 
 namespace HitAndRun
@@ -35,38 +39,62 @@ namespace HitAndRun
 
         private void Start()
         {
-            _generator.GenerateMap();
-            _enemiesTracker.Reset();
-            _enemiesTracker.OnEnemiesDied += HandleWin;
-            _team.OnCharactersDied += HandleLose;
+            Restart();
         }
 
         public void HandleWin()
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _team.OnCharactersDied -= HandleLose;
-            Debug.Log("Win");
+            NextLevel();
         }
 
         public void HandleLose(bool isFinish)
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _team.OnCharactersDied -= HandleLose;
-            Debug.Log("Lose");
+            Restart();
         }
 
         private void NextLevel()
         {
             _currentLevel++;
-            _saveManager.Save("Level", _currentLevel.ToString());
+            _saveManager.Save(_currentLevel, "Level");
+            Restart();
         }
 
-        private void Clean()
+        public void Restart()
         {
+            _generator.CleanMap();
+            _generator.GenerateMap();
+            _enemiesTracker.Reset();
+            _team.Init();
 
+            _enemiesTracker.OnEnemiesDied += HandleWin;
+            _team.OnCharactersDied += HandleLose;
         }
-
     }
+
+
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(MbGameManager))]
+    public class EGameManagerInspector : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            var manager = (MbGameManager)target;
+            GUI.enabled = Application.isPlaying;
+            if (GUILayout.Button("Reset"))
+            {
+                manager.Restart();
+            }
+            GUI.enabled = true;
+            EditorGUILayout.Space();
+            DrawDefaultInspector();
+        }
+    }
+#endif
 
     [Serializable]
     public struct Specifications

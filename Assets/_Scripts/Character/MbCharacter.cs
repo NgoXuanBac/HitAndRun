@@ -89,11 +89,17 @@ namespace HitAndRun.Character
         private void Update()
         {
             _stateMachine.Update();
+            _autoTarget.enabled = _stateMachine.GetCurrentState() is AttackState;
             if (_stateMachine.GetCurrentState() is RunState or AttackState)
             {
                 if (Time.time <= _nextFireTime) return;
 
-                if (_autoTarget.Target != null) _shooter.LookAt(_autoTarget.Target.transform);
+                if (_autoTarget.enabled && _autoTarget.Target != null)
+                {
+                    var direction = _autoTarget.Target.transform.position - _shooter.position;
+                    direction.y = 0;
+                    if (direction != Vector3.zero) _shooter.rotation = Quaternion.LookRotation(direction);
+                }
                 else _shooter.rotation = Quaternion.identity;
 
                 _shooter.rotation = Quaternion.Euler(0, _shooter.rotation.eulerAngles.y, 0);

@@ -21,18 +21,24 @@ namespace HitAndRun.Character
             _follow = transform.Find("Follow");
             _movement = GetComponent<MbTeamMovement>();
             _movement.enabled = true;
+            _movement.Reset();
+            transform.localPosition = Vector3.forward * 10f;
+            _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
         }
 
         private void Start()
         {
+            _movement.OnTouched += ActiveCharacters;
+            _movement.OnFinish += Attack;
+        }
+
+        public void Init()
+        {
+            Reset();
             var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
             character.Grabber.OnGrab += Collect;
             character.OnDead += Leave;
             _head = _tail = character;
-            character.Left = character.Right = null;
-
-            _movement.OnTouched += ActiveCharacters;
-            _movement.OnFinish += Attack;
         }
 
         public void AddCharacter()

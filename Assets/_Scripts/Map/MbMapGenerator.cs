@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using HitAndRun.Enemy;
+using HitAndRun.Bullet;
 
 namespace HitAndRun.Map
 {
@@ -74,6 +75,22 @@ namespace HitAndRun.Map
             MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy, Quaternion.Euler(0, 180, 0), transform, 300);
             MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy + new Vector3(5, 0, 0), Quaternion.Euler(0, 180, 0), transform, 300);
 
+        }
+
+        public void CleanMap()
+        {
+            var enemies = FindObjectsOfType<MbEnemy>();
+            var characters = FindObjectsOfType<MbCharacter>();
+            var bullets = FindObjectsOfType<MbBullet>();
+            var towers = FindObjectsOfType<MbTower>();
+
+#if UNITY_EDITOR
+            Debug.Log($"Enemies: {enemies.Length}, Characters: {characters.Length}, Bullets: {bullets.Length}, Towers: {towers.Length}");
+#endif
+            foreach (var enemy in enemies) MbEnemySpawner.Instance.Despawn(enemy);
+            foreach (var character in characters) MbCharacterSpawner.Instance.Despawn(character);
+            foreach (var bullet in bullets) MbBulletSpawner.Instance.Despawn(bullet);
+            foreach (var tower in towers) MbTowerSpawner.Instance.Despawn(tower);
         }
     }
 

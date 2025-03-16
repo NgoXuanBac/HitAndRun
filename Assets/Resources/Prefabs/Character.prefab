@@ -219,9 +219,9 @@ MonoBehaviour:
   _targetLM:
     serializedVersion: 2
     m_Bits: 129
+  _targetTag: Enemy
   _range: 35
   _targetRate: 0.5
-  _targetTag: Enemy
 --- !u!1 &4317097984506899321
 GameObject:
   m_ObjectHideFlags: 0

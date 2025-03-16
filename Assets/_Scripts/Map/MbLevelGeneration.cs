@@ -29,7 +29,8 @@ namespace HitAndRun.Map
                 var types = _ratio
                     .Where(v => v.Type != chunks[index - 1])
                     .ToList();
-                chunks[index] = types[UnityEngine.Random.Range(0, types.Count)].Type;
+                // chunks[index] = types[UnityEngine.Random.Range(0, types.Count)].Type;
+                chunks[index] = SpawnType.Tower;
             }
 
             return chunks;

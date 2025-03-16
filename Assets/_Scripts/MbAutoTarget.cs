@@ -47,6 +47,7 @@ namespace HitAndRun
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            if (!enabled) return;
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _range);
         }

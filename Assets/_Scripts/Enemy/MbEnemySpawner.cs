@@ -56,6 +56,7 @@ namespace HitAndRun.Enemy
             if (!_pools.ContainsKey(type)) return;
 
             enemy.transform.parent = transform;
+            enemy.Reset();
             enemy.gameObject.SetActive(false);
             _pools[type].Enqueue(enemy);
         }

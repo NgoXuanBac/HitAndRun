@@ -50,19 +50,21 @@ namespace HitAndRun.Enemy
         protected void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         protected void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
-        protected virtual void Reset()
+        public virtual void Reset()
         {
             _animator = GetComponentInChildren<Animator>();
             _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _collider = GetComponent<Collider>();
             _rb = GetComponent<Rigidbody>();
             _damage = transform.Find("Damage");
-            _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
+            _hpBar ??= transform.Find("Canvas").GetComponentInChildren<Slider>();
 
             _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
             _autoTarget.enabled = true;
+
             IsAttacking = false;
+            _stateMachine?.SetState(typeof(IdleState));
         }
 
         protected virtual void Awake()

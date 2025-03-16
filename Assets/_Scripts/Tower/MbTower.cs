@@ -43,6 +43,7 @@ namespace HitAndRun.Tower
             _collider ??= GetComponentInChildren<MbCollider>();
             _collider.enabled = true;
             _textMeshPro.enabled = true;
+            _animator.Rebind();
         }
 
         private void OnEnable()
