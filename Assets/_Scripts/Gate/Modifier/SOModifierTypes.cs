@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HitAndRun.Gate.Modifier
@@ -9,10 +10,14 @@ namespace HitAndRun.Gate.Modifier
         [SerializeField] private string _name;
         public string Name => _name;
 
-        [SerializeField] private ModifierType _positive;
-        public ModifierType Positive => _positive;
-        [SerializeField] private ModifierType _negative;
-        public ModifierType Negative => _negative;
+        [SerializeField] private List<ModifierType> _types;
+        public List<ModifierType> Types => _types;
+    }
+
+    public enum ModifierCategory
+    {
+        Positive,
+        Negative,
     }
 
     [Serializable]
@@ -20,6 +25,10 @@ namespace HitAndRun.Gate.Modifier
     {
         public Color Color;
         public Sprite Icon;
+        public int Amount;
+        public ModifierCategory Category;
+
     }
+
 }
 

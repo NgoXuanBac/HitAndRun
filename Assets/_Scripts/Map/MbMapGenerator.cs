@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using HitAndRun.Enemy;
 using HitAndRun.Bullet;
 using HitAndRun.Coin;
+using HitAndRun.Obstacles;
 
 namespace HitAndRun.Map
 {
@@ -62,10 +63,10 @@ namespace HitAndRun.Map
                             }
                             break;
                         case SpawnType.Gate:
-                            foreach (var ratio in ratios)
-                            {
-                                MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
-                            }
+                            // foreach (var ratio in ratios)
+                            // {
+                            //     MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
+                            // }
                             break;
                         case SpawnType.Coin:
                             foreach (var ratio in ratios)
@@ -73,14 +74,21 @@ namespace HitAndRun.Map
                                 MbCoinSpawner.Instance.SpawnGrid(new Vector3(ratio * chunkWidth * 0.5f, 1, index * chunkHeight), 3, 3);
                             }
                             break;
+                        case SpawnType.Obstacle:
+
+                            foreach (var ratio in ratios)
+                            {
+                                MbObstacleSpawner.Instance.SpawnRandom(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
+                            }
+                            break;
                     }
                 }
             }
 
             // MbEnemySpawner.Instance.Spawn<MbMonster>(_ground.Enemy, Quaternion.Euler(0, 180, 0), transform, 300);
+            MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy + new Vector3(5, 0, 0), Quaternion.Euler(0, 180, 0), transform, 300);
             MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy + new Vector3(-5, 0, 0), Quaternion.Euler(0, 180, 0), transform, 300);
             MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy, Quaternion.Euler(0, 180, 0), transform, 300);
-            MbEnemySpawner.Instance.Spawn<MbZombie>(_ground.Enemy + new Vector3(5, 0, 0), Quaternion.Euler(0, 180, 0), transform, 300);
 
         }
 
@@ -92,7 +100,9 @@ namespace HitAndRun.Map
             var bullets = FindObjectsOfType<MbBullet>();
             var towers = FindObjectsOfType<MbTower>();
             var coins = FindObjectsOfType<MbCoin>();
+            var obstacles = FindObjectsOfType<MbObstacle>();
 
+            foreach (var obstacle in obstacles) MbObstacleSpawner.Instance.Despawn(obstacle);
             foreach (var coin in coins) MbCoinSpawner.Instance.Despawn(coin);
             foreach (var enemy in enemies) MbEnemySpawner.Instance.Despawn(enemy);
             foreach (var character in characters) MbCharacterSpawner.Instance.Despawn(character);

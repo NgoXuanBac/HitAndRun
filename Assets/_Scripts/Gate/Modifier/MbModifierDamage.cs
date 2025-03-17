@@ -5,23 +5,21 @@ namespace HitAndRun.Gate.Modifier
 {
     public class MbModifierDamage : MbModifierBase
     {
-        [SerializeField] private int _damageAmount = 2;
-
         protected override void Reset()
         {
             base.Reset();
-            _modifierType = Resources.Load<SOModifierTypes>("Scriptables/DamageModifierTypes");
-            _isPositive = true;
+            _modifierTypes = Resources.Load<SOModifierTypes>("Scriptables/DamageModifierTypes");
         }
-
         private void Start()
         {
-            ApplyVisuals($"{(_damageAmount >= 0 ? "+" : "")}{_damageAmount}");
+            var type = _modifierTypes.Types[Random.Range(0, _modifierTypes.Types.Count)];
+            _modifierView.SetVisuals(_modifierTypes.Name, type.Color,
+                type.Amount == 0 ? null : ((type.Amount > 0 ? "+" : "") + type.Amount.ToString()),
+                type.Icon
+            );
         }
-
         public override void Modify(MbCharacter character)
         {
-            Debug.Log($"{(_damageAmount >= 0 ? "+" : "")}{_damageAmount} damages.");
         }
     }
 }

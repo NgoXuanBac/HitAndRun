@@ -127,6 +127,7 @@ namespace HitAndRun.Character
                             merged.Body.Level *= 2;
                             merged.IsMerging = false;
                             MbCharacterSpawner.Instance.Despawn(removed);
+                            MbCharacterTracker.Instance.RemoveCharacter(removed);
                         });
                     }
                 }

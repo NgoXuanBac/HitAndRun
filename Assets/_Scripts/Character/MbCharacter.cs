@@ -115,7 +115,7 @@ namespace HitAndRun.Character
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Tower") _isDead = true;
+            if (other.tag == "Tower" || other.tag == "Obstacle") _isDead = true;
             else if (other.TryGetComponent(out MbModifierBase modifier))
             {
                 modifier.Modify(this);

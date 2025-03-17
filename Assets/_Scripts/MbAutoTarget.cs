@@ -15,6 +15,7 @@ namespace HitAndRun
         public Transform Target => _target;
 
         private float _nextTargetTime;
+
         private void Update()
         {
             if (Time.time >= _nextTargetTime)

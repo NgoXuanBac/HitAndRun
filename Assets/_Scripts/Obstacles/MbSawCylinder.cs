@@ -14,7 +14,7 @@ namespace HitAndRun.Obstacles
         protected override void Reset()
         {
             _saw = transform.Find("Model").Find(Obstacles.Saw);
-            _pivot = transform.Find("Model").Find("Pivot");
+            _pivot = transform.Find("Pivot");
         }
 
         protected override void Start()

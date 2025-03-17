@@ -64,6 +64,10 @@ namespace HitAndRun.Enemy
             _autoTarget.enabled = true;
 
             IsAttacking = false;
+        }
+
+        protected virtual void OnEnable()
+        {
             _stateMachine?.SetState(typeof(IdleState));
         }
 
@@ -82,7 +86,6 @@ namespace HitAndRun.Enemy
             Any(attackState, new FuncPredicate(() => Hp > 0 && IsAttacking));
 
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
-
 
             _stateMachine?.SetState(typeof(IdleState));
         }
@@ -121,6 +124,7 @@ namespace HitAndRun.Enemy
         {
             _rb.velocity = Vector3.zero;
             if (_stateMachine.GetCurrentState() is not WalkState) return;
+            else if (_autoTarget.Target == null) return;
 
             var direction = (_autoTarget.Target.position - transform.position).normalized;
             _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);

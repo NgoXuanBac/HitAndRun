@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: FireRateModifierTypes
   m_EditorClassIdentifier: 
   _name: Fire Rate
-  _positive:
-    Color: {r: 0.3529412, g: 1, b: 0.36078432, a: 1}
-    Icon: {fileID: 21300000, guid: ff0b2818f717e61438409ecee13e1ee7, type: 3}
-  _negative:
-    Color: {r: 1, g: 0.13396227, b: 0.13396227, a: 1}
-    Icon: {fileID: 21300000, guid: 22b3cf8f37ff75644aa311b50b0a370a, type: 3}
+  _types:
+  - Color: {r: 0.16470589, g: 1, b: 0.1764706, a: 1}
+    Icon: {fileID: 0}
+    Amount: 2
+    Category: 0
+  - Color: {r: 1, g: 0.12941177, b: 0.12941177, a: 1}
+    Icon: {fileID: 0}
+    Amount: 2
+    Category: 1
