@@ -1,4 +1,6 @@
 {
+  "Level": 1,
+  "Amount": 1000,
   "Damage": 2,
   "FireRate": 0.2
 }

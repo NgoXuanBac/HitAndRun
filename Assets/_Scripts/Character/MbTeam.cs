@@ -14,27 +14,26 @@ namespace HitAndRun.Character
         private MbCharacter _head;
         private MbCharacter _tail;
 
-        public event Action<bool> OnCharactersDied;
-
         private void Reset()
         {
             _follow = transform.Find("Follow");
             _movement = GetComponent<MbTeamMovement>();
-            _movement.enabled = true;
-            _movement.Reset();
-            transform.localPosition = Vector3.forward * 10f;
-            _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
+            _movement.enabled = false;
         }
 
         private void Start()
         {
-            _movement.OnTouched += ActiveCharacters;
+            _movement.enabled = false;
             _movement.OnFinish += Attack;
         }
 
         public void Init()
         {
-            Reset();
+            _movement.enabled = false;
+            transform.localPosition = Vector3.forward * 10f;
+            _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
+            _movement?.Reset();
+
             var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
             character.Grabber.OnGrab += Collect;
             character.OnDead += Leave;
@@ -43,7 +42,8 @@ namespace HitAndRun.Character
 
         public void AddCharacter()
         {
-            ActiveCharacters();
+            for (var i = _head; i != null; i = i.Right) i.IsActive = true;
+
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
             var characters = new List<MbCharacter>();
@@ -56,14 +56,18 @@ namespace HitAndRun.Character
                 character,
                 UnityEngine.Random.Range(0, 2) == 0
             );
+
+            MbCharacterTracker.Instance.Reset();
         }
 
-        private void ActiveCharacters()
+        public void ActiveCharacters()
         {
             for (var i = _head; i != null; i = i.Right)
             {
                 i.IsActive = true;
             }
+            _movement.enabled = true;
+            InputHelper.GetTouches();
         }
 
         private void Attack(Vector3 position)
@@ -212,10 +216,6 @@ namespace HitAndRun.Character
             if (current.Right != null) current.Right.Left = current.Left;
             else _tail = current.Left;
 
-            if (_head == null)
-            {
-                OnCharactersDied?.Invoke(true);
-            }
             return current;
         }
 

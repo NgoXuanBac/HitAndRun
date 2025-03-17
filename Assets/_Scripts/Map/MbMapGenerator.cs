@@ -37,7 +37,7 @@ namespace HitAndRun.Map
         {
             if (_spawnObject)
             {
-                var chunks = _levelGeneration.Generate(MbGameManager.Instance.CurrentLevel);
+                var chunks = _levelGeneration.Generate(MbGameManager.Instance.Data.Level);
                 _ground.ChunkCount = chunks.Length;
 
                 var chunkWidth = _ground.Width;
@@ -84,9 +84,6 @@ namespace HitAndRun.Map
             var bullets = FindObjectsOfType<MbBullet>();
             var towers = FindObjectsOfType<MbTower>();
 
-#if UNITY_EDITOR
-            Debug.Log($"Enemies: {enemies.Length}, Characters: {characters.Length}, Bullets: {bullets.Length}, Towers: {towers.Length}");
-#endif
             foreach (var enemy in enemies) MbEnemySpawner.Instance.Despawn(enemy);
             foreach (var character in characters) MbCharacterSpawner.Instance.Despawn(character);
             foreach (var bullet in bullets) MbBulletSpawner.Instance.Despawn(bullet);

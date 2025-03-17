@@ -21,6 +21,7 @@ namespace HitAndRun.Character.State
             if (stateInfo.shortNameHash == FallHash && stateInfo.normalizedTime >= 1f)
             {
                 MbCharacterSpawner.Instance.Despawn(_character);
+                MbCharacterTracker.Instance.RemoveCharacter(_character);
             }
         }
     }

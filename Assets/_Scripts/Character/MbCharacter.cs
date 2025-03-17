@@ -53,8 +53,8 @@ namespace HitAndRun.Character
             transform.position = Vector3.zero;
             _body.Reset();
 
-            _fireRate = MbGameManager.Instance.Specifications.FireRate;
-            _damage = MbGameManager.Instance.Specifications.Damage;
+            _fireRate = MbGameManager.Instance.Data.FireRate;
+            _damage = MbGameManager.Instance.Data.Damage;
 
             _isDead = false;
             IsActive = false;

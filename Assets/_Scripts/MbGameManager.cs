@@ -1,9 +1,6 @@
 using System;
-using HitAndRun.Bullet;
 using HitAndRun.Character;
-using HitAndRun.Enemy;
 using HitAndRun.Map;
-using HitAndRun.Tower;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,27 +12,23 @@ namespace HitAndRun
     }
     public class MbGameManager : MbSingleton<MbGameManager>
     {
-        [SerializeField] private int _currentLevel = 1;
-        public int CurrentLevel => _currentLevel;
-
-        [SerializeField] private Specifications _specifications = new() { Damage = 2, FireRate = 0.2f };
-        public Specifications Specifications => _specifications;
+        [SerializeField] private SaveData _data = new() { Amount = 0, Level = 1, Damage = 2, FireRate = 0.2f };
+        public SaveData Data => _data;
         private SaveManager _saveManager = new();
 
         [SerializeField] private MbEnemyTracker _enemiesTracker;
+        [SerializeField] private MbCharacterTracker _charactersTracker;
         [SerializeField] private MbTeam _team;
         [SerializeField] private MbMapGenerator _generator;
 
+        public event Action<SaveData> OnDataLoaded;
         public void Reset()
         {
-            _currentLevel = _saveManager.Load("Level", _currentLevel);
-            _specifications = _saveManager.Load("Specifications", _specifications);
             _team = FindObjectOfType<MbTeam>();
             _generator = FindObjectOfType<MbMapGenerator>();
             _enemiesTracker = MbEnemyTracker.Instance;
+            _charactersTracker = MbCharacterTracker.Instance;
         }
-
-        // => Wait => Play => Win => Lose
 
         private void Start()
         {
@@ -45,33 +38,41 @@ namespace HitAndRun
         public void HandleWin()
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
-            _team.OnCharactersDied -= HandleLose;
+            _charactersTracker.OnCharactersDied -= HandleLose;
             NextLevel();
         }
 
-        public void HandleLose(bool isFinish)
+        public void HandleLose()
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
-            _team.OnCharactersDied -= HandleLose;
+            _charactersTracker.OnCharactersDied -= HandleLose;
             Restart();
         }
 
         private void NextLevel()
         {
-            _currentLevel++;
-            _saveManager.Save(_currentLevel, "Level");
+            _data.Level++;
+            _saveManager.Save(_data, "Data");
             Restart();
         }
 
         public void Restart()
         {
+            _data = _saveManager.Load("Data", _data);
+            OnDataLoaded?.Invoke(_data);
+
             _generator.CleanMap();
             _generator.GenerateMap();
             _enemiesTracker.Reset();
             _team.Init();
 
             _enemiesTracker.OnEnemiesDied += HandleWin;
-            _team.OnCharactersDied += HandleLose;
+            _charactersTracker.OnCharactersDied += HandleLose;
+        }
+
+        public void StartGame()
+        {
+            _team.ActiveCharacters();
         }
     }
 
@@ -97,8 +98,10 @@ namespace HitAndRun
 #endif
 
     [Serializable]
-    public struct Specifications
+    public struct SaveData
     {
+        public int Level;
+        public long Amount;
         public int Damage;
         public float FireRate;
     }
