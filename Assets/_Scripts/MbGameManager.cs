@@ -12,7 +12,7 @@ namespace HitAndRun
     }
     public class MbGameManager : MbSingleton<MbGameManager>
     {
-        [SerializeField] private SaveData _data = new() { Amount = 0, Level = 1, Damage = 2, FireRate = 0.2f };
+        [SerializeField] private SaveData _data = new() { Amount = 0, Level = 1, Damage = 2, FireRate = 1 };
         public SaveData Data => _data;
         private SaveManager _saveManager = new();
 
@@ -56,6 +56,13 @@ namespace HitAndRun
             Restart();
         }
 
+        public void AddCoin(int amount)
+        {
+            _data.Amount += amount;
+            _saveManager.Save(_data, "Data");
+            OnDataLoaded?.Invoke(_data);
+        }
+
         public void Restart()
         {
             _data = _saveManager.Load("Data", _data);
@@ -75,8 +82,6 @@ namespace HitAndRun
             _team.ActiveCharacters();
         }
     }
-
-
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(MbGameManager))]
@@ -103,7 +108,7 @@ namespace HitAndRun
         public int Level;
         public long Amount;
         public int Damage;
-        public float FireRate;
+        public int FireRate;
     }
 }
 

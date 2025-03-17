@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using HitAndRun.Enemy;
 using HitAndRun.Bullet;
+using HitAndRun.Coin;
 
 namespace HitAndRun.Map
 {
@@ -66,6 +67,12 @@ namespace HitAndRun.Map
                                 MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
                             }
                             break;
+                        case SpawnType.Coin:
+                            foreach (var ratio in ratios)
+                            {
+                                MbCoinSpawner.Instance.SpawnGrid(new Vector3(ratio * chunkWidth * 0.5f, 1, index * chunkHeight), 3, 3);
+                            }
+                            break;
                     }
                 }
             }
@@ -77,13 +84,16 @@ namespace HitAndRun.Map
 
         }
 
+
         public void CleanMap()
         {
             var enemies = FindObjectsOfType<MbEnemy>();
             var characters = FindObjectsOfType<MbCharacter>();
             var bullets = FindObjectsOfType<MbBullet>();
             var towers = FindObjectsOfType<MbTower>();
+            var coins = FindObjectsOfType<MbCoin>();
 
+            foreach (var coin in coins) MbCoinSpawner.Instance.Despawn(coin);
             foreach (var enemy in enemies) MbEnemySpawner.Instance.Despawn(enemy);
             foreach (var character in characters) MbCharacterSpawner.Instance.Despawn(character);
             foreach (var bullet in bullets) MbBulletSpawner.Instance.Despawn(bullet);
@@ -97,7 +107,7 @@ namespace HitAndRun.Map
         Gate,
         Obstacle,
         Character,
-        Item
+        Coin
     }
 
 #if UNITY_EDITOR

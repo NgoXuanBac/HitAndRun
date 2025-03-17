@@ -14,7 +14,7 @@ namespace HitAndRun.Obstacles
 
         protected override void Reset()
         {
-            _hammer = transform.Find(Obstacles.Hammer);
+            _hammer = transform.Find("Model").Find(Obstacles.Hammer);
         }
 
         protected override void Start()

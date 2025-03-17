@@ -4,15 +4,19 @@ using UnityEngine;
 
 namespace HitAndRun.Gui
 {
-    public class MbUpgrade : MonoBehaviour
+    public abstract class MbUpgrade : MonoBehaviour
     {
         [SerializeField]
         private RectTransform _arrowUp;
         [SerializeField]
-        private TMP_Text _curText;
+        protected TMP_Text _curText;
         [SerializeField]
-        private TMP_Text _nextText;
-
+        protected TMP_Text _nextText;
+        protected virtual void Awake()
+        {
+            MbGameManager.Instance.OnDataLoaded += UpdateUI;
+        }
+        protected abstract void UpdateUI(SaveData data);
         protected virtual void Start()
         {
             if (_arrowUp) _arrowUp.DOLocalMoveY(_arrowUp.localPosition.y + 10f, 0.5f)

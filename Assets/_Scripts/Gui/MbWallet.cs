@@ -13,7 +13,7 @@ namespace HitAndRun.Gui
             _text = GetComponentInChildren<TMP_Text>();
         }
 
-        private void Start()
+        private void Awake()
         {
             MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }

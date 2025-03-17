@@ -32,7 +32,7 @@ namespace HitAndRun.DistanceProgressBar
             _progressBar.maxValue = 1;
             _progressBar.value = 0;
         }
-        private void Start()
+        private void Awake()
         {
             MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }

@@ -10,7 +10,7 @@ namespace HitAndRun.Obstacles
         protected override void Reset()
         {
             base.Reset();
-            _base = transform.Find("Base");
+            _base = transform.Find("Model").Find("Base");
 
         }
 

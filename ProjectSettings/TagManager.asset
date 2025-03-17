@@ -11,6 +11,7 @@ TagManager:
   - Goal
   - Enemy
   - Character_Inactive
+  - Coin
   layers:
   - Default
   - TransparentFX
