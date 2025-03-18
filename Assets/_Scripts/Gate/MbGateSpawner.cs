@@ -26,7 +26,34 @@ namespace HitAndRun.Gate
             }
         }
 
-        public T Spawn<T>(Vector3 position, Transform parent) where T : MbModifierBase
+        public MbModifierBase SpawnRandom(Vector3 position, Transform parent, ModifierCategory category)
+        {
+            var types = _prefabs.Where(e => e.HasCategory(category)).ToList();
+            if (types.Count == 0) return null;
+
+            var type = types[UnityEngine.Random.Range(0, types.Count)].GetType();
+            if (!_pools.ContainsKey(type)) return null;
+
+            MbModifierBase gate;
+            if (_pools[type].Count > 0)
+            {
+                gate = _pools[type].Dequeue();
+            }
+            else
+            {
+                var prefab = _prefabs.Find(e => e.GetType() == type);
+                if (prefab == null) return null;
+                gate = Instantiate(prefab);
+            }
+
+            gate.SetCategory(category);
+            gate.transform.position = position;
+            gate.transform.SetParent(parent);
+            gate.gameObject.SetActive(true);
+            return gate;
+        }
+
+        public T Spawn<T>(Vector3 position, Transform parent, ModifierCategory category) where T : MbModifierBase
         {
             var type = typeof(T);
             if (!_pools.ContainsKey(type)) return null;
@@ -43,6 +70,7 @@ namespace HitAndRun.Gate
                 gate = Instantiate(prefab);
             }
 
+            gate.SetCategory(category);
             gate.transform.position = position;
             gate.transform.SetParent(parent);
             gate.gameObject.SetActive(true);

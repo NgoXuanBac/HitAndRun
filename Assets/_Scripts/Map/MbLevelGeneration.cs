@@ -30,7 +30,7 @@ namespace HitAndRun.Map
                     .Where(v => v.Type != chunks[index - 1])
                     .ToList();
                 // chunks[index] = types[UnityEngine.Random.Range(0, types.Count)].Type;
-                chunks[index] = SpawnType.Obstacle;
+                chunks[index] = SpawnType.Gate;
             }
 
             return chunks;

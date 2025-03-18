@@ -9,6 +9,7 @@ using HitAndRun.Enemy;
 using HitAndRun.Bullet;
 using HitAndRun.Coin;
 using HitAndRun.Obstacles;
+using HitAndRun.Gate.Modifier;
 
 namespace HitAndRun.Map
 {
@@ -19,8 +20,6 @@ namespace HitAndRun.Map
         [SerializeField] private bool _spawnObject = true;
         [SerializeField] private List<SOSpawnRule> _spawnRules;
 
-        // [SerializeField] private int _bossHealth = 500;
-        // [SerializeField] private int _gateCount = 5;
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
 
         private void Reset()
@@ -51,7 +50,7 @@ namespace HitAndRun.Map
 
                     if (!_spawnRuleWithType.TryGetValue(type, out var rule))
                         continue;
-                    var ratios = rule.GetSpawnRatios();
+                    var ratios = rule.GetRandomSpawnRatios();
 
                     switch (type)
                     {
@@ -63,10 +62,12 @@ namespace HitAndRun.Map
                             }
                             break;
                         case SpawnType.Gate:
-                            // foreach (var ratio in ratios)
-                            // {
-                            //     MbGateSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
-                            // }
+                            var random = UnityEngine.Random.Range(0, 2) == 1 ? ModifierCategory.Positive : ModifierCategory.Negative;
+                            foreach (var ratio in ratios)
+                            {
+                                MbGateSpawner.Instance.SpawnRandom(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, random);
+                                random = random == ModifierCategory.Positive ? ModifierCategory.Negative : ModifierCategory.Positive;
+                            }
                             break;
                         case SpawnType.Coin:
                             foreach (var ratio in ratios)
@@ -101,7 +102,9 @@ namespace HitAndRun.Map
             var towers = FindObjectsOfType<MbTower>();
             var coins = FindObjectsOfType<MbCoin>();
             var obstacles = FindObjectsOfType<MbObstacle>();
+            var gates = FindObjectsOfType<MbModifierBase>();
 
+            foreach (var gate in gates) MbGateSpawner.Instance.Despawn(gate);
             foreach (var obstacle in obstacles) MbObstacleSpawner.Instance.Despawn(obstacle);
             foreach (var coin in coins) MbCoinSpawner.Instance.Despawn(coin);
             foreach (var enemy in enemies) MbEnemySpawner.Instance.Despawn(enemy);

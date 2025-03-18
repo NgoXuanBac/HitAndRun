@@ -18,7 +18,15 @@ MonoBehaviour:
     Icon: {fileID: 0}
     Amount: 2
     Category: 0
+  - Color: {r: 0.16470589, g: 1, b: 0.1764706, a: 1}
+    Icon: {fileID: 0}
+    Amount: 3
+    Category: 0
   - Color: {r: 1, g: 0.12941177, b: 0.12941177, a: 1}
     Icon: {fileID: 0}
-    Amount: 2
+    Amount: -2
+    Category: 1
+  - Color: {r: 1, g: 0.12941177, b: 0.12941177, a: 1}
+    Icon: {fileID: 0}
+    Amount: -1
     Category: 1

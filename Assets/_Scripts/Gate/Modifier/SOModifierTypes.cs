@@ -12,6 +12,11 @@ namespace HitAndRun.Gate.Modifier
 
         [SerializeField] private List<ModifierType> _types;
         public List<ModifierType> Types => _types;
+
+        public List<ModifierType> GetTypes(ModifierCategory category)
+        {
+            return _types.FindAll(x => x.Category == category);
+        }
     }
 
     public enum ModifierCategory
