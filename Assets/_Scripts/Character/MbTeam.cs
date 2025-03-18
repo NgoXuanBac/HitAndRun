@@ -28,22 +28,23 @@ namespace HitAndRun.Character
             _movement.OnFinish += Attack;
         }
 
-        public void Init()
+        public void SetUp()
         {
             _movement.enabled = false;
             transform.localPosition = Vector3.forward * 10f;
             _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
             _movement?.Reset();
 
+            _head = _tail = null;
             var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
-            character.Grabber.OnGrab += Collect;
+            character.OnGrab += Collect;
             character.OnDead += Leave;
             _head = _tail = character;
         }
 
         public void AddCharacter()
         {
-            for (var i = _head; i != null; i = i.Right) i.IsActive = true;
+            // for (var i = _head; i != null; i = i.Right) i.IsActive = true;
 
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
@@ -116,7 +117,7 @@ namespace HitAndRun.Character
                         var d2 = Mathf.Abs(i.Right.Body.Target.x - _follow.localPosition.x);
 
                         var (merged, removed) = d1 <= d2 ? (i, Remove(i.Right)) : (i.Right, Remove(i));
-                        removed.Grabber.OnGrab -= Collect;
+                        removed.OnGrab -= Collect;
                         removed.OnDead -= Leave;
                         removed.Body.Target = merged.Body.Target;
 
@@ -163,17 +164,18 @@ namespace HitAndRun.Character
         private void Leave(MbCharacter remove)
         {
             remove.OnDead -= Leave;
-            remove.Grabber.OnGrab -= Collect;
+            remove.OnGrab -= Collect;
             Remove(remove);
         }
 
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
+            MbCharacterTracker.Instance.AddCharacter(insert);
+
             insert.IsActive = true;
             insert.transform.parent = transform;
             insert.OnDead += Leave;
-            insert.Grabber.OnGrab += Collect;
-            MbCharacterTracker.Instance.AddCharacter(insert);
+            insert.OnGrab += Collect;
 
             var isEdge = isRight ? current.Right == null : current.Left == null;
 
@@ -210,20 +212,25 @@ namespace HitAndRun.Character
 
         private MbCharacter Remove(MbCharacter current)
         {
-            if (_head == null) return null;
+            if (current == null) return current;
 
-            if (current.Left != null) current.Left.Right = current.Right;
-            else _head = current.Right;
+            if (current.Left != null)
+                current.Left.Right = current.Right;
 
-            if (current.Right != null) current.Right.Left = current.Left;
-            else _tail = current.Left;
+            if (current.Right != null)
+                current.Right.Left = current.Left;
+
+            if (_head == current) _head = current.Right;
+            if (_tail == current) _tail = current.Left;
 
             return current;
         }
 
         private void AddRightOf(MbCharacter current, MbCharacter insert)
         {
-            if (current == null) return;
+            if (current == null || insert == null || current == insert) return;
+            Remove(insert);
+
             if (current.Right == null)
             {
                 current.Right = insert;
@@ -241,7 +248,9 @@ namespace HitAndRun.Character
 
         private void AddLeftOf(MbCharacter current, MbCharacter insert)
         {
-            if (current == null) return;
+            if (current == null || insert == null || current == insert) return;
+            Remove(insert);
+
             if (current.Left == null)
             {
                 insert.Right = current;

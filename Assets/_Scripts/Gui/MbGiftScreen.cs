@@ -100,10 +100,10 @@ namespace HitAndRun.Gui
 
         public void Collecting()
         {
-            AdmobAds.instance.CorrectDoupleCoin((shouldDouble) =>
+            AdmobAds.Instance.CorrectDoupleCoin((shouldDouble) =>
             {
-                shouldDoubleCoins = shouldDouble; 
-                CollectCoins(); 
+                shouldDoubleCoins = shouldDouble;
+                CollectCoins();
             });
         }
 
@@ -146,7 +146,7 @@ namespace HitAndRun.Gui
             }
             coins.Clear();
 
-            
+
             int effectiveCoinAmount = shouldDoubleCoins ? coinAmount * 2 : coinAmount;
 
             List<UniTask> spawnCoinTaskList = new List<UniTask>();

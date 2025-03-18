@@ -70,7 +70,7 @@ namespace HitAndRun
 
             _generator.CleanMap();
             _generator.GenerateMap(_data);
-            _team.Init();
+            _team.SetUp();
 
             _enemiesTracker.OnEnemiesDied += HandleWin;
             _charactersTracker.OnCharactersDied += HandleLose;

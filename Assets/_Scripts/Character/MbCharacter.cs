@@ -2,8 +2,6 @@ using System;
 using HitAndRun.Bullet;
 using HitAndRun.Character.State;
 using HitAndRun.FSM;
-using HitAndRun.Gate.Modifier;
-using UnityEditor;
 using UnityEngine;
 
 namespace HitAndRun.Character
@@ -19,8 +17,6 @@ namespace HitAndRun.Character
         public IShootingPattern ShootingPattern { get; set; } = new SingleShot();
 
         [SerializeField] private Transform _shooter;
-        [SerializeField] private MbGrabber _grabber;
-        public MbGrabber Grabber => _grabber;
         [SerializeField] private Animator _animator;
         public int FireRate { get; set; } = 2;
         public int Damage { get; set; } = 2;
@@ -28,6 +24,7 @@ namespace HitAndRun.Character
         [SerializeField] MbAutoTarget _autoTarget;
         private StateMachine _stateMachine;
         public Action<MbCharacter> OnDead;
+        public event Action<MbCharacter, MbCharacter, bool> OnGrab;
         public bool IsMerging { get; set; }
         public bool IsAttack { get; set; }
         private bool _isDead;
@@ -43,7 +40,6 @@ namespace HitAndRun.Character
             _body ??= GetComponent<MbCharacterBody>();
             _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _shooter = transform.Find("Shooter");
-            _grabber = GetComponentInChildren<MbGrabber>();
             _animator = GetComponentInChildren<Animator>();
             transform.position = Vector3.zero;
             _body.Reset();
@@ -116,6 +112,11 @@ namespace HitAndRun.Character
         {
             if (other.tag == "Tower" || other.tag == "Obstacle")
                 _isDead = true;
+            else if (!other.CompareTag("Character_Inactive")) return;
+            var dir = (other.transform.position - transform.position).normalized;
+            var side = Vector3.Dot(dir, transform.right);
+
+            OnGrab?.Invoke(this, other.GetComponent<MbCharacter>(), side > 0);
         }
 
         public void TakeDamage()

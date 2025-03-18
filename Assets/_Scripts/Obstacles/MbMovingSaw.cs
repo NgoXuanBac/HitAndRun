@@ -11,11 +11,11 @@ namespace HitAndRun.Obstacles
         {
             base.Reset();
             _base = transform.Find("Model").Find("Base");
-
         }
 
         protected override void OnEnable()
         {
+            base.OnEnable();
             if (_base == null)
             {
 #if UNITY_EDITOR
@@ -30,12 +30,6 @@ namespace HitAndRun.Obstacles
             _saw.DOLocalMove(end, 1 / _speed)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine);
-        }
-
-        protected override void OnDisable()
-        {
-            _saw?.DOKill();
-            _saw.rotation = Quaternion.identity;
         }
     }
 }

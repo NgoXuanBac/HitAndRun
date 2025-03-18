@@ -16,7 +16,7 @@ namespace HitAndRun.Obstacles
             _saw = transform.Find("Model").Find(Obstacles.Saw);
         }
 
-        protected override void Start()
+        protected override void OnEnable()
         {
             if (_saw == null)
             {
@@ -29,6 +29,12 @@ namespace HitAndRun.Obstacles
             _saw.DORotate(Rotate, 1 / _speed, RotateMode.FastBeyond360)
                     .SetLoops(-1, LoopType.Restart)
                     .SetEase(Ease.Linear);
+        }
+
+        protected override void OnDisable()
+        {
+            _saw?.DOKill();
+            _saw.rotation = Quaternion.identity;
         }
     }
 }

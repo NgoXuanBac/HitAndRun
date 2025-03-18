@@ -1685,7 +1685,7 @@ MonoBehaviour:
   _bossScale: 0.1
   _timeToKill: 8
   _baseTowerHP: 20
-  _towerPercent: 0.6
+  _towerPercent: 0.8
 --- !u!114 &762254429
 MonoBehaviour:
   m_ObjectHideFlags: 0

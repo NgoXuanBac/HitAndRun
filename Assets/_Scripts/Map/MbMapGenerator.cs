@@ -24,7 +24,7 @@ namespace HitAndRun.Map
         [SerializeField, Range(0, 1)] private float _bossScale = 0.1f;
         [SerializeField, Range(1, 10)] private float _timeToKill = 8f;
         [SerializeField, Range(1, 50)] private int _baseTowerHP = 20;
-        [SerializeField, Range(0.1f, 1f)] private float _towerPercent = 0.6f;
+        [SerializeField, Range(0.1f, 1f)] private float _towerPercent = 0.8f;
 
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
 
