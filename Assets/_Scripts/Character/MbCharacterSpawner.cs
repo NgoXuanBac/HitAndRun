@@ -17,13 +17,14 @@ namespace HitAndRun.Character
         {
             if (_pools.Count == 0)
             {
-                var newCharacter = Instantiate(_prefab, parent);
+                var newCharacter = Instantiate(_prefab, transform);
                 newCharacter.gameObject.SetActive(false);
                 _pools.Enqueue(newCharacter);
             }
             _pools.TryDequeue(out var character);
             character.name = $"Character#{character.GetHashCode()}";
             character.transform.position = position;
+            character.transform.parent = parent;
             character.gameObject.SetActive(true);
             character.IsActive = isActive;
             return character;

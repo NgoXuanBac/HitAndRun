@@ -11,6 +11,17 @@ namespace HitAndRun
         public Action<GameObject> CollisionEnter;
         public Action<GameObject> CollisionExit;
 
+        private void OnEnable()
+        {
+            if (_collider == null) return;
+            _collider.enabled = true;
+        }
+        private void OnDisable()
+        {
+            if (_collider == null) return;
+            _collider.enabled = false;
+        }
+
         private void Reset()
         {
             _collider = GetComponent<Collider>();

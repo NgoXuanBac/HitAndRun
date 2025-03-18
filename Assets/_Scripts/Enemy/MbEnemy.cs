@@ -16,7 +16,8 @@ namespace HitAndRun.Enemy
         [SerializeField] private Rigidbody _rb;
         [SerializeField] Slider _hpBar;
         [SerializeField] protected MbAutoTarget _autoTarget;
-        [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
+        [SerializeField, Range(0, 10)] private float _moveSpeed = 3f;
+        public float MoveSpeed => _moveSpeed;
         public Action OnDead;
         public bool IsAttacking { get; set; }
         private long _health;
@@ -50,19 +51,25 @@ namespace HitAndRun.Enemy
         protected void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         protected void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
-        protected virtual void Reset()
+        public virtual void Reset()
         {
             _animator = GetComponentInChildren<Animator>();
             _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _collider = GetComponent<Collider>();
             _rb = GetComponent<Rigidbody>();
             _damage = transform.Find("Damage");
-            _hpBar = transform.Find("Canvas").GetComponentInChildren<Slider>();
+            _hpBar ??= transform.Find("Canvas").GetComponentInChildren<Slider>();
 
             _hpBar.gameObject.SetActive(true);
             _collider.enabled = true;
             _autoTarget.enabled = true;
+
             IsAttacking = false;
+        }
+
+        protected virtual void OnEnable()
+        {
+            _stateMachine?.SetState(typeof(IdleState));
         }
 
         protected virtual void Awake()
@@ -80,7 +87,6 @@ namespace HitAndRun.Enemy
             Any(attackState, new FuncPredicate(() => Hp > 0 && IsAttacking));
 
             Any(dyingState, new FuncPredicate(() => Hp <= 0));
-
 
             _stateMachine?.SetState(typeof(IdleState));
         }
@@ -119,6 +125,7 @@ namespace HitAndRun.Enemy
         {
             _rb.velocity = Vector3.zero;
             if (_stateMachine.GetCurrentState() is not WalkState) return;
+            else if (_autoTarget.Target == null) return;
 
             var direction = (_autoTarget.Target.position - transform.position).normalized;
             _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);
@@ -133,7 +140,8 @@ namespace HitAndRun.Enemy
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent(out MbBullet bullet) || _autoTarget.Target == null) return;
-            MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString());
+            var scale = Mathf.Clamp01(bullet.Damage / 30f) * 0.4f + 0.8f;
+            MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString(), scale);
             TakeDamage(bullet.Damage);
         }
 

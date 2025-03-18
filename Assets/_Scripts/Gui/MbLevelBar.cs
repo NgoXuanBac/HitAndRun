@@ -31,12 +31,19 @@ namespace HitAndRun.DistanceProgressBar
             _progressBar.minValue = 0;
             _progressBar.maxValue = 1;
             _progressBar.value = 0;
-
-            _current.text = MbGameManager.Instance.CurrentLevel.ToString();
-            _next.text = (MbGameManager.Instance.CurrentLevel + 1).ToString();
+        }
+        private void Awake()
+        {
+            MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }
 
-        void Update()
+        private void UpdateUI(GameData data)
+        {
+            _current.text = data.Level.ToString();
+            _next.text = (data.Level + 1).ToString();
+        }
+
+        private void Update()
         {
             if (_progressBar == null || _team == null) return;
 

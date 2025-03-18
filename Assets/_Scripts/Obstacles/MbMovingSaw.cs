@@ -10,13 +10,12 @@ namespace HitAndRun.Obstacles
         protected override void Reset()
         {
             base.Reset();
-            _base = transform.Find("Base");
-
+            _base = transform.Find("Model").Find("Base");
         }
 
-        protected override void Start()
+        protected override void OnEnable()
         {
-            base.Start();
+            base.OnEnable();
             if (_base == null)
             {
 #if UNITY_EDITOR
@@ -24,13 +23,11 @@ namespace HitAndRun.Obstacles
 #endif
                 return;
             }
-            var width = _base.GetComponent<Renderer>().bounds.size.x;
-            var offset = _saw.GetComponent<Renderer>().bounds.size.x / 2;
-            var start = _base.position - _base.right * (width / 2 - offset);
-            var end = _base.position + _base.right * (width / 2 - offset);
-            _saw.position = start;
+            var start = _base.localPosition - _base.right * 0.5f;
+            var end = _base.localPosition + _base.right * 0.5f;
+            _saw.localPosition = start;
 
-            _saw.DOMove(end, 1 / _speed)
+            _saw.DOLocalMove(end, 1 / _speed)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine);
         }

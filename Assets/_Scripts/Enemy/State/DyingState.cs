@@ -18,8 +18,8 @@ namespace HitAndRun.Enemy.State
             var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.shortNameHash == DyingHash && stateInfo.normalizedTime >= 1f)
             {
-                MbEnemyTracker.Instance.RemoveEnemy(_enemy);
                 MbEnemySpawner.Instance.Despawn(_enemy);
+                MbEnemyTracker.Instance.RemoveEnemy(_enemy);
             }
         }
     }

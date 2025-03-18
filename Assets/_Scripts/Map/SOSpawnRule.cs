@@ -13,7 +13,7 @@ namespace HitAndRun.Map
         [SerializeField]
         private List<SpawnPattern> _spawnPatterns;
 
-        public IEnumerable<float> GetSpawnRatios()
+        public IEnumerable<float> GetRandomSpawnRatios()
         {
             if (_spawnPatterns == null || _spawnPatterns.Count == 0)
                 return new List<float>();

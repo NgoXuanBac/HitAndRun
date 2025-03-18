@@ -2,8 +2,6 @@ using System;
 using HitAndRun.Bullet;
 using HitAndRun.Character.State;
 using HitAndRun.FSM;
-using HitAndRun.Gate.Modifier;
-using UnityEditor;
 using UnityEngine;
 
 namespace HitAndRun.Character
@@ -16,23 +14,17 @@ namespace HitAndRun.Character
         [SerializeField] private MbCharacterBody _body;
         public MbCharacterBody Body => _body;
 
-        private IShootingPattern _shootingPattern = new SingleShot();
-        public IShootingPattern ShootingPattern => _shootingPattern;
+        public IShootingPattern ShootingPattern { get; set; } = new SingleShot();
 
         [SerializeField] private Transform _shooter;
-        [SerializeField] private MbGrabber _grabber;
-        public MbGrabber Grabber => _grabber;
         [SerializeField] private Animator _animator;
-
-        [Header("Shooting")]
-        [SerializeField, Range(0, 1)] private float _fireRate = 0.2f;
-        public float FireRate => _fireRate;
-        [SerializeField, Range(1, 100)] private int _damage = 2;
-        public float Damage => _damage;
+        public int FireRate { get; set; } = 2;
+        public int Damage { get; set; } = 2;
         [SerializeField, Range(1, 100)] private float _bulletSpeed = 50f;
         [SerializeField] MbAutoTarget _autoTarget;
         private StateMachine _stateMachine;
         public Action<MbCharacter> OnDead;
+        public event Action<MbCharacter, MbCharacter, bool> OnGrab;
         public bool IsMerging { get; set; }
         public bool IsAttack { get; set; }
         private bool _isDead;
@@ -48,13 +40,9 @@ namespace HitAndRun.Character
             _body ??= GetComponent<MbCharacterBody>();
             _autoTarget ??= GetComponentInChildren<MbAutoTarget>();
             _shooter = transform.Find("Shooter");
-            _grabber = GetComponentInChildren<MbGrabber>();
             _animator = GetComponentInChildren<Animator>();
             transform.position = Vector3.zero;
             _body.Reset();
-
-            _fireRate = MbGameManager.Instance.Specifications.FireRate;
-            _damage = MbGameManager.Instance.Specifications.Damage;
 
             _isDead = false;
             IsActive = false;
@@ -62,6 +50,13 @@ namespace HitAndRun.Character
 
             IsMerging = IsAttack = false;
             _stateMachine?.SetState(typeof(IdleState));
+        }
+
+        private void OnEnable()
+        {
+            FireRate = MbGameManager.Instance.Data.FireRate;
+            Damage = MbGameManager.Instance.Data.Damage;
+            ShootingPattern = new SingleShot();
         }
 
         private void Awake()
@@ -89,16 +84,22 @@ namespace HitAndRun.Character
         private void Update()
         {
             _stateMachine.Update();
+            _autoTarget.enabled = _stateMachine.GetCurrentState() is AttackState;
             if (_stateMachine.GetCurrentState() is RunState or AttackState)
             {
                 if (Time.time <= _nextFireTime) return;
 
-                if (_autoTarget.Target != null) _shooter.LookAt(_autoTarget.Target.transform);
+                if (_autoTarget.enabled && _autoTarget.Target != null)
+                {
+                    var direction = _autoTarget.Target.transform.position - _shooter.position;
+                    direction.y = 0;
+                    if (direction != Vector3.zero) _shooter.rotation = Quaternion.LookRotation(direction);
+                }
                 else _shooter.rotation = Quaternion.identity;
 
                 _shooter.rotation = Quaternion.Euler(0, _shooter.rotation.eulerAngles.y, 0);
-                _shootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, _damage * _body.Level);
-                _nextFireTime = Time.time + _fireRate;
+                ShootingPattern.Shoot(_bulletSpeed, _shooter, _body.Color, transform.localScale, Damage * _body.Level);
+                _nextFireTime = Time.time + 0.1f + (0.5f - 0.1f) * Mathf.Exp(-0.2f * FireRate);
             }
         }
 
@@ -109,46 +110,19 @@ namespace HitAndRun.Character
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Tower") _isDead = true;
-            else if (other.TryGetComponent(out MbModifierBase modifier))
-            {
-                modifier.Modify(this);
-            }
+            if (other.tag == "Tower" || other.tag == "Obstacle")
+                _isDead = true;
+            else if (!other.CompareTag("Character_Inactive")) return;
+            var dir = (other.transform.position - transform.position).normalized;
+            var side = Vector3.Dot(dir, transform.right);
+
+            OnGrab?.Invoke(this, other.GetComponent<MbCharacter>(), side > 0);
         }
 
         public void TakeDamage()
         {
             _isDead = true;
         }
-
-#if UNITY_EDITOR
-        public void SetShootingPattern(IShootingPattern pattern)
-        {
-            _shootingPattern = pattern;
-        }
-#endif
-
     }
-
-#if UNITY_EDITOR
-    [CustomEditor(typeof(MbCharacter))]
-    public class ECharacterInspector : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            var character = (MbCharacter)target;
-            GUI.enabled = Application.isPlaying;
-            var shooting = character.ShootingPattern;
-            var text = shooting is SpreadShot ? "SingleShot" : "SpreadShot";
-            if (GUILayout.Button($"Shooting Pattern: {text}"))
-            {
-                character.SetShootingPattern(shooting is SpreadShot ? new SingleShot() : new SpreadShot());
-            }
-            GUI.enabled = true;
-            EditorGUILayout.Space();
-            DrawDefaultInspector();
-        }
-    }
-#endif
 }
 

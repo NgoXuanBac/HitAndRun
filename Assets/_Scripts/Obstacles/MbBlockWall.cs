@@ -11,7 +11,7 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _blockWall = transform.Find(Obstacles.BlockWall);
+            _blockWall = transform.Find("Model").Find(Obstacles.BlockWall);
         }
 
         protected override void Start()

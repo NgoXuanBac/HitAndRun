@@ -1,19 +1,28 @@
 using UnityEngine;
 using HitAndRun.Character;
+using HitAndRun.Bullet;
+using HitAndRun.Gui;
 
 namespace HitAndRun.Gate.Modifier
 {
     public class MbModifierAmmo : MbModifierBase
     {
-        [SerializeField] private int _ammoMultiplier = 2;
 
-
+        protected override void Reset()
+        {
+            base.Reset();
+            _modifierTypes = Resources.Load<SOModifierTypes>("Scriptables/AmmoModifierTypes");
+        }
         public override void Modify(MbCharacter character)
         {
-            if (_ammoMultiplier > 1)
+            if (character.ShootingPattern is not SpreadShot)
             {
-                Debug.Log($"x{_ammoMultiplier} ammo.");
+                character.ShootingPattern = new SpreadShot();
             }
+
+            MbNotification.Instance.Show("Spread Shot", _modifierType.Value.Category == ModifierCategory.Positive);
         }
+
+
     }
 }

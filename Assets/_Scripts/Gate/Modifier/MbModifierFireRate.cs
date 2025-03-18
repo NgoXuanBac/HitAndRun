@@ -1,30 +1,25 @@
 using HitAndRun.Character;
-
+using HitAndRun.Gui;
 using UnityEngine;
 
 namespace HitAndRun.Gate.Modifier
 {
     public class MbModifierFireRate : MbModifierBase
     {
-        [SerializeField] private int _fireRate = 2;
-
         protected override void Reset()
         {
             base.Reset();
-            _modifierType = Resources.Load<SOModifierTypes>("Scriptables/FireRateModifierTypes");
-            _isPositive = true;
-            ApplyVisuals(_fireRate.ToString());
+            _modifierTypes = Resources.Load<SOModifierTypes>("Scriptables/FireRateModifierTypes");
         }
         public override void Modify(MbCharacter character)
         {
-            if (_fireRate > 0)
-            {
-                Debug.Log($"x{_fireRate} firerate.");
-            }
-            else if (_fireRate < 0)
-            {
-                Debug.Log($"/{Mathf.Abs(_fireRate)} firerate.");
-            }
+            if (_modifierType == null) return;
+
+            MbNotification.Instance.Show($"{(_modifierType.Value.Amount > 0 ? "+" : "") + _modifierType.Value.Amount.ToString()} Fire Rate",
+                _modifierType.Value.Category == ModifierCategory.Positive);
+
+            if (character.FireRate <= 2 && _modifierType.Value.Amount < 0) return;
+            character.FireRate += _modifierType.Value.Amount;
         }
 
 

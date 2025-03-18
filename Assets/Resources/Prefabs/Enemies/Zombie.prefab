@@ -380,7 +380,7 @@ MonoBehaviour:
   _rb: {fileID: 3469969158597078224}
   _hpBar: {fileID: 7983740065637046721}
   _autoTarget: {fileID: 3724836272601062064}
-  _moveSpeed: 2
+  _moveSpeed: 3
 --- !u!136 &9085674052540459697
 CapsuleCollider:
   m_ObjectHideFlags: 0

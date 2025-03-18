@@ -13,7 +13,7 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _saw = transform.Find(Obstacles.Saw);
+            _saw = transform.Find("Model").Find(Obstacles.Saw);
             _pivot = transform.Find("Pivot");
         }
 
