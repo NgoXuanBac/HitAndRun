@@ -13,7 +13,7 @@ public class PlayerInfor : MonoBehaviour
         PlayFabLoginManager.OnLoginSuccess += () =>
         {
             GetPlayerRank();
-            FindObjectOfType<UpdateDisplayName>().GetDisplayName();
+            FindObjectOfType<ProfileSetting>().GetProfile();
         };
         Debug.Log("🟢 GetPlayerRank() is called.");
     }

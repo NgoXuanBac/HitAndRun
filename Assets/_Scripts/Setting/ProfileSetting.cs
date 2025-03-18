@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
+using System;
 using UnityEngine.SceneManagement;
 
-public class UpdateDisplayName : MonoBehaviour
+public class ProfileSetting : MonoBehaviour
 {
     public TMP_InputField nameInput;
+    public TMP_InputField Id;
     //public TextMeshProUGUI feedbackText; 
 
     void Start()
     {
-        PlayFabLoginManager.OnLoginSuccess += GetDisplayName;
+        Debug.Log("Profile Setting Start");
+        PlayFabLoginManager.Instance.Login();
     }
-    public void SaveDisplayName()
+    public void SetProfile()
     {
         string newName = nameInput.text.Trim();
 
@@ -33,12 +37,21 @@ public class UpdateDisplayName : MonoBehaviour
         PlayFabClientAPI.UpdateUserTitleDisplayName(request, OnDisplayNameUpdateSuccess, OnDisplayNameUpdateFailure);
     }
 
-    public void GetDisplayName()
+    public void GetProfile()
     {
         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest(), result =>
         {
-            var currentDisplayName = result.AccountInfo.TitleInfo.DisplayName ?? result.AccountInfo.PlayFabId;
+            var currentDisplayName = result.AccountInfo.TitleInfo.DisplayName;
+            var playFabId = result.AccountInfo.PlayFabId;
+
+            if(currentDisplayName == null)
+            {
+                currentDisplayName = "";
+            }
             nameInput.text = currentDisplayName;
+            Id.text = playFabId;
+            Debug.Log("Display Name: " + currentDisplayName);
+            Debug.Log("PlayFab ID: " + playFabId);
         }, error =>
         {
             Debug.LogError("Error fetching display name: " + error.GenerateErrorReport());
@@ -57,5 +70,10 @@ public class UpdateDisplayName : MonoBehaviour
     {
         //feedbackText.text = "Error: " + error.GenerateErrorReport();
         Debug.Log("Error: " + error.GenerateErrorReport());
+    }
+
+    public void CloseGameSetting()
+    {
+        SceneManager.LoadScene("BootScene");
     }
 }

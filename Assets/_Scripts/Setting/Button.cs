@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class Button : MonoBehaviour
 {
+    internal object onClick;
+
     private void Start()
     {
         ClickSound();

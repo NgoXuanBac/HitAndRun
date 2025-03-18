@@ -10,14 +10,12 @@ public class ButtonBase : MonoBehaviour
         button = GetComponent<Button>();
         if (button != null)
         {
+            ClickSound();
         }
     }
 
     private void ClickSound()
     {
-        if (PlayerPrefs.GetInt("SFX", 1) == 1)
-        {
-            AudioManager.Instance.PlaySFX(SFXType.ButtonClick);
-        }
+        
     }
 }

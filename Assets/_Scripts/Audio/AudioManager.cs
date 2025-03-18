@@ -15,17 +15,18 @@ public class SFXMapping
     public SFXType sfxType;
     public AudioClip sfxClip;
 }
+
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    private AudioSource bgmSource;  // Nguồn nhạc nền
-    private AudioSource sfxSource;  // Nguồn phát âm thanh hiệu ứng
+    private AudioSource bgmSource;  
+    private AudioSource sfxSource;  
 
     [Header("Audio Clips")]
-    public AudioClip bgmClip;  // Nhạc nền
-    public List<SFXMapping> sfxClip;  // Âm thanh hiệu ứng
+    public AudioClip bgmClip;  
+    public List<SFXMapping> sfxClip;  
 
     private void Awake()
     {
@@ -39,11 +40,19 @@ public class AudioManager : MonoBehaviour
 
             bgmSource.clip = bgmClip;
             bgmSource.loop = true;
-            
-            sfxSource.playOnAwake = true;
+
             sfxSource.playOnAwake = false;
 
-            bgmSource.volume = 0.5f;
+            float savedBgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.5f);
+            float savedSfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+
+            SetBGMVolume(savedBgmVolume);
+            SetSFXVolume(savedSfxVolume);
+
+            if (savedBgmVolume != 0f)
+            {
+                PlayBGM();
+            }
         }
         else
         {
@@ -52,27 +61,18 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void BGMOn()
+    public void PlayBGM()
     {
-        if (bgmSource.isPlaying) return;
-        if (bgmClip != null)
-        {
-            bgmSource.Play();
-        }
+        bgmSource.Play();
     }
 
-    public void BGMOff()
+    public void StopBGM()
     {
-        if (bgmSource.isPlaying)
-        {
-            bgmSource.Stop();
-        }
+        bgmSource.Stop();
     }
-
     public void PlaySFX(SFXType type)
     {
         SFXMapping mapping = sfxClip.Find(sfx => sfx.sfxType == type);
-
         if (mapping != null && mapping.sfxClip != null)
         {
             sfxSource.PlayOneShot(mapping.sfxClip);
@@ -83,20 +83,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void SFXOff()
+    public void SetBGMVolume(float volume)
     {
-        if (sfxSource.isPlaying)
-        {
-            sfxSource.Stop();
-        }
+        bgmSource.volume = volume;
+        PlayerPrefs.SetFloat("BGMVolume", volume);
     }
 
-    public void SFXOn()
+    public void SetSFXVolume(float volume)
     {
-        if (sfxSource.isPlaying)
-        {
-            sfxSource.Play();
-        }
+        sfxSource.volume = volume;
+        PlayerPrefs.SetFloat("SFXVolume", volume);
     }
-
 }

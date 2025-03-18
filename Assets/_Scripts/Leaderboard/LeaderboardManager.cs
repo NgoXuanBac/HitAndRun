@@ -2,6 +2,7 @@
 using TMPro;
 using PlayFab.ClientModels;
 using PlayFab;
+using UnityEngine.SceneManagement;
 
 namespace HitAndRun.Leaderboard
 {
@@ -13,11 +14,14 @@ namespace HitAndRun.Leaderboard
 
         private void Start()
         {
-            PlayFabLoginManager.OnLoginSuccess += () =>
-            {
-                GetLeaderboard();
-                GetCurrentPlayerRank();
-            };
+            //PlayFabLoginManager.OnLoginSuccess += () =>
+            //{
+            //    GetLeaderboard();
+            //    GetCurrentPlayerRank();
+            //};
+            PlayFabLoginManager.Instance.Login();
+            GetLeaderboard();
+            GetCurrentPlayerRank();
         }
 
 
@@ -100,7 +104,7 @@ namespace HitAndRun.Leaderboard
 
         public void CloseLeaderboard()
         {
-            gameObject.SetActive(false);
+            SceneManager.LoadScene("BootScene");
         }
     }
 }
