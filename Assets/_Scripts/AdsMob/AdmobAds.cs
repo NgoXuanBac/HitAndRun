@@ -73,7 +73,7 @@ public class AdmobAds : MonoBehaviour
         adRequest.Keywords.Add("unity-admob-sample");
 
         print("Loading banner Ad !!");
-        bannerView.LoadAd(adRequest);//show the banner on the screen
+        bannerView.LoadAd(adRequest);
     }
     void CreateBannerView()
     {
@@ -82,7 +82,7 @@ public class AdmobAds : MonoBehaviour
         {
             DestroyBannerAd();
         }
-        bannerView = new BannerView(bannerId, AdSize.GetPortraitAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.MediumRectangle.Width), AdPosition.Bottom);
+        bannerView = new BannerView(bannerId, AdSize.MediumRectangle, AdPosition.Bottom);
     }
     void ListenToBannerEvents()
     {
@@ -213,14 +213,20 @@ public class AdmobAds : MonoBehaviour
                            "with error : " + error);
         };
     }
-    public void CorrectDoupleCoin(Action actionReward)
+    public void CorrectDoupleCoin(Action<bool> actionReward)
     {
         if (rewardedAd != null && rewardedAd.CanShowAd())
         {
-            rewardedAd.Show((action) =>
+            rewardedAd.Show((reward) =>
             {
-                actionReward?.Invoke();
+                print("Rewarded ad completed - Doubling coins!");
+                actionReward?.Invoke(true); 
             });
+        }
+        else
+        {
+            print("Rewarded ad not ready - Collecting without doubling.");
+            actionReward?.Invoke(false);
         }
     }
 
@@ -367,15 +373,7 @@ public class AdmobAds : MonoBehaviour
 
     void ShowCoins()
     {
-        // Check if totalCoinsTxt is assigned
-        if (totalCoinsTxt == null)
-        {
-            Debug.LogError("totalCoinsTxt is not assigned in the Inspector!");
-            return;
-        }
-
-        // Update the UI with the current coin count
-        totalCoinsTxt.text = PlayerPrefs.GetInt("totalCoins").ToString();
+        
     }
 
     #endregion
