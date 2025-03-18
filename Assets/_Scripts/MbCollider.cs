@@ -5,20 +5,26 @@ namespace HitAndRun
 {
     public class MbCollider : MonoBehaviour
     {
-        [SerializeField] private MeshCollider _collider;
+        [SerializeField] private Collider _collider;
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
         public Action<GameObject> CollisionEnter;
         public Action<GameObject> CollisionExit;
 
-        public bool Enabled
+        private void OnEnable()
         {
-            get => _collider.enabled;
-            set => _collider.enabled = value;
+            if (_collider == null) return;
+            _collider.enabled = true;
         }
+        private void OnDisable()
+        {
+            if (_collider == null) return;
+            _collider.enabled = false;
+        }
+
         private void Reset()
         {
-            _collider = GetComponent<MeshCollider>();
+            _collider = GetComponent<Collider>();
         }
 
         private void OnCollisionEnter(Collision other)

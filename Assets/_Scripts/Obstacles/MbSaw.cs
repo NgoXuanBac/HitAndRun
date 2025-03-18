@@ -13,7 +13,7 @@ namespace HitAndRun.Obstacles
         protected virtual Vector3 Rotate => new(0, 0, 360);
         protected override void Reset()
         {
-            _saw = transform.Find(Obstacles.Saw);
+            _saw = transform.Find("Model").Find(Obstacles.Saw);
         }
 
         protected override void Start()
@@ -21,7 +21,7 @@ namespace HitAndRun.Obstacles
             if (_saw == null)
             {
 #if UNITY_EDITOR
-                Debug.LogError($"{nameof(Obstacles.Saw)} not found"); 
+                Debug.LogError($"{nameof(Obstacles.Saw)} not found");
 #endif
                 return;
             }

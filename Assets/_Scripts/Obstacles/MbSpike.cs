@@ -13,7 +13,7 @@ namespace HitAndRun.Obstacles
         protected float _delay = 2f;
         protected override void Reset()
         {
-            _spike = transform.Find(Obstacles.Spike);
+            _spike = transform.Find("Model").Find(Obstacles.Spike);
         }
 
         protected override void Start()

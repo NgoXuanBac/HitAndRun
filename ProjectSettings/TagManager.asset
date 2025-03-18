@@ -5,10 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Character
-  - Character_Inactive
   - Bullet
-  - Bullet_Inactive
   - Tower
+  - Modifier
+  - Goal
+  - Enemy
+  - Character_Inactive
+  - Coin
+  - Obstacle
   layers:
   - Default
   - TransparentFX

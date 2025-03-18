@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12ce2a36045a98a4a8b797e633d8e6bf, type: 3}
   m_Name: AmmoModifierTypes
   m_EditorClassIdentifier: 
-  _name: Damge
-  _positive:
-    Color: {r: 0.3529412, g: 1, b: 0.36078432, a: 1}
-    Icon: {fileID: 21300000, guid: 4262a6e76fc7d7b4ba2168855aa7f3bb, type: 3}
-  _negative:
-    Color: {r: 1, g: 0.13396227, b: 0.13396227, a: 1}
-    Icon: {fileID: 21300000, guid: a3fb66f2aea86474f805d5af05dc46a5, type: 3}
+  _name: Spread Shoot
+  _types:
+  - Color: {r: 0.16470589, g: 1, b: 0.1764706, a: 1}
+    Icon: {fileID: 21300000, guid: 8680e738e5c223040a832e5a49393307, type: 3}
+    Amount: 0
+    Category: 0

@@ -9,24 +9,41 @@ namespace HitAndRun.Character
     {
         [SerializeField, Range(0, 1)] private float _gap = 0.4f;
         [SerializeField] private Transform _follow;
+        [SerializeField] private MbTeamMovement _movement;
+        public MbTeamMovement Movement => _movement;
         private MbCharacter _head;
         private MbCharacter _tail;
 
         private void Reset()
         {
             _follow = transform.Find("Follow");
+            _movement = GetComponent<MbTeamMovement>();
+            _movement.enabled = false;
         }
 
         private void Start()
         {
+            _movement.enabled = false;
+            _movement.OnFinish += Attack;
+        }
+
+        public void Init()
+        {
+            _movement.enabled = false;
+            transform.localPosition = Vector3.forward * 10f;
+            _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
+            _movement?.Reset();
+
             var character = MbCharacterSpawner.Instance.Spawn(transform.position, transform);
             character.Grabber.OnGrab += Collect;
+            character.OnDead += Leave;
             _head = _tail = character;
-            character.Left = character.Right = null;
         }
 
         public void AddCharacter()
         {
+            for (var i = _head; i != null; i = i.Right) i.IsActive = true;
+
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
             var characters = new List<MbCharacter>();
@@ -39,10 +56,48 @@ namespace HitAndRun.Character
                 character,
                 UnityEngine.Random.Range(0, 2) == 0
             );
+
+            MbCharacterTracker.Instance.Reset();
+        }
+
+        public void ActiveCharacters()
+        {
+            for (var i = _head; i != null; i = i.Right)
+            {
+                i.IsActive = true;
+            }
+            _movement.enabled = true;
+            InputHelper.GetTouches();
+        }
+
+        private void Attack(Vector3 position)
+        {
+            _movement.enabled = false;
+            var sum = 0f;
+            for (var i = _head; i != null; i = i.Right)
+            {
+                sum += i.Body.Width + _gap;
+            }
+
+            var startX = -sum * 0.5f + _head.Body.Width * 0.5f;
+            for (var i = _head; i != null; i = i.Right)
+            {
+                i.IsAttack = true;
+                i.transform.SetParent(null, true);
+                i.Body.MoveToTarget(new Vector3(startX, 0, position.z));
+                startX += i.Body.Width + _gap;
+            }
+            _follow.position = new Vector3(0, _follow.position.y, _follow.position.z);
         }
 
         private void Update()
         {
+            if (!_head || !_movement.enabled)
+            {
+                _movement.enabled = false;
+                return;
+            }
+
             var isMoving = false;
             for (var i = _head; i != null; i = i.Right)
             {
@@ -72,6 +127,7 @@ namespace HitAndRun.Character
                             merged.Body.Level *= 2;
                             merged.IsMerging = false;
                             MbCharacterSpawner.Instance.Despawn(removed);
+                            MbCharacterTracker.Instance.RemoveCharacter(removed);
                         });
                     }
                 }
@@ -104,8 +160,6 @@ namespace HitAndRun.Character
             Follow();
         }
 
-
-
         private void Leave(MbCharacter remove)
         {
             remove.OnDead -= Leave;
@@ -115,7 +169,7 @@ namespace HitAndRun.Character
 
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
-            insert.tag = MbCharacter.ACTIVE_TAG;
+            insert.IsActive = true;
             insert.transform.parent = transform;
             insert.OnDead += Leave;
             insert.Grabber.OnGrab += Collect;
@@ -205,7 +259,7 @@ namespace HitAndRun.Character
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(MbTeam))]
-    public class ETeam1Inspector : Editor
+    public class ETeamInspector : Editor
     {
         public override void OnInspectorGUI()
         {

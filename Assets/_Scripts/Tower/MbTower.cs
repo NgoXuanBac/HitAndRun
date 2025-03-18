@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using HitAndRun.Bullet;
 using TMPro;
 using UnityEngine;
@@ -18,25 +19,33 @@ namespace HitAndRun.Tower
             set
             {
                 _health = value;
-                SetHp(value);
+                Hp = value;
             }
         }
+
+
         private long _hp;
-        private void SetHp(long value)
+        public long Hp
         {
-            _hp = value;
-            _textMeshPro.text = FormatNumber(value);
-            _animator.SetFloat("Health", 1 - (float)Math.Round(_hp / (double)_health, 2));
-            if (_hp <= 0) Disappear();
+            get => _hp;
+            set
+            {
+                _hp = value;
+                _textMeshPro.text = FormatNumber(value);
+                _animator.SetFloat("Health", 1 - (float)Math.Round(_hp / (double)_health, 2));
+                if (_hp <= 0) Disappear();
+            }
         }
+
 
         public void Reset()
         {
             _textMeshPro ??= GetComponentInChildren<TextMeshPro>();
             _animator = GetComponentInChildren<Animator>();
             _collider ??= GetComponentInChildren<MbCollider>();
-            _collider.Enabled = true;
+            _collider.enabled = true;
             _textMeshPro.enabled = true;
+            _animator.Rebind();
         }
 
         private void OnEnable()
@@ -47,18 +56,22 @@ namespace HitAndRun.Tower
         private void OnDisable()
         {
             _collider.TriggerEnter -= OnHit;
+            transform.DOKill();
         }
 
         private void OnHit(GameObject other)
         {
             if (!other.TryGetComponent(out MbBullet bullet)) return;
-            SetHp(_hp - bullet.Damage);
+            Hp -= bullet.Damage;
+            transform.DOKill();
+            transform.DOShakePosition(0.1f, 0.1f);
+
         }
 
         private void Disappear()
         {
             _animator.SetTrigger("Break");
-            _collider.Enabled = false;
+            _collider.enabled = false;
             _textMeshPro.enabled = false;
             StartCoroutine(WaitForAnimationEnd());
         }

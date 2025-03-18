@@ -12,9 +12,19 @@ namespace HitAndRun.Obstacles
         [SerializeField, Range(0.1f, 2f)]
         protected float _delay = 0.5f;
 
+        protected override void OnDisable()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnEnable()
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override void Reset()
         {
-            _hammer = transform.Find(Obstacles.Hammer);
+            _hammer = transform.Find("Model").Find(Obstacles.Hammer);
         }
 
         protected override void Start()

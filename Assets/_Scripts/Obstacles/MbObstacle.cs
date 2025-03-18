@@ -5,10 +5,12 @@ namespace HitAndRun.Obstacles
     public abstract class MbObstacle : MonoBehaviour
     {
 
-        protected abstract void Start();
-        protected abstract void Reset();
+        protected virtual void Start() { }
+        protected virtual void Reset() { }
         protected virtual void Awake() { }
         protected virtual void Update() { }
+        protected virtual void OnEnable() { }
+        protected virtual void OnDisable() { }
 
         protected static class Obstacles
         {

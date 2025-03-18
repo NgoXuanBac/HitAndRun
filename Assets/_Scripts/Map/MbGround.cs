@@ -5,14 +5,23 @@ namespace HitAndRun.Map
     public class MbGround : MonoBehaviour
     {
         [SerializeField] private MeshRenderer _renderer;
-        [SerializeField, ReadOnly] private int _chunkCount = 1;
+        [SerializeField] private Transform _road;
+        [SerializeField] private Transform _finish;
+        [SerializeField] private Transform _enemy;
+        [SerializeField, ReadOnly] private int _chunkCount = 10;
+        public Vector3 Finish => _finish.position;
+        public Vector3 Enemy => _enemy.position;
         public int ChunkCount
         {
             get => _chunkCount;
             set
             {
                 _chunkCount = value;
-                transform.localScale = new Vector3(1, 1, _chunkCount);
+                _road.localScale = new Vector3(1, 1, _chunkCount);
+                var length = _renderer.bounds.size.z;
+
+                _finish.localPosition = new Vector3(0, -1f, _road.localPosition.z + length + 3);
+
                 if (Application.isPlaying)
                     _renderer.material.mainTextureScale = new Vector2(1, _chunkCount);
                 else
@@ -24,7 +33,11 @@ namespace HitAndRun.Map
         public float Length => _renderer.bounds.size.z;
         private void Reset()
         {
-            _renderer = GetComponentInChildren<MeshRenderer>();
+            _road = transform.Find("Road");
+            _finish = transform.Find("Finish");
+            _enemy = GameObject.Find("Enemy").transform;
+
+            _renderer = _road.Find("Model").GetComponentInChildren<MeshRenderer>();
             ChunkCount = _chunkCount;
         }
     }

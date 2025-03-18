@@ -11,7 +11,7 @@ namespace HitAndRun.Obstacles
         protected float _speed = 0.5f;
         protected override void Reset()
         {
-            _pendulum = transform.Find(Obstacles.Pendulum);
+            _pendulum = transform.Find("Model").Find(Obstacles.Pendulum);
         }
 
         protected override void Start()

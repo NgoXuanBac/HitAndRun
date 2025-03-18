@@ -1,14 +1,14 @@
 using HitAndRun.Character;
-using UnityEditor;
 using UnityEngine;
 
 namespace HitAndRun.Gate.Modifier
 {
     public abstract class MbModifierBase : MonoBehaviour
     {
-        [SerializeField] protected SOModifierTypes _modifierType;
+        [SerializeField] protected SOModifierTypes _modifierTypes;
         [SerializeField] protected MbModifierView _modifierView;
-        [SerializeField] protected bool _isPositive;
+
+        protected ModifierType? _modifierType;
 
         public abstract void Modify(MbCharacter character);
 
@@ -17,10 +17,27 @@ namespace HitAndRun.Gate.Modifier
             _modifierView = GetComponent<MbModifierView>();
         }
 
-        protected void ApplyVisuals(string info)
+        public virtual bool HasCategory(ModifierCategory category)
         {
-            var type = _isPositive ? _modifierType.Positive : _modifierType.Negative;
-            _modifierView.SetVisuals(_modifierType.Name, info, type);
+            return _modifierTypes.GetTypes(category).Count > 0;
+        }
+
+        public virtual void SetCategory(ModifierCategory category)
+        {
+            var types = _modifierTypes.GetTypes(category);
+            _modifierType = types[Random.Range(0, types.Count)];
+
+            if (_modifierType == null) return;
+            _modifierView.SetVisuals(_modifierTypes.Name, _modifierType.Value.Color,
+                _modifierType.Value.Amount == 0 ? null : ((_modifierType.Value.Amount > 0 ? "+" : "") + _modifierType.Value.Amount.ToString()),
+                _modifierType.Value.Icon
+            );
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.TryGetComponent(out MbCharacter character)) return;
+            Modify(character);
         }
     }
 }

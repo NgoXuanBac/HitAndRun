@@ -11,7 +11,7 @@ namespace HitAndRun.Gate
         [SerializeField] private Renderer _cylinderR;
         [SerializeField] private Renderer _banner;
         [SerializeField] private Image _background;
-        [SerializeField] private TMP_Text _info;
+        [SerializeField] private TMP_Text _text;
         [SerializeField] private TMP_Text _name;
         [SerializeField] private Image _icon;
 
@@ -20,30 +20,34 @@ namespace HitAndRun.Gate
             _cylinderL = transform.Find("Cylinder_L").GetComponent<Renderer>();
             _cylinderR = transform.Find("Cylinder_R").GetComponent<Renderer>();
             _banner = transform.Find("Banner").GetComponent<Renderer>();
-            _background = transform.Find("Canvas").Find("Background").GetComponent<Image>();
-            _icon = transform.Find("Canvas").Find("Icon").GetComponent<Image>();
-            _name = transform.Find("Canvas").Find("Name").GetComponent<TMP_Text>();
-            _info = transform.Find("Canvas").Find("Info").GetComponent<TMP_Text>();
+            var canvas = transform.Find("Canvas");
+            _background = canvas.Find("Background").GetComponent<Image>();
+            _name = canvas.Find("Name").GetComponent<TMP_Text>();
+            _icon = canvas.Find("Background").Find("Icon").GetComponent<Image>();
+            _text = canvas.Find("Background").Find("Text").GetComponent<TMP_Text>();
         }
 
-        public override void SetVisuals(string name, string info, ModifierType type)
+        public override void SetVisuals(string name, Color color, string text = null, Sprite icon = null)
         {
             _name.text = name;
-            _background.color = new Color(type.Color.r, type.Color.g, type.Color.b, 0.5f);
-            _info.text = info;
-            _icon.sprite = type.Icon;
+            _text.text = text;
+            _icon.sprite = icon;
 
+            _icon.gameObject.SetActive(icon != null);
+            _text.gameObject.SetActive(text != null);
+
+            _background.color = new Color(color.r, color.g, color.b, 0.7f);
             if (Application.isPlaying)
             {
-                _cylinderL.material.SetColor("_BaseColor", type.Color);
-                _cylinderR.material.SetColor("_BaseColor", type.Color);
-                _banner.material.SetColor("_BaseColor", type.Color);
+                _cylinderL.material.SetColor("_BaseColor", color);
+                _cylinderR.material.SetColor("_BaseColor", color);
+                _banner.material.SetColor("_BaseColor", color);
             }
             else
             {
-                _cylinderL.sharedMaterial.SetColor("_BaseColor", type.Color);
-                _cylinderR.sharedMaterial.SetColor("_BaseColor", type.Color);
-                _banner.sharedMaterial.SetColor("_BaseColor", type.Color);
+                _cylinderL.sharedMaterial.SetColor("_BaseColor", color);
+                _cylinderR.sharedMaterial.SetColor("_BaseColor", color);
+                _banner.sharedMaterial.SetColor("_BaseColor", color);
             }
         }
     }

@@ -69,7 +69,8 @@ namespace HitAndRun.Character
             _textMeshPro ??= GetComponentInChildren<TextMeshPro>();
             _meshRenderer ??= GetComponentInChildren<SkinnedMeshRenderer>();
 
-            _radius = GetComponent<CapsuleCollider>().radius;
+            _collider.enabled = true;
+            _radius = _collider.radius;
 
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
@@ -85,13 +86,18 @@ namespace HitAndRun.Character
             if (!_isGrounded) _moveTween?.Kill();
         }
 
-        public void StopTween() => _moveTween?.Kill();
+        public void Unaffected()
+        {
+            _moveTween?.Kill();
+            _collider.enabled = false;
+        }
 
         private void FixedUpdate()
         {
             if (!_isGrounded)
                 _rigidbody.AddForce(Physics.gravity.y * _gravityScale * Vector3.up, ForceMode.Acceleration);
-            else _rigidbody.velocity = Vector3.zero;
+            else
+                _rigidbody.velocity = Vector3.zero;
         }
 
         private void MoveToTarget()
@@ -108,9 +114,20 @@ namespace HitAndRun.Character
                 .OnComplete(() => { _moveTween = null; });
         }
 
+        public void MoveToTarget(Vector3 target)
+        {
+            if (_moveTween != null && _moveTween.IsActive())
+            {
+                _moveTween.Kill();
+            }
+            _moveTween = transform.DOMove(target, _moveDuration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() => { _moveTween = null; });
+        }
+
         public void WhenMoveCompleted(Action onCompleted)
         {
-            if (_moveTween == null) onCompleted?.Invoke();
+            if (_moveTween == null && _moveTween.IsActive()) onCompleted?.Invoke();
             else _moveTween?.OnComplete(() => { _moveTween = null; onCompleted?.Invoke(); });
         }
 
