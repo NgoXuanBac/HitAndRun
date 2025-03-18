@@ -2453,7 +2453,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.747
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4277,7 +4277,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2089030650}
-  - component: {fileID: 2089030651}
   m_Layer: 5
   m_Name: LevelFailed
   m_TagString: Untagged
@@ -4311,33 +4310,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000061035156, y: -0.000061035156}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2089030651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2089030649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f000c5c06a08ec4e94c79b644d712bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  giftScreen: {fileID: 0}
-  Dimed: {fileID: 883149235}
-  settingTweenTime: 0.3
-  waitTimeBeforeShow: 0.1
-  coinPrefab: {fileID: 9141021215386988786, guid: bfb4c63755376f045becf8b18e295c73, type: 3}
-  coinParent: {fileID: 2089030650}
-  spawnLocation: {fileID: 0}
-  endPosition: {fileID: 7931678773447341455}
-  _coinText: {fileID: 7931678775160318888}
-  duration: 0.2
-  coinAmount: 10
-  minX: -100
-  maxX: 100
-  minY: -200
-  maxY: 200
 --- !u!1 &2092487785
 GameObject:
   m_ObjectHideFlags: 0
