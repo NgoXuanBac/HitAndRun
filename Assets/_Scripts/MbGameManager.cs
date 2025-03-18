@@ -12,8 +12,8 @@ namespace HitAndRun
     }
     public class MbGameManager : MbSingleton<MbGameManager>
     {
-        [SerializeField] private SaveData _data = new() { Amount = 0, Level = 1, Damage = 2, FireRate = 1 };
-        public SaveData Data => _data;
+        [SerializeField] private GameData _data = new() { Amount = 0, Level = 1, Damage = 2, FireRate = 1 };
+        public GameData Data => _data;
         private SaveManager _saveManager = new();
 
         [SerializeField] private MbEnemyTracker _enemiesTracker;
@@ -21,7 +21,7 @@ namespace HitAndRun
         [SerializeField] private MbTeam _team;
         [SerializeField] private MbMapGenerator _generator;
 
-        public event Action<SaveData> OnDataLoaded;
+        public event Action<GameData> OnDataLoaded;
         public void Reset()
         {
             _team = FindObjectOfType<MbTeam>();
@@ -69,8 +69,7 @@ namespace HitAndRun
             OnDataLoaded?.Invoke(_data);
 
             _generator.CleanMap();
-            _generator.GenerateMap();
-            _enemiesTracker.Reset();
+            _generator.GenerateMap(_data);
             _team.Init();
 
             _enemiesTracker.OnEnemiesDied += HandleWin;
@@ -80,6 +79,8 @@ namespace HitAndRun
         public void StartGame()
         {
             _team.ActiveCharacters();
+            _enemiesTracker.Reset();
+            _charactersTracker.Reset();
         }
     }
 
@@ -103,7 +104,7 @@ namespace HitAndRun
 #endif
 
     [Serializable]
-    public struct SaveData
+    public struct GameData
     {
         public int Level;
         public long Amount;

@@ -18,7 +18,7 @@ namespace HitAndRun.Gui
             MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }
 
-        private void UpdateUI(SaveData data)
+        private void UpdateUI(GameData data)
         {
             _text.text = FormatNumber(data.Amount);
         }

@@ -792,7 +792,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1461788329}
   - {fileID: 4940212174655671476}
   - {fileID: 2074108843}
   m_Father: {fileID: 762254427}
@@ -1676,12 +1675,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levelGeneration: {fileID: 762254429}
   _ground: {fileID: 6907515922028317753}
-  _spawnObject: 1
+  _renderMap: 1
   _spawnRules:
   - {fileID: 11400000, guid: 63e9a66252ff78a449e29fe53d7abace, type: 2}
   - {fileID: 11400000, guid: deb9ecad6014613408bdc11c35de9fe5, type: 2}
   - {fileID: 11400000, guid: 05a79e205a788de4dbafdc821843a1b1, type: 2}
   - {fileID: 11400000, guid: bfe230254aba60c4cb045b1cb4e427f9, type: 2}
+  _bossBaseHP: 300
+  _bossScale: 0.1
+  _timeToKill: 8
+  _baseTowerHP: 20
+  _towerPercent: 0.6
 --- !u!114 &762254429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1694,18 +1698,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e5172ddc453f2b408f938df41cb2c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chunkCount: 10
   _ratio:
   - Type: 0
     Weight: 1
   - Type: 1
     Weight: 1
-  - Type: 2
-    Weight: 1
   - Type: 3
     Weight: 1
   - Type: 4
     Weight: 1
+  _coverage: 3.5
 --- !u!1 &892131891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2813,13 +2815,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1461788328}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.01, z: 230}
-  m_LocalScale: {x: 100, y: 2, z: 100}
+  m_LocalPosition: {x: 0, y: -0.505, z: 7.8333335}
+  m_LocalScale: {x: 2.9411764, y: 1, z: 16.666668}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4309972874894008128}
   - {fileID: 892131892}
-  m_Father: {fileID: 328904655}
+  m_Father: {fileID: 4940212174655671476}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1461788331
@@ -3851,7 +3853,7 @@ Transform:
   - {fileID: 4260589640087598287}
   - {fileID: 5230885081939629582}
   m_Father: {fileID: 328904655}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9552132495341407
 MonoBehaviour:
@@ -5284,9 +5286,10 @@ Transform:
   m_LocalPosition: {x: 0, y: -1, z: 183}
   m_LocalScale: {x: 34, y: 2, z: 6}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1461788329}
   m_Father: {fileID: 328904655}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &4953656024396337457
 RectTransform:

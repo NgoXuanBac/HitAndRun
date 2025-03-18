@@ -15,7 +15,7 @@ namespace HitAndRun.Enemy
             _textMesh = GetComponent<TextMeshPro>();
         }
 
-        public void Setup(string text)
+        public void Popup(string text, float scale = 0.5f)
         {
             _textMesh.text = text;
             _textMesh.alpha = 1;
@@ -25,9 +25,8 @@ namespace HitAndRun.Enemy
                 _moveDistance,
                 0
             );
-
             transform.localScale = Vector3.one * 0.5f;
-            transform.DOScale(1.2f, _duration).SetEase(Ease.OutBack);
+            transform.DOScale(scale, _duration).SetEase(Ease.OutBack);
 
             transform.DOMove(transform.position + randomDirection, _duration).SetEase(Ease.OutCubic);
 

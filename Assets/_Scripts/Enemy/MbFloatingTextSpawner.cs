@@ -13,7 +13,7 @@ namespace HitAndRun.Enemy
             _prefab = Resources.Load<MbFloatingText>("Prefabs/FloatingText");
         }
 
-        public MbFloatingText Spawn(Vector3 position, Transform parent, string text)
+        public MbFloatingText Spawn(Vector3 position, Transform parent, string text, float scale = 0.5f)
         {
             if (_pools.Count == 0)
             {
@@ -25,7 +25,7 @@ namespace HitAndRun.Enemy
             floatingText.transform.position = position;
             floatingText.transform.SetParent(parent);
             floatingText.gameObject.SetActive(true);
-            floatingText.Setup(text);
+            floatingText.Popup(text, scale);
             return floatingText;
 
         }

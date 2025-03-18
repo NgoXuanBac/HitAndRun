@@ -16,7 +16,7 @@ namespace HitAndRun.Gui
         {
             MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }
-        protected abstract void UpdateUI(SaveData data);
+        protected abstract void UpdateUI(GameData data);
         protected virtual void Start()
         {
             if (_arrowUp) _arrowUp.DOLocalMoveY(_arrowUp.localPosition.y + 10f, 0.5f)

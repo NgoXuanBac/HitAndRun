@@ -64,7 +64,7 @@ namespace HitAndRun.Tower
             if (!other.TryGetComponent(out MbBullet bullet)) return;
             Hp -= bullet.Damage;
             transform.DOKill();
-            transform.DOShakePosition(0.1f, 0.1f);
+            transform.DOShakePosition(0.1f, new Vector3(0.1f, 0, 0.1f));
 
         }
 

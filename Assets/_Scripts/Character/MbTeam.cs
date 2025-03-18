@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using HitAndRun.Bullet;
 using UnityEditor;
 using UnityEngine;
 
@@ -86,6 +87,7 @@ namespace HitAndRun.Character
                 i.transform.SetParent(null, true);
                 i.Body.MoveToTarget(new Vector3(startX, 0, position.z));
                 startX += i.Body.Width + _gap;
+                i.ShootingPattern = new SingleShot();
             }
             _follow.position = new Vector3(0, _follow.position.y, _follow.position.z);
         }
@@ -173,6 +175,7 @@ namespace HitAndRun.Character
             insert.transform.parent = transform;
             insert.OnDead += Leave;
             insert.Grabber.OnGrab += Collect;
+            MbCharacterTracker.Instance.AddCharacter(insert);
 
             var isEdge = isRight ? current.Right == null : current.Left == null;
 

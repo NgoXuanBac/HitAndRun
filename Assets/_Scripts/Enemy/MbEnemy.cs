@@ -16,7 +16,8 @@ namespace HitAndRun.Enemy
         [SerializeField] private Rigidbody _rb;
         [SerializeField] Slider _hpBar;
         [SerializeField] protected MbAutoTarget _autoTarget;
-        [SerializeField, Range(0, 10)] private float _moveSpeed = 2f;
+        [SerializeField, Range(0, 10)] private float _moveSpeed = 3f;
+        public float MoveSpeed => _moveSpeed;
         public Action OnDead;
         public bool IsAttacking { get; set; }
         private long _health;
@@ -139,7 +140,8 @@ namespace HitAndRun.Enemy
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent(out MbBullet bullet) || _autoTarget.Target == null) return;
-            MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString());
+            var scale = Mathf.Clamp01(bullet.Damage / 30f) * 0.4f + 0.8f;
+            MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString(), scale);
             TakeDamage(bullet.Damage);
         }
 

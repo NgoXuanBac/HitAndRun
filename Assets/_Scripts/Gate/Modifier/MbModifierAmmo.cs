@@ -15,7 +15,11 @@ namespace HitAndRun.Gate.Modifier
         }
         public override void Modify(MbCharacter character)
         {
-            character.ShootingPattern = new SpreadShot();
+            if (character.ShootingPattern is not SpreadShot)
+            {
+                character.ShootingPattern = new SpreadShot();
+            }
+
             MbNotification.Instance.Show("Spread Shot", _modifierType.Value.Category == ModifierCategory.Positive);
         }
 

@@ -60,6 +60,7 @@ namespace HitAndRun.Character
         {
             FireRate = MbGameManager.Instance.Data.FireRate;
             Damage = MbGameManager.Instance.Data.Damage;
+            ShootingPattern = new SingleShot();
         }
 
         private void Awake()

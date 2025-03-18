@@ -13,16 +13,27 @@ namespace HitAndRun.Character
 
         public void Reset()
         {
-            _characters?.Clear();
-            _characters = FindObjectsOfType<MbCharacter>().ToList();
+            _characters.Clear();
+            _characters = FindObjectsOfType<MbCharacter>().Where(c => c.tag == "Character").ToList();
         }
 
         public void RemoveCharacter(MbCharacter character)
         {
-            if (_characters.Contains(character)) _characters.Remove(character);
+            if (_characters.Contains(character))
+            {
+                _characters.Remove(character);
+            }
             if (_characters.Count == 0)
             {
                 OnCharactersDied?.Invoke();
+            }
+        }
+
+        public void AddCharacter(MbCharacter character)
+        {
+            if (!_characters.Contains(character))
+            {
+                _characters.Add(character);
             }
         }
     }

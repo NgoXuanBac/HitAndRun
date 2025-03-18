@@ -37,7 +37,7 @@ namespace HitAndRun.DistanceProgressBar
             MbGameManager.Instance.OnDataLoaded += UpdateUI;
         }
 
-        private void UpdateUI(SaveData data)
+        private void UpdateUI(GameData data)
         {
             _current.text = data.Level.ToString();
             _next.text = (data.Level + 1).ToString();
