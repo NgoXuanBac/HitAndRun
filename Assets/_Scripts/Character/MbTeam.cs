@@ -57,8 +57,6 @@ namespace HitAndRun.Character
                 character,
                 UnityEngine.Random.Range(0, 2) == 0
             );
-
-            MbCharacterTracker.Instance.Reset();
         }
 
         public void ActiveCharacters()
