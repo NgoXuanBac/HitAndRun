@@ -5,7 +5,7 @@ using System;
 using HitAndRun;
 
 
-public class AdmobAds : MbSingleton<AdmobAds>
+public class MbAdmobAds : MbSingleton<MbAdmobAds>
 {
 
 #if UNITY_ANDROID
@@ -35,7 +35,6 @@ public class AdmobAds : MbSingleton<AdmobAds>
 
     private void Start()
     {
-        ShowCoins();
         MobileAds.RaiseAdEventsOnUnityMainThread = true;
         MobileAds.Initialize(initStatus =>
         {
@@ -108,7 +107,7 @@ public class AdmobAds : MbSingleton<AdmobAds>
             Debug.Log("Banner view full screen content closed.");
         };
     }
-    public void DestroyBannerAd()
+    private void DestroyBannerAd()
     {
 
         if (_bannerView != null)
@@ -184,7 +183,12 @@ public class AdmobAds : MbSingleton<AdmobAds>
                            "with error : " + error);
         };
     }
-    public void CorrectDoupleCoin(Action<bool> actionReward)
+
+    #endregion
+
+    #region Rewarded
+
+    public void ShowRewardedAd(Action<bool> actionReward)
     {
         if (_rewardedAd != null && _rewardedAd.CanShowAd())
         {
@@ -198,10 +202,6 @@ public class AdmobAds : MbSingleton<AdmobAds>
             actionReward?.Invoke(false);
         }
     }
-
-    #endregion
-
-    #region Rewarded
 
     public void LoadRewardedAd()
     {
@@ -225,18 +225,7 @@ public class AdmobAds : MbSingleton<AdmobAds>
             RewardedAdEvents(_rewardedAd);
         });
     }
-    public void ShowRewardedAd()
-    {
 
-        if (_rewardedAd != null && _rewardedAd.CanShowAd())
-        {
-            _rewardedAd.Show((Reward reward) =>
-            {
-                GrantCoins(200);
-            });
-        }
-
-    }
     public void RewardedAdEvents(RewardedAd ad)
     {
         // Raised when the ad is estimated to have earned money.
@@ -314,22 +303,4 @@ public class AdmobAds : MbSingleton<AdmobAds>
 
     #endregion
 
-
-    #region extra 
-
-    void GrantCoins(int coins)
-    {
-        int crrCoins = PlayerPrefs.GetInt("totalCoins");
-        crrCoins += coins;
-        PlayerPrefs.SetInt("totalCoins", crrCoins);
-
-        ShowCoins();
-    }
-
-    void ShowCoins()
-    {
-
-    }
-
-    #endregion
 }

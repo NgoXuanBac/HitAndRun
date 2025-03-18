@@ -8,6 +8,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Random = UnityEngine.Random;
 using UnityEditor;
+using HitAndRun.Ads;
 
 namespace HitAndRun.Gui
 {
@@ -100,7 +101,7 @@ namespace HitAndRun.Gui
 
         public void Collecting()
         {
-            AdmobAds.Instance.CorrectDoupleCoin((shouldDouble) =>
+            MbRewardAds.Instance.ShowRewardedAd((shouldDouble) =>
             {
                 shouldDoubleCoins = shouldDouble;
                 CollectCoins();
