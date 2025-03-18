@@ -16,6 +16,7 @@ namespace HitAndRun.Gui
         [Header("UI Elements")]
         public GameObject giftScreen;
         public GameObject Dimed;
+        private bool shouldDoubleCoins = false;
 
         [Header("Animation Settings")]
         [SerializeField] private float settingTweenTime = 0.3f;
@@ -99,7 +100,11 @@ namespace HitAndRun.Gui
 
         public void Collecting()
         {
-            CollectCoins();
+            AdmobAds.instance.CorrectDoupleCoin((shouldDouble) =>
+            {
+                shouldDoubleCoins = shouldDouble; 
+                CollectCoins(); 
+            });
         }
 
         private IEnumerator TweenShowPanel(GameObject targetPanel)
@@ -141,8 +146,11 @@ namespace HitAndRun.Gui
             }
             coins.Clear();
 
+            
+            int effectiveCoinAmount = shouldDoubleCoins ? coinAmount * 2 : coinAmount;
+
             List<UniTask> spawnCoinTaskList = new List<UniTask>();
-            for (int i = 0; i < coinAmount; i++)
+            for (int i = 0; i < effectiveCoinAmount; i++)
             {
                 GameObject coinInstance = Instantiate(coinPrefab, coinParent);
                 float xPosition = spawnLocation.position.x + Random.Range(minX, maxX);

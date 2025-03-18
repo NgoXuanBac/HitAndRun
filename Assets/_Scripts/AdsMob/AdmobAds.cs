@@ -7,6 +7,7 @@ using System;
 
 public class AdmobAds : MonoBehaviour
 {
+    public static AdmobAds instance;
     public TextMeshProUGUI totalCoinsTxt;
 
     public string appId = "ca-app-pub-1385093244148841~5602672977";// "ca-app-pub-3940256099942544~3347511713";
@@ -35,8 +36,11 @@ public class AdmobAds : MonoBehaviour
     InterstitialAd interstitialAd;
     RewardedAd rewardedAd;
     NativeAd nativeAd;
-
-
+    private void Awake()
+    {
+        instance = this;
+    }
+   
     private void Start()
     {
         ShowCoins();
@@ -44,7 +48,8 @@ public class AdmobAds : MonoBehaviour
         MobileAds.Initialize(initStatus => {
 
             print("Ads Initialised !!");
-
+            LoadBannerAd();
+            LoadRewardedAd();
         });
     }
 
@@ -68,7 +73,7 @@ public class AdmobAds : MonoBehaviour
         adRequest.Keywords.Add("unity-admob-sample");
 
         print("Loading banner Ad !!");
-        bannerView.LoadAd(adRequest);//show the banner on the screen
+        bannerView.LoadAd(adRequest);
     }
     void CreateBannerView()
     {
@@ -77,7 +82,7 @@ public class AdmobAds : MonoBehaviour
         {
             DestroyBannerAd();
         }
-        bannerView = new BannerView(bannerId, AdSize.Banner, AdPosition.Top);
+        bannerView = new BannerView(bannerId, AdSize.MediumRectangle, AdPosition.Bottom);
     }
     void ListenToBannerEvents()
     {
@@ -208,6 +213,22 @@ public class AdmobAds : MonoBehaviour
                            "with error : " + error);
         };
     }
+    public void CorrectDoupleCoin(Action<bool> actionReward)
+    {
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            rewardedAd.Show((reward) =>
+            {
+                print("Rewarded ad completed - Doubling coins!");
+                actionReward?.Invoke(true); 
+            });
+        }
+        else
+        {
+            print("Rewarded ad not ready - Collecting without doubling.");
+            actionReward?.Invoke(false);
+        }
+    }
 
     #endregion
 
@@ -283,10 +304,12 @@ public class AdmobAds : MonoBehaviour
         ad.OnAdFullScreenContentClosed += () =>
         {
             Debug.Log("Rewarded ad full screen content closed.");
+            LoadRewardedAd();
         };
         // Raised when the ad failed to open full screen content.
         ad.OnAdFullScreenContentFailed += (AdError error) =>
         {
+            LoadRewardedAd();
             Debug.LogError("Rewarded ad failed to open full screen content " +
                            "with error : " + error);
         };
@@ -350,15 +373,7 @@ public class AdmobAds : MonoBehaviour
 
     void ShowCoins()
     {
-        // Check if totalCoinsTxt is assigned
-        if (totalCoinsTxt == null)
-        {
-            Debug.LogError("totalCoinsTxt is not assigned in the Inspector!");
-            return;
-        }
-
-        // Update the UI with the current coin count
-        totalCoinsTxt.text = PlayerPrefs.GetInt("totalCoins").ToString();
+        
     }
 
     #endregion
