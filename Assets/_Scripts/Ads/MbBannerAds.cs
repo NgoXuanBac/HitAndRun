@@ -28,6 +28,7 @@ namespace HitAndRun.Ads
             MobileAds.Initialize((InitializationStatus status) =>
             {
                 RequestBanner();
+                MbRewardAds.Instance.LoadRewardedAd();
             });
         }
         private void RequestBanner()

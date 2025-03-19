@@ -7,7 +7,7 @@ namespace HitAndRun.Gui.Popup
     {
         public void OnPointerDown(PointerEventData eventData)
         {
-            transform.gameObject.SetActive(false);
+            HidePopup();
             MbGameManager.Instance.StartGame();
         }
     }

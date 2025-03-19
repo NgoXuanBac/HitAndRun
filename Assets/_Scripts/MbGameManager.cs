@@ -1,5 +1,7 @@
 using System;
 using HitAndRun.Character;
+using HitAndRun.Gui;
+using HitAndRun.Gui.Popup;
 using HitAndRun.Map;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +20,7 @@ namespace HitAndRun
 
         [SerializeField] private MbEnemyTracker _enemiesTracker;
         [SerializeField] private MbCharacterTracker _charactersTracker;
+        [SerializeField] private MbUIManager _uiManager;
         [SerializeField] private MbTeam _team;
         [SerializeField] private MbMapGenerator _generator;
 
@@ -28,6 +31,7 @@ namespace HitAndRun
             _generator = FindObjectOfType<MbMapGenerator>();
             _enemiesTracker = MbEnemyTracker.Instance;
             _charactersTracker = MbCharacterTracker.Instance;
+            _uiManager = MbUIManager.Instance;
         }
 
         private void Start()
@@ -39,6 +43,8 @@ namespace HitAndRun
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _charactersTracker.OnCharactersDied -= HandleLose;
+            _uiManager.ShowPopup<MbWinPopup>();
+
             NextLevel();
         }
 
@@ -46,14 +52,13 @@ namespace HitAndRun
         {
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _charactersTracker.OnCharactersDied -= HandleLose;
-            Restart();
+            _uiManager.ShowPopup<MbLosePopup>();
         }
 
         private void NextLevel()
         {
             _data.Level++;
             _saveManager.Save(_data, "Data");
-            Restart();
         }
 
         public void AddCoin(int amount)
@@ -74,6 +79,8 @@ namespace HitAndRun
 
             _enemiesTracker.OnEnemiesDied += HandleWin;
             _charactersTracker.OnCharactersDied += HandleLose;
+
+            _uiManager.ShowPopup<MbWaitPopup>();
         }
 
         public void StartGame()

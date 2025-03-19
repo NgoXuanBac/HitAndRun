@@ -6,55 +6,59 @@ namespace HitAndRun.Ads
 {
     public class MbRewardAds : MbSingleton<MbRewardAds>
     {
+
 #if UNITY_ANDROID
-        private readonly string _rewardedId = "ca-app-pub-3940256099942544/5224354917";
+        private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
 #elif UNITY_IPHONE
-    private readonly string _rewardedId = "ca-app-pub-3940256099942544/1712485313"; 
+  private string _adUnitId = "ca-app-pub-3940256099942544/1712485313";
+#else
+  private string _adUnitId = "unused";
 #endif
+
         private RewardedAd _rewardedAd;
-
-        private void Start()
-        {
-            MobileAds.RaiseAdEventsOnUnityMainThread = true;
-            MobileAds.Initialize(initStatus =>
-            {
-                LoadRewardedAd();
-            });
-        }
-
-        public void ShowRewardedAd(Action<bool> actionReward)
-        {
-            if (_rewardedAd != null && _rewardedAd.CanShowAd())
-            {
-                _rewardedAd.Show((reward) =>
-                {
-                    actionReward?.Invoke(true);
-                });
-            }
-            else
-            {
-                actionReward?.Invoke(false);
-            }
-        }
 
         public void LoadRewardedAd()
         {
-
             if (_rewardedAd != null)
             {
                 _rewardedAd.Destroy();
                 _rewardedAd = null;
             }
+
             var adRequest = new AdRequest();
 
-            RewardedAd.Load(_rewardedId, adRequest, (RewardedAd ad, LoadAdError error) =>
-            {
-                if (error != null || ad == null)
-                    return;
-                _rewardedAd = ad;
-            });
+            RewardedAd.Load(_adUnitId, adRequest,
+                (RewardedAd ad, LoadAdError error) =>
+                {
+                    if (error != null || ad == null) return;
+                    _rewardedAd = ad;
+                    RegisterReloadHandler(_rewardedAd);
+                });
         }
 
+        public void ShowRewardedAd(Action receive)
+        {
+
+            if (_rewardedAd != null && _rewardedAd.CanShowAd())
+            {
+                _rewardedAd.Show((Reward reward) =>
+                {
+                    receive?.Invoke();
+                });
+            }
+        }
+
+        private void RegisterReloadHandler(RewardedAd ad)
+        {
+            ad.OnAdFullScreenContentClosed += () =>
+            {
+                LoadRewardedAd();
+            };
+            ad.OnAdFullScreenContentFailed += (AdError error) =>
+            {
+                LoadRewardedAd();
+            };
+        }
     }
 
 }

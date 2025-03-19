@@ -1,22 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using HitAndRun.Gui.Popup;
 using UnityEngine;
 
 namespace HitAndRun.Gui
 {
-    public class MbUIManager : MonoBehaviour
+    public class MbUIManager : MbSingleton<MbUIManager>
     {
-        [SerializeField] private GameObject _losePopup;
-        [SerializeField] private GameObject _winPopup;
-        [SerializeField] private GameObject _waitPopup;
-
+        [SerializeField] private List<MbPopup> _popups;
+        [SerializeField] private Dictionary<Type, MbPopup> _popupsByType = new();
         private void Reset()
         {
-            _losePopup = GameObject.Find("LosePopup");
-            _winPopup = GameObject.Find("WinPopup");
-            _waitPopup = GameObject.Find("WaitPopup");
+            _popups = FindObjectsOfType<MbPopup>(true).ToList();
+        }
 
-            _losePopup.SetActive(false);
-            _winPopup.SetActive(false);
-            _waitPopup.SetActive(true);
+        private void Awake()
+        {
+            foreach (var popup in _popups)
+            {
+                var type = popup.GetType();
+                if (!_popupsByType.ContainsKey(type))
+                {
+                    _popupsByType.Add(type, popup);
+                }
+            }
+        }
+
+        public MbPopup ShowPopup<T>() where T : MbPopup
+        {
+            var popup = _popupsByType[typeof(T)];
+            popup.ShowPopup();
+            return popup;
         }
     }
 

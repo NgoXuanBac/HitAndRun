@@ -1,4 +1,3 @@
-using DG.Tweening;
 using UnityEngine;
 
 namespace HitAndRun.Gui.Popup
@@ -13,6 +12,18 @@ namespace HitAndRun.Gui.Popup
             _content = transform.Find("Content");
         }
 
+        public virtual void ShowPopup()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public virtual void HidePopup()
+        {
+            gameObject.SetActive(false);
+        }
+
+        protected virtual void OnEnable() { }
+        protected virtual void OnDisable() { }
     }
 
 }
