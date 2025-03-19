@@ -46,15 +46,11 @@ namespace HitAndRun.Ads
                 _rewardedAd = null;
             }
             var adRequest = new AdRequest();
-            adRequest.Keywords.Add("unity-admob-sample");
 
             RewardedAd.Load(_rewardedId, adRequest, (RewardedAd ad, LoadAdError error) =>
             {
                 if (error != null || ad == null)
-                {
                     return;
-                }
-
                 _rewardedAd = ad;
             });
         }

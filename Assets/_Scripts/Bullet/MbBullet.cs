@@ -8,7 +8,7 @@ namespace HitAndRun.Bullet
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private TrailRenderer _trailRenderer;
         public TrailRenderer TrailRenderer => _trailRenderer;
-        private Vector3 start;
+        private Vector3 _start;
         private int _damage = 1;
         public int Damage => _damage;
         private void Reset()
@@ -19,11 +19,11 @@ namespace HitAndRun.Bullet
         }
         private void OnEnable()
         {
-            start = transform.position;
+            _start = transform.position;
         }
         private void Update()
         {
-            if (Vector3.Distance(start, transform.position) > _maxDistance)
+            if (Vector3.Distance(_start, transform.position) > _maxDistance)
                 MbBulletSpawner.Instance.Despawn(this);
         }
 
@@ -44,7 +44,6 @@ namespace HitAndRun.Bullet
             );
 
             _trailRenderer.colorGradient = gradient;
-
             _damage = damage;
         }
     }

@@ -323,7 +323,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &126443237
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1762,8 +1762,9 @@ MonoBehaviour:
   _bossBaseHP: 300
   _bossScale: 0.1
   _timeToKill: 8
-  _baseTowerHP: 20
-  _towerPercent: 0.8
+  _towerPercent: 0.6
+  _towerScale: 0.5
+  _towerBaseHP: 12
 --- !u!114 &762254429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1776,15 +1777,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e5172ddc453f2b408f938df41cb2c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ratio:
-  - Type: 0
-    Weight: 1
-  - Type: 1
-    Weight: 1
-  - Type: 3
-    Weight: 1
-  - Type: 4
-    Weight: 1
+  _milestones:
+  - LevelThreshold: 30
+    TypeRatios:
+    - Type: 0
+      Weight: 10
+    - Type: 1
+      Weight: 40
+    - Type: 3
+      Weight: 25
+    - Type: 4
+      Weight: 25
+  - LevelThreshold: 10
+    TypeRatios:
+    - Type: 0
+      Weight: 30
+    - Type: 1
+      Weight: 20
+    - Type: 3
+      Weight: 25
+    - Type: 4
+      Weight: 25
+  - LevelThreshold: 0
+    TypeRatios:
+    - Type: 0
+      Weight: 15
+    - Type: 1
+      Weight: 15
+    - Type: 3
+      Weight: 30
+    - Type: 4
+      Weight: 40
   _coverage: 3.5
 --- !u!1 &826282051
 GameObject:
@@ -1803,7 +1826,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &826282052
 RectTransform:
   m_ObjectHideFlags: 0

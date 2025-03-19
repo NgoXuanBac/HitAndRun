@@ -170,12 +170,14 @@ namespace HitAndRun.Character
 
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
-            MbCharacterTracker.Instance.AddCharacter(insert);
+            if (insert == null) return;
 
             insert.IsActive = true;
             insert.transform.parent = transform;
             insert.OnDead += Leave;
             insert.OnGrab += Collect;
+
+            MbCharacterTracker.Instance.AddCharacter(insert);
 
             var isEdge = isRight ? current.Right == null : current.Left == null;
 

@@ -8,31 +8,22 @@ namespace HitAndRun.Map
     public class MbLevelGeneration : MonoBehaviour
     {
         [Header("Chunk")]
-        [SerializeField] private List<TypeRatio> _ratio;
+
+        [SerializeField] private List<LevelMilestone> _milestones;
         [SerializeField, Range(3.5f, 5)] private float _coverage = 3.5f;
         private void Reset()
         {
-            _ratio = new List<TypeRatio>();
+            var ratio = new List<TypeRatio>();
             foreach (SpawnType type in Enum.GetValues(typeof(SpawnType)))
             {
                 if (type == SpawnType.Character) continue;
-                _ratio.Add(new TypeRatio { Type = type, Weight = 1 });
+                ratio.Add(new TypeRatio { Type = type, Weight = 1 });
             }
-        }
 
-        public SpawnType[] Generate(int currentLevel)
-        {
-            var chunks = new SpawnType[30];
-
-            for (int index = 3; index < 30; index++)
+            _milestones = new List<LevelMilestone>
             {
-                var types = _ratio
-                    .Where(v => v.Type != chunks[index - 1])
-                    .ToList();
-                chunks[index] = types[UnityEngine.Random.Range(0, types.Count)].Type;
-            }
-
-            return chunks;
+                new() { LevelThreshold = 0, TypeRatios = ratio },
+            };
         }
 
         public List<SpawnType> Generate(int level, int characterNum, int min = 3)
@@ -56,7 +47,7 @@ namespace HitAndRun.Map
                 availables.Remove(position - 1);
                 availables.Remove(position + 1);
             }
-
+            var ratio = GetTypeRatiosForLevel(level);
             for (int i = 0; i < count; i++)
             {
                 if (positions.Contains(i))
@@ -65,8 +56,9 @@ namespace HitAndRun.Map
                 }
                 else if (i >= min)
                 {
-                    var types = _ratio.Where(v => v.Type != chunks[i - 1]).ToList();
-                    chunks.Add(types[UnityEngine.Random.Range(0, types.Count)].Type);
+                    if (ratio.Count == 0) continue;
+                    var type = GetRandomType(ratio.Where(v => v.Type != chunks[i - 1]).ToList());
+                    chunks.Add(type);
                 }
                 else
                 {
@@ -83,9 +75,36 @@ namespace HitAndRun.Map
             {
                 chunks.RemoveAt(chunks.Count - 1);
             }
-            chunks.Add(SpawnType.Empty);
 
             return chunks;
+        }
+
+        private SpawnType GetRandomType(List<TypeRatio> types)
+        {
+            int totalWeight = types.Sum(t => t.Weight);
+            int randomValue = UnityEngine.Random.Range(0, totalWeight);
+
+            foreach (var type in types)
+            {
+                if (randomValue < type.Weight)
+                    return type.Type;
+                randomValue -= type.Weight;
+            }
+
+            return SpawnType.Empty;
+        }
+
+        private List<TypeRatio> GetTypeRatiosForLevel(int level)
+        {
+            var milestone = _milestones.FirstOrDefault(m => level >= m.LevelThreshold);
+            return milestone.TypeRatios.Count > 0 ? milestone.TypeRatios : new List<TypeRatio>();
+        }
+
+        [Serializable]
+        private struct LevelMilestone
+        {
+            public int LevelThreshold;
+            public List<TypeRatio> TypeRatios;
         }
 
         [Serializable]

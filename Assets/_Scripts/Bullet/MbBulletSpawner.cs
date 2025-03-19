@@ -18,6 +18,7 @@ namespace HitAndRun.Bullet
             if (_pool.Count == 0)
             {
                 var newBullet = Instantiate(_prefab, transform);
+                newBullet.gameObject.SetActive(false);
                 _pool.Enqueue(newBullet);
             }
 

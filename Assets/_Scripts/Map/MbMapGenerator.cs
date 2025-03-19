@@ -20,11 +20,12 @@ namespace HitAndRun.Map
         [SerializeField] private List<SOSpawnRule> _spawnRules;
 
         [Header("Seed")]
-        [SerializeField, Range(100f, 500f)] private long _bossBaseHP = 300;
+        [SerializeField, Range(100, 500)] private long _bossBaseHP = 300;
         [SerializeField, Range(0, 1)] private float _bossScale = 0.1f;
         [SerializeField, Range(1, 10)] private float _timeToKill = 8f;
-        [SerializeField, Range(1, 50)] private int _baseTowerHP = 20;
-        [SerializeField, Range(0.1f, 1f)] private float _towerPercent = 0.8f;
+        [SerializeField, Range(0.1f, 1f)] private float _towerPercent = 0.6f;
+        [SerializeField, Range(0, 1)] private float _towerScale = 0.5f;
+        [SerializeField, Range(1, 50)] private long _towerBaseHP = 12;
 
         private Dictionary<SpawnType, SOSpawnRule> _spawnRuleWithType;
 
@@ -42,10 +43,11 @@ namespace HitAndRun.Map
 
         public void GenerateMap(GameData data)
         {
-            var towerHp = _baseTowerHP;
             var bossHp = (long)(_bossBaseHP * (1 + data.Level * _bossScale));
             var rate = 1f / (0.1f + (0.5f - 0.1f) * Mathf.Exp(-0.2f * data.FireRate));
-            var characterNum = Mathf.CeilToInt(bossHp / (2 * data.Damage * _timeToKill * rate));
+            var dms = 2 * data.Damage * rate;
+            var characterNum = Mathf.CeilToInt(bossHp / (dms * _timeToKill));
+            var towerHp = (long)(_towerBaseHP * (1 + data.Level * _towerScale));
 
             var chunks = _levelGeneration.Generate(data.Level, characterNum);
             _ground.ChunkCount = chunks.Count;
@@ -65,6 +67,7 @@ namespace HitAndRun.Map
 
             var chunkWidth = _ground.Width;
             var chunkHeight = _ground.Length / chunks.Count;
+            var cIndex = 0;
 
             for (int index = 3; index < chunks.Count; index++)
             {
@@ -83,13 +86,14 @@ namespace HitAndRun.Map
                             if (isTower)
                             {
                                 MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 8, index * chunkHeight), transform);
-                                MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, towerHp);
+                                MbTowerSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform, towerHp * (1 + cIndex));
                             }
                             else
                             {
                                 MbCharacterSpawner.Instance.Spawn(new Vector3(ratio * chunkWidth * 0.5f, 0, index * chunkHeight), transform);
                             }
                         }
+                        cIndex++;
                         break;
                     case SpawnType.Gate:
                         var category = Random.Range(0, 2) == 1 ? ModifierCategory.Positive : ModifierCategory.Negative;
