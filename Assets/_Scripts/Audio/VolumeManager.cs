@@ -8,22 +8,20 @@ public class VolumeManager : MonoBehaviour
 
     private void Start()
     {
-        bgmSlider.value = PlayerPrefs.GetFloat("BGMVolume", 0.5f);
-        sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+        if (AudioManager.Instance == null) return;
+
+        float bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 0.5f);
+        float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+
+        bgmSlider.value = bgmVolume;
+        sfxSlider.value = sfxVolume;
 
         bgmSlider.onValueChanged.AddListener(AudioManager.Instance.SetBGMVolume);
         sfxSlider.onValueChanged.AddListener(AudioManager.Instance.SetSFXVolume);
 
-        if (AudioManager.Instance != null) // Kiểm tra AudioManager.Instance
-        {
-            if (bgmSlider.value != 0f)
-            {
-                AudioManager.Instance.PlayBGM();
-            }
-            else
-            {
-                AudioManager.Instance.StopBGM();
-            }
-        }
+        if (bgmVolume > 0f)
+            AudioManager.Instance.PlayBGM();
+        else
+            AudioManager.Instance.StopBGM();
     }
 }

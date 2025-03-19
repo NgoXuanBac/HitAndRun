@@ -49,7 +49,7 @@ public class AudioManager : MonoBehaviour
             SetBGMVolume(savedBgmVolume);
             SetSFXVolume(savedSfxVolume);
 
-            if (savedBgmVolume != 0f)
+            if (savedBgmVolume != 0f && !bgmSource.isPlaying)
             {
                 PlayBGM();
             }
@@ -60,10 +60,20 @@ public class AudioManager : MonoBehaviour
             return;
         }
     }
-
+    private void Update()
+    {
+        float savedSfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
+        if (Input.GetMouseButtonDown(0) && sfxSource.volume != 0)
+        {
+            PlaySFX(SFXType.ButtonClick);
+        }
+    }
     public void PlayBGM()
     {
-        bgmSource.Play();
+        if(!bgmSource.isPlaying)
+        {
+            bgmSource.Play();
+        }
     }
 
     public void StopBGM()
