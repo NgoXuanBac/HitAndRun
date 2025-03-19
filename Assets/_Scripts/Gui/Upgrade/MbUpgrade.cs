@@ -2,7 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-namespace HitAndRun.Gui
+namespace HitAndRun.Gui.Upgrade
 {
     public abstract class MbUpgrade : MonoBehaviour
     {

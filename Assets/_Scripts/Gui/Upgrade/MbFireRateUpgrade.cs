@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HitAndRun.Gui
+namespace HitAndRun.Gui.Upgrade
 {
     public class MbFireRateUpgrade : MbUpgrade
     {

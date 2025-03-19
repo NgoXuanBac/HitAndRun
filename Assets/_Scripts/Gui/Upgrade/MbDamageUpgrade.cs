@@ -1,4 +1,4 @@
-namespace HitAndRun.Gui
+namespace HitAndRun.Gui.Upgrade
 {
     public class MbDamageUpgrade : MbUpgrade
     {

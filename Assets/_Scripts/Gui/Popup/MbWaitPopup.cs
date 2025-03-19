@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HitAndRun.Gui
+namespace HitAndRun.Gui.Popup
 {
-    public class MbWaitPopup : MonoBehaviour, IPointerDownHandler
+    public class MbWaitPopup : MbPopup, IPointerDownHandler
     {
         public void OnPointerDown(PointerEventData eventData)
         {
