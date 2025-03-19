@@ -68,11 +68,13 @@ namespace HitAndRun.Character
             );
         }
 
-        public void Run()
+        public void Run(GameData data)
         {
             for (var i = _head; i != null; i = i.Right)
             {
                 i.IsActive = true;
+                i.FireRate = data.FireRate;
+                i.Damage = data.Damage;
             }
             _movement.enabled = true;
             InputHelper.GetTouches();
