@@ -1,3 +1,4 @@
+using DG.Tweening;
 using HitAndRun.Ads;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace HitAndRun.Gui.Popup
         [SerializeField] private Button _claimBtn;
         [SerializeField] private Button _claimX2Btn;
         [SerializeField] private TMP_Text _total;
+        [SerializeField] private TMP_Text _level;
         [SerializeField, Range(10, 100)] private long _coinNum = 10;
         [SerializeField, Range(0.1f, 2)] private float _coinScale = 1f;
 
@@ -30,19 +32,20 @@ namespace HitAndRun.Gui.Popup
                     break;
             }
 
-            _total = _content.GetComponentInChildren<TMP_Text>();
-        }
-
-        private void Awake()
-        {
-            OnEnable();
+            _total = _content.Find("Total").GetComponent<TMP_Text>();
+            _level = _content.Find("Level").GetComponent<TMP_Text>();
         }
 
         protected override void OnEnable()
         {
-            _total.text = "x" + FormatNumber((long)(_coinNum * (1 + MbGameManager.Instance.Data.Level * _coinScale)));
+            _total.text = "x" + FormatNumber(_coinNum * (int)(1 + MbGameManager.Instance.Data.Level * _coinScale));
             _claimBtn.onClick.AddListener(HandleClaim);
             _claimX2Btn.onClick.AddListener(HandleX2Claim);
+            _level.text = MbGameManager.Instance.Data.Level.ToString();
+
+            _group.DOFade(1f, 0.3f).SetEase(Ease.OutElastic);
+            _content.localScale = Vector3.zero;
+            _content.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutElastic);
         }
 
         protected override void OnDisable()
@@ -60,18 +63,22 @@ namespace HitAndRun.Gui.Popup
             return number.ToString();
         }
 
-
         private void HandleClaim()
         {
-            Debug.Log("Claim");
+            MbGameManager.Instance.AddCoin(_coinNum);
+            MbGameManager.Instance.NextLevel();
+            HidePopup();
         }
 
         private void HandleX2Claim()
         {
-            MbRewardAds.Instance.ShowRewardedAd(() =>
-            {
-                Debug.Log("Claim X2");
-            });
+            MbRewardAds.Instance.ShowRewardedAd(() => MbGameManager.Instance.AddCoin(_coinNum * 2),
+                () =>
+                {
+                    HidePopup();
+                    MbGameManager.Instance.NextLevel();
+                }
+            );
         }
 
     }

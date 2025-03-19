@@ -12,6 +12,15 @@ namespace HitAndRun.Character.State
         {
             _animator.CrossFade(VictoryHash, CrossFadeDuration);
         }
+
+        public override void Update()
+        {
+            var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.shortNameHash == VictoryHash && stateInfo.normalizedTime >= 1f)
+            {
+                _character.IsActive = false;
+            }
+        }
     }
 
 }

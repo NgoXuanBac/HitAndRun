@@ -22,6 +22,10 @@ namespace HitAndRun.Gui.Popup
         {
             base.OnEnable();
             _retry.DOScale(1.2f, 0.5f).SetLoops(-1, LoopType.Yoyo).Play();
+
+            _group.DOFade(1f, 0.3f).SetEase(Ease.OutElastic);
+            _content.localScale = Vector3.zero;
+            _content.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutElastic);
         }
 
         protected override void OnDisable()

@@ -100,7 +100,7 @@ namespace HitAndRun.Enemy
         private void DetectCharacter()
         {
             if (_stateMachine.GetCurrentState() is not WalkState) return;
-            var origin = transform.position + Vector3.up * _collider.bounds.extents.y;
+            var origin = transform.position;
             var direction = (_autoTarget.Target.position - transform.position).normalized;
             var maxDistance = _collider.bounds.extents.z * 3;
 
@@ -131,7 +131,10 @@ namespace HitAndRun.Enemy
             _rb.MovePosition(_rb.position + direction * _moveSpeed * Time.fixedDeltaTime);
 
             if (direction.magnitude > 0.1f)
-                transform.rotation = Quaternion.LookRotation(direction);
+            {
+                var targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
+            }
         }
 
 
@@ -140,7 +143,7 @@ namespace HitAndRun.Enemy
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent(out MbBullet bullet) || _autoTarget.Target == null) return;
-            var scale = Mathf.Clamp01(bullet.Damage / 30f) * 0.4f + 0.8f;
+            var scale = Mathf.Clamp01(bullet.Damage / 50f) * 0.4f + 0.8f;
             MbFloatingTextSpawner.Instance.Spawn(_damage.position, _damage, bullet.Damage.ToString(), scale);
             TakeDamage(bullet.Damage);
         }

@@ -15,10 +15,13 @@ namespace HitAndRun.Character
         private MbCharacter _head;
         private MbCharacter _tail;
 
+        [SerializeField] private ParticleSystem _particle;
+
         private void Reset()
         {
             _follow = transform.Find("Follow");
             _movement = GetComponent<MbTeamMovement>();
+            _particle = GetComponentInChildren<ParticleSystem>();
             _movement.enabled = false;
         }
 
@@ -30,6 +33,11 @@ namespace HitAndRun.Character
 
         public void SetUp()
         {
+            if (_particle.isPlaying)
+            {
+                _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+
             _movement.enabled = false;
             transform.localPosition = Vector3.forward * 10f;
             _follow.localPosition = new Vector3(0, _follow.localPosition.y, _follow.localPosition.z);
@@ -44,7 +52,7 @@ namespace HitAndRun.Character
 
         public void AddCharacter()
         {
-            // for (var i = _head; i != null; i = i.Right) i.IsActive = true;
+            for (var i = _head; i != null; i = i.Right) i.IsActive = true;
 
             var character = MbCharacterSpawner.Instance.Spawn(transform.position + new Vector3(0, 0, 8f), null);
 
@@ -60,7 +68,7 @@ namespace HitAndRun.Character
             );
         }
 
-        public void ActiveCharacters()
+        public void Run()
         {
             for (var i = _head; i != null; i = i.Right)
             {
@@ -68,6 +76,20 @@ namespace HitAndRun.Character
             }
             _movement.enabled = true;
             InputHelper.GetTouches();
+        }
+
+        public void Victory()
+        {
+            if (_particle.isPlaying)
+            {
+                _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+            _particle.Play();
+
+            for (var i = _head; i != null; i = i.Right)
+            {
+                i.IsVictory = true;
+            }
         }
 
         private void Attack(Vector3 position)
@@ -121,6 +143,8 @@ namespace HitAndRun.Character
                         removed.OnDead -= Leave;
                         removed.Body.Target = merged.Body.Target;
 
+                        merged.FireRate = Mathf.Max(merged.FireRate, removed.FireRate);
+                        merged.Damage = Mathf.Max(merged.Damage, removed.Damage);
                         merged.IsMerging = true;
 
                         removed.Body.WhenMoveCompleted(() =>
@@ -171,14 +195,6 @@ namespace HitAndRun.Character
         private void Collect(MbCharacter current, MbCharacter insert, bool isRight)
         {
             if (insert == null) return;
-
-            insert.IsActive = true;
-            insert.transform.parent = transform;
-            insert.OnDead += Leave;
-            insert.OnGrab += Collect;
-
-            MbCharacterTracker.Instance.AddCharacter(insert);
-
             var isEdge = isRight ? current.Right == null : current.Left == null;
 
             if (isRight) AddRightOf(current, insert);
@@ -197,6 +213,14 @@ namespace HitAndRun.Character
             var direction = isRight ? 1 : -1;
             insert.Body.Target = current.Body.Target
                 + (current.Body.Width / 2 + _gap + insert.Body.Width / 2) * direction * Vector3.right;
+
+            insert.IsActive = true;
+            insert.transform.parent = transform;
+
+            MbCharacterTracker.Instance.AddCharacter(insert);
+
+            insert.OnDead += Leave;
+            insert.OnGrab += Collect;
         }
 
         private void Follow()

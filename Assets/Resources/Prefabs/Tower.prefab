@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 187383693824027168}
   - component: {fileID: 5723633132141709808}
-  - component: {fileID: 1785230433605395593}
+  - component: {fileID: 1697185829075654644}
   m_Layer: 6
   m_Name: Collider
   m_TagString: Tower
@@ -41,13 +41,13 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5701948534180720663}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4575734979276873811, guid: de1737870cac89d4db235ab3d6bd9bd0, type: 3}
---- !u!114 &1785230433605395593
+--- !u!114 &1697185829075654644
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _textMeshPro: {fileID: 8072784381940987081}
   _animator: {fileID: 8072784382472352219}
-  _collider: {fileID: 1785230433605395593}
+  _collider: {fileID: 1697185829075654644}
 --- !u!1 &8072784381940987127
 GameObject:
   m_ObjectHideFlags: 0

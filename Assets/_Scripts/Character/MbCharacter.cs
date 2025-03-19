@@ -27,6 +27,7 @@ namespace HitAndRun.Character
         public event Action<MbCharacter, MbCharacter, bool> OnGrab;
         public bool IsMerging { get; set; }
         public bool IsAttack { get; set; }
+        public bool IsVictory { get; set; }
         private bool _isDead;
         private float _nextFireTime;
 
@@ -48,7 +49,11 @@ namespace HitAndRun.Character
             IsActive = false;
             Left = Right = null;
 
-            IsMerging = IsAttack = false;
+            _nextFireTime = 0;
+            OnDead = null;
+            OnGrab = null;
+
+            IsMerging = IsAttack = IsVictory = false;
             _stateMachine?.SetState(typeof(IdleState));
         }
 
@@ -67,9 +72,11 @@ namespace HitAndRun.Character
             var dyingState = new DyingState(this, _animator);
             var fallState = new FallState(this, _animator);
             var attackState = new AttackState(this, _animator);
+            var victoryState = new VictoryState(this, _animator);
 
             At(idleState, runState, new FuncPredicate(() => IsActive));
             At(runState, attackState, new FuncPredicate(() => IsAttack));
+            At(attackState, victoryState, new FuncPredicate(() => IsVictory));
             Any(fallState, new FuncPredicate(() => IsActive && !_body.IsGrounded));
             Any(dyingState, new FuncPredicate(() => IsActive && _isDead));
             Any(idleState, new FuncPredicate(() => !IsActive));

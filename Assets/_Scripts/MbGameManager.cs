@@ -41,11 +41,10 @@ namespace HitAndRun
 
         public void HandleWin()
         {
+            _team.Victory();
             _enemiesTracker.OnEnemiesDied -= HandleWin;
             _charactersTracker.OnCharactersDied -= HandleLose;
             _uiManager.ShowPopup<MbWinPopup>();
-
-            NextLevel();
         }
 
         public void HandleLose()
@@ -55,13 +54,14 @@ namespace HitAndRun
             _uiManager.ShowPopup<MbLosePopup>();
         }
 
-        private void NextLevel()
+        public void NextLevel()
         {
             _data.Level++;
             _saveManager.Save(_data, "Data");
+            Restart();
         }
 
-        public void AddCoin(int amount)
+        public void AddCoin(long amount)
         {
             _data.Amount += amount;
             _saveManager.Save(_data, "Data");
@@ -85,7 +85,7 @@ namespace HitAndRun
 
         public void StartGame()
         {
-            _team.ActiveCharacters();
+            _team.Run();
             _enemiesTracker.Reset();
             _charactersTracker.Reset();
         }

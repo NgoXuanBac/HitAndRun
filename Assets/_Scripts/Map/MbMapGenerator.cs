@@ -43,11 +43,11 @@ namespace HitAndRun.Map
 
         public void GenerateMap(GameData data)
         {
-            var bossHp = (long)(_bossBaseHP * (1 + data.Level * _bossScale));
+            var bossHp = _bossBaseHP * (int)(1 + data.Level * _bossScale);
             var rate = 1f / (0.1f + (0.5f - 0.1f) * Mathf.Exp(-0.2f * data.FireRate));
             var dms = 2 * data.Damage * rate;
             var characterNum = Mathf.CeilToInt(bossHp / (dms * _timeToKill));
-            var towerHp = (long)(_towerBaseHP * (1 + data.Level * _towerScale));
+            var towerHp = _towerBaseHP * (int)(1 + data.Level * _towerScale);
 
             var chunks = _levelGeneration.Generate(data.Level, characterNum);
             _ground.ChunkCount = chunks.Count;

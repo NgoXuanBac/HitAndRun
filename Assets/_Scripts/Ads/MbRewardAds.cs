@@ -15,6 +15,7 @@ namespace HitAndRun.Ads
   private string _adUnitId = "unused";
 #endif
 
+        private Action _onAdClosed;
         private RewardedAd _rewardedAd;
 
         public void LoadRewardedAd()
@@ -36,11 +37,12 @@ namespace HitAndRun.Ads
                 });
         }
 
-        public void ShowRewardedAd(Action receive)
+        public void ShowRewardedAd(Action receive, Action onAdClosed = null)
         {
 
             if (_rewardedAd != null && _rewardedAd.CanShowAd())
             {
+                _onAdClosed = onAdClosed;
                 _rewardedAd.Show((Reward reward) =>
                 {
                     receive?.Invoke();
@@ -52,6 +54,7 @@ namespace HitAndRun.Ads
         {
             ad.OnAdFullScreenContentClosed += () =>
             {
+                _onAdClosed?.Invoke();
                 LoadRewardedAd();
             };
             ad.OnAdFullScreenContentFailed += (AdError error) =>

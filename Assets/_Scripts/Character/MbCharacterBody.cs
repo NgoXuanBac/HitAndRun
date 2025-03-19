@@ -75,6 +75,8 @@ namespace HitAndRun.Character
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
             _rigidbody.Sleep();
+
+            _target = Vector3.zero;
             Level = 2;
 
             _moveTween?.Kill();
