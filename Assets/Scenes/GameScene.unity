@@ -399,7 +399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &126443237
 RectTransform:
   m_ObjectHideFlags: 0
@@ -473,8 +473,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _content: {fileID: 1335484497}
-  _claimBtn: {fileID: 5083445657561197967}
-  _claimX2Btn: {fileID: 5083445656247458362}
+  _claimBtn: {fileID: 0}
+  _claimX2Btn: {fileID: 0}
   _total: {fileID: 5083445657718634277}
   _coinNum: 10
   _coinScale: 1
