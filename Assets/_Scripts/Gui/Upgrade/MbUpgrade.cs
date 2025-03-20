@@ -25,7 +25,6 @@ namespace HitAndRun.Gui.Upgrade
 
         protected virtual void OnDestroy()
         {
-            MbGameManager.Instance.OnDataLoaded -= UpdateUI;
             _button.onClick.RemoveListener(HandleClick);
         }
 
@@ -33,7 +32,7 @@ namespace HitAndRun.Gui.Upgrade
         protected abstract void HandleClick();
         protected virtual void Start()
         {
-            if (_arrowUp) _arrowUp.DOLocalMoveY(_arrowUp.localPosition.y + 10f, 0.5f)
+            if (_arrowUp) _arrowUp.DOLocalMoveY(_arrowUp.localPosition.y + 20f, 0.5f)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutBounce);
         }

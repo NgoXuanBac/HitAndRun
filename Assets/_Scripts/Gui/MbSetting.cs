@@ -1,3 +1,4 @@
+using HitAndRun.Gui.Popup;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,6 @@ namespace HitAndRun.Gui
         [SerializeField] private Image _icon;
         [SerializeField] private Sprite _setting;
         [SerializeField] private Sprite _restart;
-
         private void Reset()
         {
             _btn = GetComponentInChildren<Button>();
@@ -35,7 +35,7 @@ namespace HitAndRun.Gui
         {
             if (_icon.sprite == _setting)
             {
-                Debug.Log("Settings");
+                // MbUIManager.Instance.ShowPopup<MbSettingPopup>();
             }
             else
             {

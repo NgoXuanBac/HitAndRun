@@ -397,7 +397,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _level: 2
-  _gravityScale: 20
+  _fallSpeed: 10
+  _checkDistance: 15
   _textMeshPro: {fileID: 240896982}
   _bodyTypes: {fileID: 11400000, guid: 1912ff75bf4074a45bb884e1384e8f22, type: 2}
   _meshRenderer: {fileID: 4412818629764687591}

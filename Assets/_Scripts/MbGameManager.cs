@@ -14,7 +14,7 @@ namespace HitAndRun
     }
     public class MbGameManager : MbSingleton<MbGameManager>
     {
-        [SerializeField] private GameData _data = new() { Amount = 100, Level = 1, Damage = 1, FireRate = 1 };
+        [SerializeField] private GameData _data = new() { Amount = 10, Level = 1, Damage = 1, FireRate = 1 };
         public GameData Data => _data;
         private SaveManager _saveManager = new();
 

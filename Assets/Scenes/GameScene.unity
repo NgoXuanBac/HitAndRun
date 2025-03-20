@@ -96,7 +96,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 0572a76ddd308b54b8de7a6ba8847545, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 13b57c8a07f39bc4d9469e4765d6de5a, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5348,6 +5348,8 @@ GameObject:
   - component: {fileID: 806782876}
   - component: {fileID: 806782878}
   - component: {fileID: 806782877}
+  - component: {fileID: 806782879}
+  - component: {fileID: 806782880}
   m_Layer: 5
   m_Name: SettingPopup
   m_TagString: Untagged
@@ -5414,6 +5416,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806782875}
   m_CullTransparentMesh: 1
+--- !u!225 &806782879
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806782875}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &806782880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806782875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f384e1e1fda8fe04f82721b210048ced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _content: {fileID: 2232052916409029412}
+  _group: {fileID: 806782879}
 --- !u!1 &806974264
 GameObject:
   m_ObjectHideFlags: 0
@@ -8559,7 +8587,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1216203414
 MonoBehaviour:
@@ -8825,7 +8853,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1255190331
 MonoBehaviour:
@@ -10556,7 +10584,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1458924266
 MonoBehaviour:
@@ -10571,9 +10599,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _popups:
+  - {fileID: 806782880}
+  - {fileID: 13692420}
   - {fileID: 126443240}
   - {fileID: 826282055}
-  - {fileID: 13692420}
 --- !u!1 &1461788328
 GameObject:
   m_ObjectHideFlags: 0

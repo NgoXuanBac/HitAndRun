@@ -30,7 +30,6 @@ namespace HitAndRun
                             SingletonName,
                             instances.Length);
                     }
-
                     _instance = (T)instances[0];
                     return _instance;
                 }
