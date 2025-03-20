@@ -13,6 +13,7 @@ TagManager:
   - Character_Inactive
   - Coin
   - Obstacle
+  - Ground
   layers:
   - Default
   - TransparentFX

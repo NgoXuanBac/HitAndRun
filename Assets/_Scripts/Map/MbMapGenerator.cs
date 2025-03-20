@@ -50,7 +50,7 @@ namespace HitAndRun.Map
             var towerHp = _towerBaseHP * (int)(1 + data.Level * _towerScale);
 
             var chunks = _levelGeneration.Generate(data.Level, characterNum);
-            _ground.ChunkCount = chunks.Count;
+            _ground.Setup(chunks.Count);
 
             if (data.Level % 3 == 0)
             {

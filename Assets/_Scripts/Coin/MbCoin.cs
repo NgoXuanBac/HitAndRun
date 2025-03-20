@@ -1,4 +1,5 @@
 using DG.Tweening;
+using HitAndRun.Audio;
 using UnityEngine;
 
 namespace HitAndRun.Coin
@@ -7,6 +8,12 @@ namespace HitAndRun.Coin
     {
         [SerializeField, Range(0.1f, 1f)]
         protected float _speed = 0.5f;
+        [SerializeField] protected AudioClip _sfx;
+
+        private void Reset()
+        {
+            _sfx = Resources.Load<AudioClip>("Musics/Coin");
+        }
         private void OnDisable()
         {
             transform.DOKill();
@@ -24,6 +31,7 @@ namespace HitAndRun.Coin
         {
             if (!other.CompareTag("Character")) return;
             MbGameManager.Instance.AddCoin(1);
+            MbAudioManager.Instance.PlaySFX(_sfx);
             MbCoinSpawner.Instance.Despawn(this);
         }
     }

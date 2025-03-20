@@ -60,7 +60,7 @@ public class PlayFabLoginManager : MonoBehaviour
 
     }
 
-    void CreateNewAccount(string deviceId)
+    private void CreateNewAccount(string deviceId)
     {
         var request = new LoginWithCustomIDRequest
         {

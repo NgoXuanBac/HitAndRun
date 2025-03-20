@@ -9,7 +9,7 @@ namespace HitAndRun.Character
     public class MbCharacterBody : MonoBehaviour
     {
         [SerializeField, ReadOnly, Min(2)] private int _level;
-        [SerializeField, Range(1, 100)] private int _gravityScale = 20;
+        [SerializeField, Range(1, 100)] private int _gravityScale = 10;
         [SerializeField] private TextMeshPro _textMeshPro;
         [SerializeField] private SOBodyTypes _bodyTypes;
         [SerializeField] private SkinnedMeshRenderer _meshRenderer;

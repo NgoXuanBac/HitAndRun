@@ -35,7 +35,7 @@ namespace HitAndRun.Gui
         {
             if (_icon.sprite == _setting)
             {
-                // MbUIManager.Instance.ShowPopup<MbSettingPopup>();
+                MbUIManager.Instance.ShowPopup<MbSettingPopup>();
             }
             else
             {

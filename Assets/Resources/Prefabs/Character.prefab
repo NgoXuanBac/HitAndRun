@@ -365,9 +365,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.8
-  m_Height: 4.8
+  m_Height: 4.7764273
   m_Direction: 1
-  m_Center: {x: 0, y: 2.4, z: 0}
+  m_Center: {x: 0, y: 2.4117866, z: 0}
 --- !u!54 &836500010
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -378,12 +378,12 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &8678606024956233080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,8 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _level: 2
-  _fallSpeed: 10
-  _checkDistance: 15
+  _gravityScale: 10
   _textMeshPro: {fileID: 240896982}
   _bodyTypes: {fileID: 11400000, guid: 1912ff75bf4074a45bb884e1384e8f22, type: 2}
   _meshRenderer: {fileID: 4412818629764687591}
