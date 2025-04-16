@@ -2217,7 +2217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &806782876
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2616,7 +2616,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &924040138
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4718,7 +4718,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 4
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -7204,7 +7204,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7643,8 +7643,8 @@ RectTransform:
   m_Father: {fileID: 2232052915723793633}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.76, y: 0}
+  m_AnchorMax: {x: 0.76, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 88, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7717,7 +7717,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 88, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7929,7 +7929,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.76, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11809,12 +11809,8 @@ MonoBehaviour:
   _enemy: {fileID: 4309972874894008128}
   _chunkCount: 10
   _enviroments:
-  - Stage: {fileID: 2800000, guid: 15cbde205ac69084085ec4f147ca997a, type: 3}
-    Skybox: {fileID: 2100000, guid: 20f6d22d93779de4ea6f62f8ab305593, type: 2}
   - Stage: {fileID: 2800000, guid: 645e94c96759fde428be58c280050792, type: 3}
     Skybox: {fileID: 2100000, guid: 56113b3b655ab7349bab4d7d405c258a, type: 2}
-  - Stage: {fileID: 2800000, guid: aef02e6eaae967c419298ebde7dc8754, type: 3}
-    Skybox: {fileID: 2100000, guid: ddbcbb3899687ea469ed4a5fce1532df, type: 2}
   _stage: {fileID: 0}
 --- !u!114 &7016368716027868183
 MonoBehaviour:
